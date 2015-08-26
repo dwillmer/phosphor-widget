@@ -39,6 +39,10 @@
     "type": "git",
     "url": "https://github.com/phosphorjs/phosphor-widget.git"
   },
+  "files": [
+    "lib/index.js",
+    "lib/phosphor-widget.d.ts"
+  ],
   "keywords": [
     "ui",
     "widget"
