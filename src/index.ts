@@ -346,6 +346,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   /**
    * Get the number of children of the widget.
    *
+   * #### Notes
+   * This is a read-only property.
+   *
    * **See also** [[children]], [[childAt]]
    */
   get childCount(): number {
@@ -939,6 +942,9 @@ class ChildMessage extends Message {
 
   /**
    * The child widget for the message.
+   *
+   * #### Notes
+   * This is a read-only property.
    */
   get child(): Widget {
     return this._child;
@@ -949,6 +955,8 @@ class ChildMessage extends Message {
    *
    * #### Notes
    * This will be `-1` if the current index is unknown.
+   *
+   * This is a read-only property.
    */
   get currentIndex(): number {
     return this._currentIndex;
@@ -959,6 +967,8 @@ class ChildMessage extends Message {
    *
    * #### Notes
    * This will be `-1` if the previous index is unknown.
+   *
+   * This is a read-only property.
    */
   get previousIndex(): number {
     return this._previousIndex;
@@ -1000,6 +1010,8 @@ class ResizeMessage extends Message {
    *
    * #### Notes
    * This will be `-1` if the width is unknown.
+   *
+   * This is a read-only property.
    */
   get width(): number {
     return this._width;
@@ -1010,6 +1022,8 @@ class ResizeMessage extends Message {
    *
    * #### Notes
    * This will be `-1` if the height is unknown.
+   *
+   * This is a read-only property.
    */
   get height(): number {
     return this._height;
