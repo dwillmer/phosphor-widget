@@ -36,19 +36,19 @@ import {
 
 
 /**
- * The class name added to Widget instances.
+ * `p-Widget`: the class name added to Widget instances.
  */
 export
 const WIDGET_CLASS = 'p-Widget';
 
 /**
- * The class name added to hidden widgets.
+ * `p-mod-hidden`: the class name added to hidden widgets.
  */
 export
 const HIDDEN_CLASS = 'p-mod-hidden';
 
 /**
- * A singleton 'update-request' message.
+ * A singleton `'update-request'` message.
  *
  * #### Notes
  * This message can be dispatched to supporting widgets in order to
@@ -61,13 +61,13 @@ const HIDDEN_CLASS = 'p-mod-hidden';
  *
  * Messages of this type are compressed by default.
  *
- * **See also** [[onUpdateRequest]]
+ * **See also:** [[onUpdateRequest]]
  */
 export
 const MSG_UPDATE_REQUEST = new Message('update-request');
 
 /**
- * A singleton 'layout-request' message.
+ * A singleton `'layout-request'` message.
  *
  * #### Notes
  * This message can be dispatched to supporting widgets in order to
@@ -79,61 +79,61 @@ const MSG_UPDATE_REQUEST = new Message('update-request');
  *
  * Messages of this type are compressed by default.
  *
- * **See also** [[onLayoutRequest]]
+ * **See also:** [[onLayoutRequest]]
  */
 export
 const MSG_LAYOUT_REQUEST = new Message('layout-request');
 
 /**
- * A singleton 'after-show' message.
+ * A singleton `'after-show'` message.
  *
  * #### Notes
  * This message is sent to a widget when it becomes visible.
  *
  * This message is **not** sent when the widget is attached.
  *
- * **See also** [[isVisible]], [[onAfterShow]]
+ * **See also:** [[isVisible]], [[onAfterShow]]
  */
 export
 const MSG_AFTER_SHOW = new Message('after-show');
 
 /**
- * A singleton 'before-hide' message.
+ * A singleton `'before-hide'` message.
  *
  * #### Notes
  * This message is sent to a widget when it becomes not-visible.
  *
  * This message is **not** sent when the widget is detached.
  *
- * **See also** [[isVisible]], [[onBeforeHide]]
+ * **See also:** [[isVisible]], [[onBeforeHide]]
  */
 export
 const MSG_BEFORE_HIDE = new Message('before-hide');
 
 /**
- * A singleton 'after-attach' message.
+ * A singleton `'after-attach'` message.
  *
  * #### Notes
  * This message is sent to a widget after it is attached to the DOM.
  *
- * **See also** [[isAttached]], [[onAfterAttach]]
+ * **See also:** [[isAttached]], [[onAfterAttach]]
  */
 export
 const MSG_AFTER_ATTACH = new Message('after-attach');
 
 /**
- * A singleton 'before-detach' message.
+ * A singleton `'before-detach'` message.
  *
  * #### Notes
  * This message is sent to a widget before it is detached from the DOM.
  *
- * **See also** [[isAttached]], [[onBeforeDetach]]
+ * **See also:** [[isAttached]], [[onBeforeDetach]]
  */
 export
 const MSG_BEFORE_DETACH = new Message('before-detach');
 
 /**
- * A singleton 'close' message.
+ * A singleton `'close'` message.
  *
  * #### Notes
  * This message should be dispatched to a widget when it should close
@@ -142,7 +142,7 @@ const MSG_BEFORE_DETACH = new Message('before-detach');
  * Widgets do not respond to this message by default. A subclass must
  * reimplement the message handler and take appropriate action.
  *
- * **See also** [[onClose]]
+ * **See also:** [[onClose]]
  */
 export
 const MSG_CLOSE = new Message('close');
@@ -161,9 +161,18 @@ const MSG_CLOSE = new Message('close');
 export
 class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPropertyOwner {
   /**
-   * The property descriptor for the `hidden` instance property.
+   * A property descriptor which controls the hidden state of a widget.
    *
-   * **See also** [[hidden]]
+   * #### Notes
+   * This property controls whether a widget is explicitly hidden.
+   * Hiding a widget will cause it and all of its descendants to
+   * become not-visible.
+   *
+   * This property will toggle the presence of [[HIDDEN_CLASS]] on a
+   * widget according to the property value. It will also dispatch
+   * [[MSG_AFTER_SHOW]] and [[MSG_BEFORE_HIDE]] as appropriate.
+   *
+   * **See also:** [[hidden]], [[isVisible]]
    */
   static hiddenProperty = new Property<Widget, boolean>({
     value: false,
@@ -179,7 +188,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   /**
    * A signal emitted when the widget is disposed.
    *
-   * **See also** [[isDisposed]]
+   * **See also:** [[isDisposed]]
    */
   @defineSignal
   disposed: ISignal<void>;
@@ -236,7 +245,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * #### Notes
    * This is a read-only property which is always safe to access.
    *
-   * **See also** [[attachWidget]], [[detachWidget]]
+   * **See also:** [[attachWidget]], [[detachWidget]]
    */
   get isAttached(): boolean {
     return this.testFlag(WidgetFlag.IsAttached);
@@ -248,7 +257,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * #### Notes
    * This is a read-only property which is always safe to access.
    *
-   * **See also** [[disposed]]
+   * **See also:** [[disposed]]
    */
   get isDisposed(): boolean {
     return this.testFlag(WidgetFlag.IsDisposed);
@@ -263,7 +272,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * This is a read-only property which is always safe to access.
    *
-   * **See also** [[hidden]]
+   * **See also:** [[hidden]]
    */
   get isVisible(): boolean {
     return this.testFlag(WidgetFlag.IsVisible);
@@ -272,7 +281,10 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   /**
    * Get whether the widget is explicitly hidden.
    *
-   * **See also** [[isVisible]]
+   * #### Notes
+   * This is a pure delegate to the [[hiddenProperty]].
+   *
+   * **See also:** [[isVisible]]
    */
   get hidden(): boolean {
     return Widget.hiddenProperty.get(this);
@@ -280,9 +292,14 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
 
   /**
    * Set whether the widget is explicitly hidden.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[hiddenProperty]].
+   *
+   * **See also:** [[isVisible]]
    */
-  set hidden(hidden: boolean) {
-    Widget.hiddenProperty.set(this, hidden);
+  set hidden(value: boolean) {
+    Widget.hiddenProperty.set(this, value);
   }
 
   /**
@@ -305,7 +322,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * expression `widget.parent.removeChild(widget)`, otherwise it
    * is equivalent to the expression `parent.addChild(widget)`.
    *
-   * **See also** [[addChild]], [[insertChild]], [[removeChild]]
+   * **See also:** [[addChild]], [[insertChild]], [[removeChild]]
    */
   set parent(parent: Widget) {
     if (parent && parent !== this._parent) {
@@ -322,7 +339,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * When only iterating over the children, it can be faster to use
    * the child query methods, which do not perform a copy.
    *
-   * **See also** [[childCount]], [[childAt]]
+   * **See also:** [[childCount]], [[childAt]]
    */
   get children(): Widget[] {
     return this._children.slice();
@@ -336,7 +353,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * child widgets. Depending on the desired outcome, it can be more
    * efficient to use one of the child manipulation methods.
    *
-   * **See also** [[addChild]], [[insertChild]], [[removeChild]]
+   * **See also:** [[addChild]], [[insertChild]], [[removeChild]]
    */
   set children(children: Widget[]) {
     this.clearChildren();
@@ -349,7 +366,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * #### Notes
    * This is a read-only property.
    *
-   * **See also** [[children]], [[childAt]]
+   * **See also:** [[children]], [[childAt]]
    */
   get childCount(): number {
     return this._children.length;
@@ -363,7 +380,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * @returns The child widget at the specified index, or `undefined`
    *  if the index is out of range.
    *
-   * **See also** [[childCount]], [[childIndex]]
+   * **See also:** [[childCount]], [[childIndex]]
    */
   childAt(index: number): Widget {
     return this._children[index | 0];
@@ -377,7 +394,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * @returns The index of the specified child widget, or `-1` if
    *   the widget is not a child of this widget.
    *
-   * **See also** [[childCount]], [[childAt]]
+   * **See also:** [[childCount]], [[childAt]]
    */
   childIndex(child: Widget): number {
     return this._children.indexOf(child);
@@ -396,7 +413,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * The child will be automatically removed from its current parent
    * before being added to this widget.
    *
-   * **See also** [[insertChild]], [[moveChild]]
+   * **See also:** [[insertChild]], [[moveChild]]
    */
   addChild(child: Widget): number {
     return this.insertChild(this._children.length, child);
@@ -418,7 +435,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * The child will be automatically removed from its current parent
    * before being added to this widget.
    *
-   * **See also** [[addChild]], [[moveChild]]
+   * **See also:** [[addChild]], [[moveChild]]
    */
   insertChild(index: number, child: Widget): number {
     if (child === this) {
@@ -448,7 +465,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * child, as some widgets may be able to optimize child moves and
    * avoid making unnecessary changes to the DOM.
    *
-   * **See also** [[addChild]], [[insertChild]]
+   * **See also:** [[addChild]], [[insertChild]]
    */
   moveChild(fromIndex: number, toIndex: number): boolean {
     var i = fromIndex | 0;
@@ -471,7 +488,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * @returns The removed child widget, or `undefined` if the index
    *   is out of range.
    *
-   * **See also** [[removeChild]], [[clearChildren]]
+   * **See also:** [[removeChild]], [[clearChildren]]
    */
   removeChildAt(index: number): Widget {
     var i = index | 0;
@@ -491,7 +508,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * @returns The index which the child occupied, or `-1` if the
    *   child is not a child of this widget.
    *
-   * **See also** [[removeChildAt]], [[clearChildren]]
+   * **See also:** [[removeChildAt]], [[clearChildren]]
    */
   removeChild(child: Widget): number {
     var i = this.childIndex(child);
@@ -508,7 +525,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * loop if a message handler causes a child widget to be added
    * in response to one being removed.
    *
-   * **See also** [[removeChild]], [[removeChildAt]]
+   * **See also:** [[removeChild]], [[removeChildAt]]
    */
   clearChildren(): void {
     while (this.childCount > 0) {
@@ -523,7 +540,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * @returns `true` if the flag is set, `false` otherwise.
    *
-   * **See also** [[setFlag]], [[clearFlag]]
+   * **See also:** [[setFlag]], [[clearFlag]]
    */
   testFlag(flag: WidgetFlag): boolean {
     return (this._flags & flag) !== 0;
@@ -534,7 +551,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * @param flag - The widget flag of interest.
    *
-   * **See also** [[testFlag]], [[clearFlag]]
+   * **See also:** [[testFlag]], [[clearFlag]]
    */
   setFlag(flag: WidgetFlag): void {
     this._flags |= flag;
@@ -545,7 +562,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * @param flag - The widget flag of interest.
    *
-   * **See also** [[testFlag]], [[setFlag]]
+   * **See also:** [[testFlag]], [[setFlag]]
    */
   clearFlag(flag: WidgetFlag): void {
     this._flags &= ~flag;
@@ -711,7 +728,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also** [[MSG_UPDATE_REQUEST]]
+   * **See also:** [[MSG_UPDATE_REQUEST]]
    */
   protected onUpdateRequest(msg: Message): void { }
 
@@ -720,7 +737,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also** [[MSG_LAYOUT_REQUEST]]
+   * **See also:** [[MSG_LAYOUT_REQUEST]]
    */
   protected onLayoutRequest(msg: Message): void { }
 
@@ -729,7 +746,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also** [[MSG_AFTER_SHOW]]
+   * **See also:** [[MSG_AFTER_SHOW]]
    */
   protected onAfterShow(msg: Message): void { }
 
@@ -738,21 +755,21 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also** [[MSG_BEFORE_HIDE]]
+   * **See also:** [[MSG_BEFORE_HIDE]]
    */
   protected onBeforeHide(msg: Message): void { }
 
   /**
    * A message handler invoked on an 'after-attach' message.
    *
-   * **See also** [[MSG_AFTER_ATTACH]]
+   * **See also:** [[MSG_AFTER_ATTACH]]
    */
   protected onAfterAttach(msg: Message): void { }
 
   /**
    * A message handler invoked on a 'before-detach' message.
    *
-   * **See also** [[MSG_BEFORE_DETACH]]
+   * **See also:** [[MSG_BEFORE_DETACH]]
    */
   protected onBeforeDetach(msg: Message): void { }
 
@@ -775,7 +792,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also** [[MSG_CLOSE]]
+   * **See also:** [[MSG_CLOSE]]
    */
   protected onClose(msg: Message): void { }
 
@@ -831,9 +848,8 @@ enum WidgetFlag {
  * #### Notes
  * Only a root widget can be attached to a host node.
  *
- * This function ensures that an 'after-attached' message is properly
- * dispatched to the hierarchy, and should be used in lieu of manual
- * attachment to the DOM.
+ * This function ensures that [[MSG_AFTER_ATTACH]] is dispatched to
+ * the hierarchy. It should be used in lieu of manual DOM attachment.
  */
 export
 function attachWidget(widget: Widget, host: HTMLElement): void {
@@ -862,9 +878,8 @@ function attachWidget(widget: Widget, host: HTMLElement): void {
  * #### Notes
  * Only a root widget can be detached from its host node.
  *
- * This function ensures that a 'before-attached' message is properly
- * dispatched to the hierarchy, and should be used in lieu of manual
- * detachment from the DOM.
+ * This function ensures that [[MSG_BEFORE_DETACH]] is dispatched to
+ * the hierarchy. It should be used in lieu of manual DOM detachment.
  */
 export
 function detachWidget(widget: Widget): void {
@@ -1035,7 +1050,7 @@ class ResizeMessage extends Message {
 
 
 /**
- * The change handler for the Widget `hiddenProperty`.
+ * The change handler for the [[hiddenProperty]].
  */
 function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
   if (hidden) {
