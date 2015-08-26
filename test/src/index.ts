@@ -9,6 +9,10 @@
 
 import expect = require('expect.js');
 
+import {
+  Widget
+} from '../../lib/index';
+
 
 describe('phosphor-widget', () => {
 
@@ -25,7 +29,7 @@ describe('phosphor-widget', () => {
   });
 
   it('should pass', () => {
-    expect(true).to.be(true);
+    expect(!!Widget).to.be(true);
   });
 
 });

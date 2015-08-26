@@ -10,6 +10,12 @@
   "files": [
     "../../typings/expect.js/expect.js.d.ts",
     "../../typings/mocha/mocha.d.ts",
+    "../../node_modules/phosphor-disposable/lib/phosphor-disposable.d.ts",
+    "../../node_modules/phosphor-messaging/lib/phosphor-messaging.d.ts",
+    "../../node_modules/phosphor-nodewrapper/lib/phosphor-nodewrapper.d.ts",
+    "../../node_modules/phosphor-properties/lib/phosphor-properties.d.ts",
+    "../../node_modules/phosphor-signaling/lib/phosphor-signaling.d.ts",
+    "../../node_modules/phosphor-queue/lib/phosphor-queue.d.ts",
     "index.ts"
   ]
 }
