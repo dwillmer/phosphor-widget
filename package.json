@@ -6,7 +6,15 @@
   "typescript": {
     "definition": "lib/phosphor-widget.d.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "phosphor-arrays": "^1.0.1",
+    "phosphor-disposable": "^1.0.1",
+    "phosphor-messaging": "^1.0.2",
+    "phosphor-nodewrapper": "^1.0.1",
+    "phosphor-properties": "^1.0.0",
+    "phosphor-queue": "^1.0.1",
+    "phosphor-signaling": "^1.0.1"
+  },
   "devDependencies": {
     "browserify": "^11.0.1",
     "dts-generator": "^1.5.0",
