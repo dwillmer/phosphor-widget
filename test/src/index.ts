@@ -959,39 +959,81 @@ describe('phosphor-widget', () => {
     describe('#onResize()', () => {
 
       it('should be invoked when the widget is resized', () => {
-
+        var widget = new VerboseWidget();
+        attachWidget(widget, document.body);
+        fitWidget(widget);
+        var last = widget.messages.length - 1;
+        expect(widget.messages[last].type).to.be('resize');
+        expect(widget.sources[last]).to.be('resize');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `ResizeMessage`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect(widget.messages[last] instanceof ResizeMessage).to.be(true);
         });
 
         it('should have a `type` of `resize`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect(widget.messages[last].type).to.be('resize');
         });
 
         it('should have a `width` of `-1` if the size is unknown', () => {
-
+          var widget = new VerboseWidget();
+          widget.processMessage(ResizeMessage.UnknownSize);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).width).to.be(-1);
         });
 
         it('should have a `height` of `-1` if the size is unknown', () => {
-
+          var widget = new VerboseWidget();
+          widget.processMessage(ResizeMessage.UnknownSize);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).height).to.be(-1);
         });
 
         it('should have a valid `width` if the size is known', () => {
-
+          var widget = new VerboseWidget();
+          var div = document.createElement('div');
+          document.body.appendChild(div);
+          attachWidget(widget, div);
+          div.style.position = 'absolute';
+          div.style.width = '101px';
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).width).to.be(101);
         });
 
         it('should have a valid `height` if the size is known', () => {
-
+          var widget = new VerboseWidget();
+          var div = document.createElement('div');
+          document.body.appendChild(div);
+          attachWidget(widget, div);
+          div.style.position = 'absolute';
+          div.style.height = '101px';
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).height).to.be(101);
         });
 
       });
 
       it('should dispatch `ResizeMessage.UnknownSize` to the children', () => {
-
+        var child0 = new VerboseWidget();
+        var child1 = new VerboseWidget();
+        var parent = new Widget([child0, child1]);
+        child0.messages = [];
+        child1.messages = [];
+        parent.processMessage(ResizeMessage.UnknownSize);
+        expect(child0.messages[0]).to.be(ResizeMessage.UnknownSize);
+        expect(child1.messages[0]).to.be(ResizeMessage.UnknownSize);
       });
 
     });
