@@ -24,7 +24,8 @@ import {
 import {
   HIDDEN_CLASS, MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH,
   MSG_BEFORE_HIDE, MSG_CLOSE, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
-  WIDGET_CLASS, Widget, attachWidget, detachWidget, fitWidget
+  WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget, 
+  detachWidget, fitWidget
 } from '../../lib/index';
 
 
@@ -1145,23 +1146,30 @@ describe('phosphor-widget', () => {
     describe('#constructor()', () => {
 
       it('should accept the message type and child widget', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget);
       });
 
       it('should accept an optional `previousIndex`', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget, 1);
       });
 
       it('should accept an optional `currentIndex`', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget, 1, 0);
       });
 
       it('should default the `previousIndex` to `-1`', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget);
+        expect(msg.previousIndex).to.be(-1);
       });
 
       it('should default the `currentIndex` to `-1`', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget, 1);
+        expect(msg.currentIndex).to.be(-1);
       });
 
     });
@@ -1169,11 +1177,18 @@ describe('phosphor-widget', () => {
     describe('#child', () => {
 
       it('should be the child passed to the constructor', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget);
+        expect(msg.child).to.be(widget);
       });
 
       it('should be a read-only property', () => {
-
+        var widget0 = new Widget();
+        var widget1 = new Widget();
+        var msg = new ChildMessage('test', widget0);
+        expect(() => {
+          msg.child = widget1;
+        }).to.throwError();
       });
 
     });
@@ -1181,11 +1196,17 @@ describe('phosphor-widget', () => {
     describe('#currentIndex', () => {
 
       it('should be the index provided to the constructor', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget, 1, 2);
+        expect(msg.currentIndex).to.be(2);
       });
 
       it('should be a read-only property', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget, 1, 2);
+        expect(() => {
+          msg.currentIndex = 1;
+        }).to.throwError();
       });
 
     });
@@ -1193,11 +1214,17 @@ describe('phosphor-widget', () => {
     describe('#previousIndex', () => {
 
       it('should be the index provided to the constructor', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget, 2);
+        expect(msg.previousIndex).to.be(2);
       });
 
       it('should be a read-only property', () => {
-
+        var widget = new Widget();
+        var msg = new ChildMessage('test', widget, 1, 2);
+        expect(() => {
+          msg.previousIndex = 0;
+        }).to.throwError();
       });
 
     });
@@ -1209,15 +1236,18 @@ describe('phosphor-widget', () => {
     describe('.UnknownSize', () => {
 
       it('should be a `ResizeMessage`', () => {
-
+        var msg = ResizeMessage.UnknownSize;
+        expect(msg instanceof ResizeMessage).to.be(true);
       });
 
       it('should have a `width` of `-1`', () => {
-
+        var msg = ResizeMessage.UnknownSize;
+        expect(msg.width).to.be(-1);
       });
 
       it('should have a `height` of `-1`', () => {
-
+        var msg = ResizeMessage.UnknownSize;
+        expect(msg.height).to.be(-1);
       });
 
     });
@@ -1225,7 +1255,7 @@ describe('phosphor-widget', () => {
     describe('#constructor()', () => {
 
       it('should accept a width and height', () => {
-
+        var msg = new ResizeMessage(100, 100);
       });
 
     });
@@ -1233,11 +1263,15 @@ describe('phosphor-widget', () => {
     describe('#width', () => {
 
       it('should be the width passed to the constructor', () => {
-
+        var msg = new ResizeMessage(100, 200);
+        expect(msg.width).to.be(100);
       });
 
       it('should be a read-only property', () => {
-
+        var msg = new ResizeMessage(100, 200);
+        expect(() => {
+          msg.width = 200;
+        }).to.throwError();
       });
 
     });
@@ -1245,11 +1279,15 @@ describe('phosphor-widget', () => {
     describe('#height', () => {
 
       it('should be the height passed to the constructor', () => {
-
+        var msg = new ResizeMessage(100, 200);
+        expect(msg.height).to.be(200);
       });
 
       it('should be a read-only property', () => {
-
+        var msg = new ResizeMessage(100, 200);
+        expect(() => {
+          msg.height = 200;
+        }).to.throwError();
       });
 
     });
