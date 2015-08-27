@@ -144,7 +144,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#childat" class="tsd-kind-icon">child<wbr>At</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#childindex" class="tsd-kind-icon">child<wbr>Index</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#clearchildren" class="tsd-kind-icon">clear<wbr>Children</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#clearflag" class="tsd-kind-icon">clear<wbr>Flag</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#compressmessage" class="tsd-kind-icon">compress<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#dispose" class="tsd-kind-icon">dispose</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="widget.html#hasclass" class="tsd-kind-icon">has<wbr>Class</a></li>
@@ -167,8 +166,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#removechild" class="tsd-kind-icon">remove<wbr>Child</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#removechildat" class="tsd-kind-icon">remove<wbr>Child<wbr>At</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="widget.html#removeclass" class="tsd-kind-icon">remove<wbr>Class</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#setflag" class="tsd-kind-icon">set<wbr>Flag</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="widget.html#testflag" class="tsd-kind-icon">test<wbr>Flag</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="widget.html#toggleclass" class="tsd-kind-icon">toggle<wbr>Class</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="widget.html#createnode" class="tsd-kind-icon">create<wbr>Node</a></li>
 							</ul>
@@ -222,7 +219,7 @@
 					<div class="tsd-signature tsd-kind-icon">_children<span class="tsd-signature-symbol">:</span> <a href="widget.html" class="tsd-signature-type">Widget</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L809">index.ts:809</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L774">index.ts:774</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -232,7 +229,7 @@
 					<div class="tsd-signature tsd-kind-icon">_flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L807">index.ts:807</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L772">index.ts:772</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -242,7 +239,7 @@
 					<div class="tsd-signature tsd-kind-icon">_parent<span class="tsd-signature-symbol">:</span> <a href="widget.html" class="tsd-signature-type">Widget</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L808">index.ts:808</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L773">index.ts:773</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -781,38 +778,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="clearflag" class="tsd-anchor"></a>
-					<h3>clear<wbr>Flag</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">clear<wbr>Flag<span class="tsd-signature-symbol">(</span>flag<span class="tsd-signature-symbol">: </span><a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L575">index.ts:575</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Clear the given flag for the widget.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>flag: <a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The widget flag of interest.</p>
-										<p><strong>See also:</strong> <a href="widget.html#testflag">testFlag</a>, <a href="widget.html#setflag">setFlag</a></p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="compressmessage" class="tsd-anchor"></a>
 					<h3>compress<wbr>Message</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -822,7 +787,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L658">index.ts:658</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L623">index.ts:623</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1018,7 +983,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L775">index.ts:775</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L740">index.ts:740</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1047,7 +1012,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L759">index.ts:759</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L724">index.ts:724</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1077,7 +1042,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L782">index.ts:782</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L747">index.ts:747</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1106,7 +1071,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L768">index.ts:768</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L733">index.ts:733</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1136,7 +1101,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L677">index.ts:677</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L642">index.ts:642</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1171,7 +1136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L796">index.ts:796</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L761">index.ts:761</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1200,7 +1165,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L711">index.ts:711</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L676">index.ts:676</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1235,7 +1200,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L694">index.ts:694</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L659">index.ts:659</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1269,7 +1234,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L789">index.ts:789</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L754">index.ts:754</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1298,7 +1263,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L805">index.ts:805</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L770">index.ts:770</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1328,7 +1293,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L750">index.ts:750</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L715">index.ts:715</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1358,7 +1323,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L730">index.ts:730</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L695">index.ts:695</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1393,7 +1358,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L741">index.ts:741</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L706">index.ts:706</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1423,7 +1388,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L587">index.ts:587</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L552">index.ts:552</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1548,71 +1513,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="setflag" class="tsd-anchor"></a>
-					<h3>set<wbr>Flag</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Flag<span class="tsd-signature-symbol">(</span>flag<span class="tsd-signature-symbol">: </span><a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L564">index.ts:564</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Set the given flag for the widget.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>flag: <a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The widget flag of interest.</p>
-										<p><strong>See also:</strong> <a href="widget.html#testflag">testFlag</a>, <a href="widget.html#clearflag">clearFlag</a></p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="testflag" class="tsd-anchor"></a>
-					<h3>test<wbr>Flag</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">test<wbr>Flag<span class="tsd-signature-symbol">(</span>flag<span class="tsd-signature-symbol">: </span><a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L553">index.ts:553</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Test whether the given flag is set for the widget.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>flag: <a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The widget flag of interest.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-							<p><code>true</code> if the flag is set, <code>false</code> otherwise.</p>
-							<p><strong>See also:</strong> <a href="widget.html#setflag">setFlag</a>, <a href="widget.html#clearflag">clearFlag</a></p>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="toggleclass" class="tsd-anchor"></a>
 					<h3>toggle<wbr>Class</h3>
@@ -1693,9 +1593,6 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum">
-						<a href="../enums/widgetflag.html" class="tsd-kind-icon">Widget<wbr>Flag</a>
-					</li>
 					<li class=" tsd-kind-class">
 						<a href="childmessage.html" class="tsd-kind-icon">Child<wbr>Message</a>
 					</li>
@@ -1771,9 +1668,6 @@
 								<a href="widget.html#clearchildren" class="tsd-kind-icon">clear<wbr>Children</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="widget.html#clearflag" class="tsd-kind-icon">clear<wbr>Flag</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="widget.html#compressmessage" class="tsd-kind-icon">compress<wbr>Message</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -1838,12 +1732,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="widget.html#removeclass" class="tsd-kind-icon">remove<wbr>Class</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="widget.html#setflag" class="tsd-kind-icon">set<wbr>Flag</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="widget.html#testflag" class="tsd-kind-icon">test<wbr>Flag</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="widget.html#toggleclass" class="tsd-kind-icon">toggle<wbr>Class</a>
