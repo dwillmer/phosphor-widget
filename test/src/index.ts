@@ -180,16 +180,20 @@ describe('phosphor-widget', () => {
 
     describe('#propertyChanged', () => {
 
-      it('should be emitted when a widget property changes', () => {
-
+      it('should be emitted when a widget property changes', (done) => {
+        var widget = new Widget();
+        widget.propertyChanged.connect(() => { done(); });
+        Widget.hiddenProperty.set(widget, true);
       });
 
     });
 
     describe('#disposed', () => {
 
-      it('should be emitted when the widget is disposed', () => {
-
+      it('should be emitted when the widget is disposed', (done) => {
+        var widget = new Widget();
+        widget.disposed.connect(() => { done(); });
+        widget.dispose();
       });
 
     });
@@ -197,11 +201,13 @@ describe('phosphor-widget', () => {
     describe('#constructor()', () => {
 
       it('should accept no arguments', () => {
-
+        var widget = new Widget();
       });
 
       it('should accept an array of initial children', () => {
-
+        var child1 = new Widget();
+        var child2 = new Widget();
+        var parent = new Widget([child1, child2]);
       });
 
     });
@@ -209,15 +215,26 @@ describe('phosphor-widget', () => {
     describe('#dispose()', () => {
 
       it('should dispose of the widget', () => {
-
+        var widget = new Widget();
+        widget.dispose();
+        expect(widget.isDisposed).to.be(true);
       });
 
       it('should dispose of the widget descendants', () => {
-
+        var child = new Widget();
+        var parent = new Widget([child]);
+        parent.dispose();
+        expect(child.isDisposed).to.be(true);
       });
 
       it('should automatically detach the widget', () => {
-
+        var widget = new Widget();
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        attachWidget(widget, div);
+        expect(widget.isAttached).to.be(true);
+        widget.dispose();
+        expect(widget.isAttached).to.be(false);
       });
 
     });
@@ -225,11 +242,16 @@ describe('phosphor-widget', () => {
     describe('#isAttached', () => {
 
       it('should be `true` if the widget is attached', () => {
-
+        var widget = new Widget();
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        attachWidget(widget, div);
+        expect(widget.isAttached).to.be(true);
       });
 
       it('should be `false` if the widget is not attached', () => {
-
+        var widget = new Widget();
+        expect(widget.isAttached).to.be(false);
       });
 
     });
@@ -237,11 +259,14 @@ describe('phosphor-widget', () => {
     describe('#isDisposed', () => {
 
       it('should be `true` if the widget is disposed', () => {
-
+        var widget = new Widget();
+        widget.dispose();
+        expect(widget.isDisposed).to.be(true);
       });
 
       it('should be `false` if the widget is not disposed', () => {
-
+        var widget = new Widget();
+        expect(widget.isDisposed).to.be(false);
       });
 
     });
@@ -249,15 +274,25 @@ describe('phosphor-widget', () => {
     describe('#isVisible', () => {
 
       it('should be `true` if the widget is visible', () => {
-
+        var widget = new Widget();
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        attachWidget(widget, div);
+        expect(widget.isVisible).to.be(true);
       });
 
       it('should be `false` if the widget is not visible', () => {
-
+        var widget = new Widget();
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        attachWidget(widget, div);
+        Widget.hiddenProperty.set(widget, true);
+        expect(widget.isVisible).to.be(false);
       });
 
       it('should be `false` if the widget is not attached', () => {
-
+        var widget = new Widget();
+        expect(widget.isVisible).to.be(false);
       });
 
     });
@@ -265,7 +300,12 @@ describe('phosphor-widget', () => {
     describe('#hidden', () => {
 
       it('should be `true` if the widget is hidden', () => {
-
+        var widget = new Widget();
+        var div = document.createElement('div');
+        document.body.appendChild(div);
+        attachWidget(widget, div);
+        Widget.hiddenProperty.set(widget, true);
+        expect(widget.hidden).to.be(true);
       });
 
       it('should be `false` if the widget is not hidden', () => {
