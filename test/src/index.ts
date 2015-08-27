@@ -10,7 +10,7 @@
 import expect = require('expect.js');
 
 import {
-  Message
+  Message, postMessage
 } from 'phosphor-messaging';
 
 import {
@@ -24,7 +24,7 @@ import {
 import {
   HIDDEN_CLASS, MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH,
   MSG_BEFORE_HIDE, MSG_CLOSE, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
-  WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget, 
+  WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget,
   detachWidget, fitWidget
 } from '../../lib/index';
 
@@ -185,20 +185,24 @@ describe('phosphor-widget', () => {
 
     describe('#propertyChanged', () => {
 
-      it('should be emitted when a widget property changes', (done) => {
+      it('should be emitted when a widget property changes', () => {
+        var called = false;
         var widget = new Widget();
-        widget.propertyChanged.connect(() => { done(); });
-        Widget.hiddenProperty.set(widget, true);
+        widget.propertyChanged.connect(() => { called = true; });
+        widget.hidden = true;
+        expect(called).to.be(true);
       });
 
     });
 
     describe('#disposed', () => {
 
-      it('should be emitted when the widget is disposed', (done) => {
+      it('should be emitted when the widget is disposed', () => {
+        var called = false;
         var widget = new Widget();
-        widget.disposed.connect(() => { done(); });
+        widget.disposed.connect(() => { called = true; });
         widget.dispose();
+        expect(called).to.be(true);
       });
 
     });
@@ -207,12 +211,15 @@ describe('phosphor-widget', () => {
 
       it('should accept no arguments', () => {
         var widget = new Widget();
+        expect(widget instanceof Widget).to.be(true);
       });
 
       it('should accept an array of initial children', () => {
         var child0 = new Widget();
         var child1 = new Widget();
         var parent = new Widget([child0, child1]);
+        expect(parent instanceof Widget).to.be(true);
+        expect(parent.children).to.eql([child0, child1]);
       });
 
     });
@@ -283,7 +290,7 @@ describe('phosphor-widget', () => {
       it('should be `false` if the widget is not visible', () => {
         var widget = new Widget();
         attachWidget(widget, document.body);
-        Widget.hiddenProperty.set(widget, true);
+        widget.hidden = true;
         expect(widget.isVisible).to.be(false);
       });
 
@@ -299,7 +306,7 @@ describe('phosphor-widget', () => {
       it('should be `true` if the widget is hidden', () => {
         var widget = new Widget();
         attachWidget(widget, document.body);
-        Widget.hiddenProperty.set(widget, true);
+        widget.hidden = true;
         expect(widget.hidden).to.be(true);
       });
 
@@ -311,10 +318,10 @@ describe('phosphor-widget', () => {
 
       it('should be a pure delegate to the `hiddenProperty`', () => {
         var widget = new Widget();
+        widget.hidden = true;
+        expect(Widget.hiddenProperty.get(widget)).to.be(true);
         Widget.hiddenProperty.set(widget, false);
         expect(widget.hidden).to.be(false);
-        Widget.hiddenProperty.set(widget, true);
-        expect(widget.hidden).to.be(true);
       });
 
     });
@@ -325,6 +332,7 @@ describe('phosphor-widget', () => {
         var child = new Widget();
         var parent = new Widget([child]);
         expect(child.parent).to.be(parent);
+        expect(parent.children).to.eql([child]);
       });
 
       it('should be `null` if the widget has no parent', () => {
@@ -337,6 +345,7 @@ describe('phosphor-widget', () => {
         var parent = new Widget([child]);
         child.parent = null;
         expect(child.parent).to.be(null);
+        expect(parent.children).to.eql([]);
       });
 
       it('should reparent the widget when set to not `null`', () => {
@@ -345,6 +354,8 @@ describe('phosphor-widget', () => {
         var parent2 = new Widget();
         child.parent = parent2;
         expect(child.parent).to.be(parent2);
+        expect(parent1.children).to.eql([]);
+        expect(parent2.children).to.eql([child]);
       });
 
       it('should be a no-op if the parent does not change', () => {
@@ -352,13 +363,12 @@ describe('phosphor-widget', () => {
         var parent = new Widget([child]);
         child.parent = parent;
         expect(child.parent).to.be(parent);
+        expect(parent.children).to.eql([child]);
       });
 
       it('should throw an error if the widget is used as its parent', () => {
         var widget = new Widget();
-        expect(() => {
-          widget.parent = widget;
-        }).to.throwError();
+        expect(() => { widget.parent = widget; }).to.throwError();
       });
 
     });
@@ -367,19 +377,16 @@ describe('phosphor-widget', () => {
 
       it('should be an empty array if there are no children', () => {
         var widget = new Widget();
-        expect(Array.isArray(widget.children)).to.be(true);
-        expect(widget.children.length).to.be(0);
+        expect(widget.children).to.eql([]);
       });
 
       it('should return a shallow copy of the children', () => {
         var child0 = new Widget();
         var child1 = new Widget();
-        var parent = new Widget([child0, child1]);
-        var children = parent.children;
-        expect(children[0]).to.be(child0);
-        expect(children[1]).to.be(child1);
-        parent.children = [];
-        expect(children[0]).to.be(child0);
+        var children = [child0, child1];
+        var parent = new Widget(children);
+        expect(parent.children).to.not.be(children);
+        expect(parent.children).to.eql(children);
       });
 
       it('should clear the existing children and add the new children when set', () => {
@@ -389,9 +396,11 @@ describe('phosphor-widget', () => {
         var child2 = new Widget();
         var child3 = new Widget();
         parent.children = [child2, child3];
-        expect(parent.children.length).to.be(2);
-        expect(parent.children[0]).to.be(child2);
-        expect(parent.children[1]).to.be(child3);
+        expect(parent.children).to.eql([child2, child3]);
+        expect(child0.parent).to.be(null);
+        expect(child1.parent).to.be(null);
+        expect(child2.parent).to.be(parent);
+        expect(child3.parent).to.be(parent);
       });
 
     });
@@ -409,9 +418,7 @@ describe('phosphor-widget', () => {
 
       it('should be a read-only property', () => {
         var widget = new Widget();
-        expect(() => {
-          widget.childCount = 2;
-        }).to.throwError();
+        expect(() => { widget.childCount = 2; }).to.throwError();
       });
 
     });
@@ -422,6 +429,7 @@ describe('phosphor-widget', () => {
         var child0 = new Widget();
         var child1 = new Widget();
         var parent = new Widget([child0, child1]);
+        expect(parent.childAt(0)).to.be(child0);
         expect(parent.childAt(1)).to.be(child1);
       });
 
@@ -439,6 +447,7 @@ describe('phosphor-widget', () => {
         var child0 = new Widget();
         var child1 = new Widget();
         var parent = new Widget([child0, child1]);
+        expect(parent.childIndex(child0)).to.be(0);
         expect(parent.childIndex(child1)).to.be(1);
       });
 
@@ -458,7 +467,7 @@ describe('phosphor-widget', () => {
         var child1 = new Widget();
         var parent = new Widget([child0]);
         parent.addChild(child1);
-        expect(parent.childIndex(child1)).to.be(1);
+        expect(parent.children).to.eql([child0, child1]);
       });
 
       it('should return the new index of the child', () => {
@@ -470,7 +479,7 @@ describe('phosphor-widget', () => {
 
       it('should throw an error if the widget is added to itself', () => {
         var widget = new Widget();
-        expect(() => widget.addChild(widget)).to.throwError();
+        expect(() => { widget.addChild(widget); }).to.throwError();
       });
 
     });
@@ -482,7 +491,7 @@ describe('phosphor-widget', () => {
         var child1 = new Widget();
         var parent = new Widget([child0]);
         parent.insertChild(0, child1);
-        expect(parent.childIndex(child1)).to.be(0);
+        expect(parent.children).to.eql([child1, child0]);
       });
 
       it('should return the new index of the child', () => {
@@ -503,7 +512,7 @@ describe('phosphor-widget', () => {
 
       it('should throw an error if the widget is added to itself', () => {
         var widget = new Widget();
-        expect(() => widget.insertChild(0, widget)).to.throwError();
+        expect(() => { widget.insertChild(0, widget); }).to.throwError();
       });
 
     });
@@ -516,6 +525,7 @@ describe('phosphor-widget', () => {
         var parent = new Widget([child0, child1]);
         parent.moveChild(1, 0);
         expect(parent.childAt(0)).to.be(child1);
+        expect(parent.childAt(1)).to.be(child0);
       });
 
       it('should return `true` if the move was successful', () => {
@@ -546,10 +556,10 @@ describe('phosphor-widget', () => {
         var child2 = new Widget();
         var parent = new Widget([child0, child1]);
         parent.removeChildAt(0);
-        expect(parent.childAt(0)).to.be(child1);
+        expect(parent.children).to.eql([child1]);
         parent.children = [child0, child1, child2]
         parent.removeChildAt(1);
-        expect(parent.childAt(1)).to.be(child2);
+        expect(parent.children).to.eql([child0, child2]);
       });
 
       it('should return the removed child', () => {
@@ -577,7 +587,7 @@ describe('phosphor-widget', () => {
         var parent = new Widget([child0, child1]);
         parent.removeChild(child0);
         expect(parent.childCount).to.be(1);
-        expect(parent.children[0]).to.be(child1);
+        expect(parent.children).to.eql([child1]);
       });
 
       it('should return the index occupied by the child', () => {
@@ -610,20 +620,26 @@ describe('phosphor-widget', () => {
 
     describe('#compressMessage()', () => {
 
-      it('should compress `update-request` messages', () => {
-        var widget = new Widget();
-        var queue = new Queue<Message>();
-        queue.push(MSG_UPDATE_REQUEST);
-        var didCompress = widget.compressMessage(MSG_UPDATE_REQUEST, queue);
-        expect(didCompress).to.be(true);
+      it('should compress `update-request` messages', (done) => {
+        var widget = new LogWidget();
+        postMessage(widget, MSG_UPDATE_REQUEST);
+        postMessage(widget, MSG_UPDATE_REQUEST);
+        postMessage(widget, MSG_UPDATE_REQUEST);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['update-request']);
+          done();
+        });
       });
 
-      it('should compress `layout-request` messages', () => {
-        var widget = new Widget();
-        var queue = new Queue<Message>();
-        queue.push(MSG_LAYOUT_REQUEST);
-        var didCompress = widget.compressMessage(MSG_LAYOUT_REQUEST, queue);
-        expect(didCompress).to.be(true);
+      it('should compress `layout-request` messages', (done) => {
+        var widget = new LogWidget();
+        postMessage(widget, MSG_LAYOUT_REQUEST);
+        postMessage(widget, MSG_LAYOUT_REQUEST);
+        postMessage(widget, MSG_LAYOUT_REQUEST);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['layout-request']);
+          done();
+        });
       });
 
     });
@@ -1047,19 +1063,19 @@ describe('phosphor-widget', () => {
       var widget = new Widget();
       var child = new Widget();
       child.parent = widget;
-      expect(() => attachWidget(child, document.body)).to.throwException();
+      expect(() => attachWidget(child, document.body)).to.throwError();
     });
 
     it('should throw if the widget is already attached', () => {
       var widget = new Widget();
       attachWidget(widget, document.body);
-      expect(() => attachWidget(widget, document.body)).to.throwException();
+      expect(() => attachWidget(widget, document.body)).to.throwError();
     });
 
     it('should throw if the host is not attached to the DOM', () => {
       var widget = new Widget();
       var host = document.createElement('div');
-      expect(() => attachWidget(widget, host)).to.throwException();
+      expect(() => attachWidget(widget, host)).to.throwError();
     });
 
     it('should dispatch an `after-attach` message', () => {
@@ -1087,12 +1103,12 @@ describe('phosphor-widget', () => {
       var child = new Widget();
       var widget = new Widget([child]);
       attachWidget(widget, document.body);
-      expect(() => detachWidget(child)).to.throwError();
+      expect(() => { detachWidget(child); }).to.throwError();
     });
 
     it('should throw if the widget is not attached', () => {
       var widget = new Widget();
-      expect(() => detachWidget(widget)).to.throwError();
+      expect(() => { detachWidget(widget); }).to.throwError();
     });
 
     it('should dispatch a `before-detach` message', () => {
@@ -1112,6 +1128,7 @@ describe('phosphor-widget', () => {
       var div = document.createElement('div');
       document.body.appendChild(div);
       attachWidget(widget, div);
+      div.style.position = 'absolute';
       div.style.width = '101px';
       div.style.height = '101px';
       fitWidget(widget);
@@ -1123,12 +1140,12 @@ describe('phosphor-widget', () => {
       var child = new Widget();
       var parent = new Widget([child]);
       attachWidget(parent, document.body);
-      expect(() => fitWidget(child)).to.throwError();
+      expect(() => { fitWidget(child) }).to.throwError();
     });
 
     it('should throw if the widget does not have a host', () => {
       var widget = new Widget();
-      expect(() => fitWidget(widget)).to.throwError();
+      expect(() => { fitWidget(widget) }).to.throwError();
     });
 
     it('should dispatch a `resize` message to the widget', () => {
@@ -1148,16 +1165,19 @@ describe('phosphor-widget', () => {
       it('should accept the message type and child widget', () => {
         var widget = new Widget();
         var msg = new ChildMessage('test', widget);
+        expect(msg instanceof ChildMessage).to.be(true);
       });
 
       it('should accept an optional `previousIndex`', () => {
         var widget = new Widget();
         var msg = new ChildMessage('test', widget, 1);
+        expect(msg instanceof ChildMessage).to.be(true);
       });
 
       it('should accept an optional `currentIndex`', () => {
         var widget = new Widget();
         var msg = new ChildMessage('test', widget, 1, 0);
+        expect(msg instanceof ChildMessage).to.be(true);
       });
 
       it('should default the `previousIndex` to `-1`', () => {
@@ -1186,9 +1206,7 @@ describe('phosphor-widget', () => {
         var widget0 = new Widget();
         var widget1 = new Widget();
         var msg = new ChildMessage('test', widget0);
-        expect(() => {
-          msg.child = widget1;
-        }).to.throwError();
+        expect(() => { msg.child = widget1; }).to.throwError();
       });
 
     });
@@ -1204,9 +1222,7 @@ describe('phosphor-widget', () => {
       it('should be a read-only property', () => {
         var widget = new Widget();
         var msg = new ChildMessage('test', widget, 1, 2);
-        expect(() => {
-          msg.currentIndex = 1;
-        }).to.throwError();
+        expect(() => { msg.currentIndex = 1; }).to.throwError();
       });
 
     });
@@ -1222,9 +1238,7 @@ describe('phosphor-widget', () => {
       it('should be a read-only property', () => {
         var widget = new Widget();
         var msg = new ChildMessage('test', widget, 1, 2);
-        expect(() => {
-          msg.previousIndex = 0;
-        }).to.throwError();
+        expect(() => { msg.previousIndex = 0; }).to.throwError();
       });
 
     });
@@ -1256,6 +1270,7 @@ describe('phosphor-widget', () => {
 
       it('should accept a width and height', () => {
         var msg = new ResizeMessage(100, 100);
+        expect(msg instanceof ResizeMessage).to.be(true);
       });
 
     });
@@ -1269,9 +1284,7 @@ describe('phosphor-widget', () => {
 
       it('should be a read-only property', () => {
         var msg = new ResizeMessage(100, 200);
-        expect(() => {
-          msg.width = 200;
-        }).to.throwError();
+        expect(() => { msg.width = 200; }).to.throwError();
       });
 
     });
@@ -1285,9 +1298,7 @@ describe('phosphor-widget', () => {
 
       it('should be a read-only property', () => {
         var msg = new ResizeMessage(100, 200);
-        expect(() => {
-          msg.height = 200;
-        }).to.throwError();
+        expect(() => { msg.height = 200; }).to.throwError();
       });
 
     });
