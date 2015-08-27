@@ -40,6 +40,64 @@ class LogWidget extends Widget {
 }
 
 
+class VerboseWidget extends Widget {
+
+  messages: Message[] = [];
+
+  onChildAdded(msg: ChildMessage) {
+    super.onChildAdded(msg);
+    this.messages.push(msg);
+  }
+
+  onChildRemoved(msg: ChildMessage) {
+    super.onChildRemoved(msg);
+    this.messages.push(msg);
+  }
+
+  onChildMoved(msg: ChildMessage) {
+    super.onChildMoved(msg);
+    this.messages.push(msg);
+  }
+
+  onResize(msg: ResizeMessage) {
+    super.onResize(msg);
+    this.messages.push(msg);
+  }
+
+  onUpdateRequest(msg: Message) {
+    this.messages.push(msg);
+  }
+
+  onLayoutRequest(msg: Message) {
+    this.messages.push(msg);
+  }
+
+  onAfterShow(msg: Message) {
+    this.messages.push(msg);
+  }
+
+  onBeforeHide(msg: Message) {
+    this.messages.push(msg);
+  }
+
+  onAfterAttach(msg: Message) {
+    this.messages.push(msg);
+  }
+
+  onBeforeAttach(msg: Message) {
+    this.messages.push(msg);
+  }
+
+  onChildHidden(msg: Message) {
+    this.messages.push(msg);
+  }
+
+  onClose(msg: Message) {
+    this.messages.push(msg);
+  }
+}
+
+
 describe('phosphor-widget', () => {
 
   describe('WIDGET_CLASS', () => {
@@ -647,11 +705,19 @@ describe('phosphor-widget', () => {
     describe('#onChildAdded()', () => {
 
       it('should be invoked when a child is added', () => {
-
+        var child = new VerboseWidget();
+        var parent = new VerboseWidget();
+        parent.addChild(child);
+        expect(parent.messages[0].type).to.be('child-added');
       });
 
-      it('should insert the child node at the corrent location', () => {
-
+      it('should insert the child node at the current location', () => {
+        var child0 = new VerboseWidget();
+        var child1 = new VerboseWidget();
+        var parent = new VerboseWidget([child0]);
+        parent.insertChild(0, child1);
+        expect(parent.messages[0].type).to.be('child-added');
+        expect(parent.children[0]).to.be(child1);
       });
 
       context('`msg` parameter', () => {
