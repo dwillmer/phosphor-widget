@@ -321,6 +321,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   /**
    * Set the parent of the widget.
    *
+   * @throws Will throw an error if the widget is the parent.
+   *
    * #### Notes
    * If the specified parent is the current parent, this is a no-op.
    *
