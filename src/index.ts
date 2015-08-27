@@ -168,8 +168,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * Hiding a widget will cause the widget and all of its descendants
    * to become not-visible.
    *
-   * This property will toggle the presence of the `p-mod-hidden` class
-   * on a widget according to the property value. It will also dispatch
+   * This property will toggle the presence of [[HIDDEN_CLASS]] on a
+   * widget according to the property value. It will also dispatch
    * `'after-show'` and `'before-hide'` messages as appropriate.
    *
    * The default property value is `false`.
@@ -199,6 +199,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * Construct a new widget.
    *
    * @param children - The initial children for the widget.
+   *
+   * #### Notes
+   * The [[WIDGET_CLASS]] is added to the widget during construction.
    */
   constructor(children?: Widget[]) {
     super();
