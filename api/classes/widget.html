@@ -222,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">_children<span class="tsd-signature-symbol">:</span> <a href="widget.html" class="tsd-signature-type">Widget</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L807">index.ts:807</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L809">index.ts:809</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -232,7 +232,7 @@
 					<div class="tsd-signature tsd-kind-icon">_flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L805">index.ts:805</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L807">index.ts:807</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -242,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">_parent<span class="tsd-signature-symbol">:</span> <a href="widget.html" class="tsd-signature-type">Widget</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L806">index.ts:806</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L808">index.ts:808</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -358,7 +358,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L377">index.ts:377</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L379">index.ts:379</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -384,7 +384,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L350">index.ts:350</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L352">index.ts:352</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -401,7 +401,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L364">index.ts:364</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L366">index.ts:366</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -575,7 +575,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L333">index.ts:333</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L335">index.ts:335</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -583,11 +583,18 @@
 									<p>Set the parent of the widget.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
-								<p>If the specified parent is the current parent, this is a no-op.</p>
-								<p>If the specified parent is <code>null</code>, this is equivalent to the
-									expression <code>widget.parent.removeChild(widget)</code>, otherwise it
-								is equivalent to the expression <code>parent.addChild(widget)</code>.</p>
-								<p><strong>See also:</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#removechild">removeChild</a></p>
+								<p>This will be <code>null</code> if the widget does not have a parent.</p>
+								<dl class="tsd-comment-tags">
+									<dt>throws</dt>
+									<dd><p>Will throw an error if the widget is the parent.</p>
+										<h4 id="notes">Notes</h4>
+										<p>If the specified parent is the current parent, this is a no-op.</p>
+										<p>If the specified parent is <code>null</code>, this is equivalent to the
+											expression <code>widget.parent.removeChild(widget)</code>, otherwise it
+										is equivalent to the expression <code>parent.addChild(widget)</code>.</p>
+										<p><strong>See also:</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#removechild">removeChild</a></p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -612,7 +619,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L424">index.ts:424</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L426">index.ts:426</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -687,7 +694,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L391">index.ts:391</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L393">index.ts:393</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -721,7 +728,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L405">index.ts:405</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L407">index.ts:407</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -755,7 +762,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L536">index.ts:536</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L538">index.ts:538</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -783,7 +790,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L573">index.ts:573</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L575">index.ts:575</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -815,7 +822,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L656">index.ts:656</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L658">index.ts:658</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -919,7 +926,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L446">index.ts:446</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L448">index.ts:448</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -967,7 +974,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L476">index.ts:476</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L478">index.ts:478</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1011,7 +1018,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L773">index.ts:773</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L775">index.ts:775</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1040,7 +1047,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L757">index.ts:757</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L759">index.ts:759</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1070,7 +1077,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L780">index.ts:780</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L782">index.ts:782</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1099,7 +1106,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L766">index.ts:766</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L768">index.ts:768</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1129,7 +1136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L675">index.ts:675</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L677">index.ts:677</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1164,7 +1171,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L794">index.ts:794</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L796">index.ts:796</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1193,7 +1200,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L709">index.ts:709</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L711">index.ts:711</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1228,7 +1235,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L692">index.ts:692</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L694">index.ts:694</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1262,7 +1269,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L787">index.ts:787</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L789">index.ts:789</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1291,7 +1298,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L803">index.ts:803</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L805">index.ts:805</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1321,7 +1328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L748">index.ts:748</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L750">index.ts:750</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1351,7 +1358,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L728">index.ts:728</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L730">index.ts:730</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1386,7 +1393,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L739">index.ts:739</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L741">index.ts:741</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1416,7 +1423,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L585">index.ts:585</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L587">index.ts:587</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1449,7 +1456,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L519">index.ts:519</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L521">index.ts:521</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1483,7 +1490,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L499">index.ts:499</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L501">index.ts:501</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1551,7 +1558,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L562">index.ts:562</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L564">index.ts:564</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1583,7 +1590,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L551">index.ts:551</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L553">index.ts:553</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
