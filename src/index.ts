@@ -165,6 +165,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * #### Notes
    * This property controls whether a widget is explicitly hidden.
+   *
    * Hiding a widget will cause the widget and all of its descendants
    * to become not-visible.
    *
