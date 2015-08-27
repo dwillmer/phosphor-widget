@@ -225,7 +225,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
       return;
     }
 
-    this.setFlag(WidgetFlag.IsDisposed);
+    this._flags |= WidgetFlag.IsDisposed;
     this.disposed.emit(void 0);
 
     if (this._parent) {
@@ -254,7 +254,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * **See also:** [[attachWidget]], [[detachWidget]]
    */
   get isAttached(): boolean {
-    return this.testFlag(WidgetFlag.IsAttached);
+    return (this._flags & WidgetFlag.IsAttached) !== 0;
   }
 
   /**
@@ -266,7 +266,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * **See also:** [[disposed]]
    */
   get isDisposed(): boolean {
-    return this.testFlag(WidgetFlag.IsDisposed);
+    return (this._flags & WidgetFlag.IsDisposed) !== 0;
   }
 
   /**
@@ -281,7 +281,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * **See also:** [[hidden]]
    */
   get isVisible(): boolean {
-    return this.testFlag(WidgetFlag.IsVisible);
+    return (this._flags & WidgetFlag.IsVisible) !== 0;
   }
 
   /**
@@ -542,41 +542,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
-   * Test whether the given flag is set for the widget.
-   *
-   * @param flag - The widget flag of interest.
-   *
-   * @returns `true` if the flag is set, `false` otherwise.
-   *
-   * **See also:** [[setFlag]], [[clearFlag]]
-   */
-  testFlag(flag: WidgetFlag): boolean {
-    return (this._flags & flag) !== 0;
-  }
-
-  /**
-   * Set the given flag for the widget.
-   *
-   * @param flag - The widget flag of interest.
-   *
-   * **See also:** [[testFlag]], [[clearFlag]]
-   */
-  setFlag(flag: WidgetFlag): void {
-    this._flags |= flag;
-  }
-
-  /**
-   * Clear the given flag for the widget.
-   *
-   * @param flag - The widget flag of interest.
-   *
-   * **See also:** [[testFlag]], [[setFlag]]
-   */
-  clearFlag(flag: WidgetFlag): void {
-    this._flags &= ~flag;
-  }
-
-  /**
    * Process a message sent to the widget.
    *
    * @param msg - The message sent to the widget.
@@ -605,26 +570,26 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
       this.onChildMoved(<ChildMessage>msg);
       break;
     case 'after-show':
-      this.setFlag(WidgetFlag.IsVisible);
+      this._flags |= WidgetFlag.IsVisible;
       this.onAfterShow(msg);
       sendToShown(this._children, msg);
       break;
     case 'before-hide':
       this.onBeforeHide(msg);
       sendToShown(this._children, msg);
-      this.clearFlag(WidgetFlag.IsVisible);
+      this._flags &= ~WidgetFlag.IsVisible;
     case 'after-attach':
       var visible = !this.hidden && (!this._parent || this._parent.isVisible);
-      if (visible) this.setFlag(WidgetFlag.IsVisible);
-      this.setFlag(WidgetFlag.IsAttached);
+      if (visible) this._flags |= WidgetFlag.IsVisible;
+      this._flags |= WidgetFlag.IsAttached;
       this.onAfterAttach(msg);
       sendToAll(this._children, msg);
       break;
     case 'before-detach':
       this.onBeforeDetach(msg);
       sendToAll(this._children, msg);
-      this.clearFlag(WidgetFlag.IsVisible);
-      this.clearFlag(WidgetFlag.IsAttached);
+      this._flags &= ~WidgetFlag.IsVisible;
+      this._flags &= ~WidgetFlag.IsAttached;
       break;
     case 'child-shown':
       this.onChildShown(<ChildMessage>msg);
@@ -807,28 +772,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   private _flags = 0;
   private _parent: Widget = null;
   private _children: Widget[] = [];
-}
-
-
-/**
- * An enum of widget bit flags.
- */
-export
-enum WidgetFlag {
-  /**
-   * The widget is attached to the DOM.
-   */
-  IsAttached = 0x1,
-
-  /**
-   * The widget is visible.
-   */
-  IsVisible = 0x2,
-
-  /**
-   * The widget has been disposed.
-   */
-  IsDisposed = 0x4,
 }
 
 
@@ -1044,6 +987,27 @@ class ResizeMessage extends Message {
 
   private _width: number;
   private _height: number;
+}
+
+
+/**
+ * An enum of widget bit flags.
+ */
+enum WidgetFlag {
+  /**
+   * The widget is attached to the DOM.
+   */
+  IsAttached = 0x1,
+
+  /**
+   * The widget is visible.
+   */
+  IsVisible = 0x2,
+
+  /**
+   * The widget has been disposed.
+   */
+  IsDisposed = 0x4,
 }
 
 

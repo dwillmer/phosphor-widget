@@ -450,42 +450,6 @@ describe('phosphor-widget', () => {
 
     });
 
-    describe('#testFlag()', () => {
-
-      it('should return `true` if the given flag is set', () => {
-
-      });
-
-      it('should return `false` if the given flag is not set', () => {
-
-      });
-
-    });
-
-    describe('#setFlag()', () => {
-
-      it('should set the given flag', () => {
-
-      });
-
-      it('should be safe to call multiple times for the same flag', () => {
-
-      });
-
-    });
-
-    describe('#clearFlag()', () => {
-
-      it('should clear the given flag', () => {
-
-      });
-
-      it('should be safe to call multiple times for the same flag', () => {
-
-      });
-
-    });
-
     describe('#compressMessage()', () => {
 
       it('should compress `update-request` messages', () => {
