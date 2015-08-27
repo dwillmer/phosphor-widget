@@ -10,7 +10,7 @@
 import expect = require('expect.js');
 
 import {
-  Message, postMessage
+  Message
 } from 'phosphor-messaging';
 
 import {
@@ -39,7 +39,7 @@ describe('phosphor-widget', () => {
 
   describe('WIDGET_CLASS', () => {
 
-    it('should be "p-Widget"', () => {
+    it('should equal `p-Widget`', () => {
       expect(WIDGET_CLASS).to.be('p-Widget');
     });
 
@@ -47,7 +47,7 @@ describe('phosphor-widget', () => {
 
   describe('HIDDEN_CLASS', () => {
 
-    it('should be "p-mod-hidden"', () => {
+    it('should equal `p-mod-hidden`', () => {
       expect(HIDDEN_CLASS).to.be('p-mod-hidden');
     });
 
@@ -55,154 +55,84 @@ describe('phosphor-widget', () => {
 
   describe('MSG_UPDATE_REQUEST', () => {
 
-    it('should be a Message instance', () => {
+    it('should be a `Message` instance', () => {
       expect(MSG_UPDATE_REQUEST instanceof Message).to.be(true);
     });
 
-    it('should have type "update-request"', () => {
+    it('should have type `update-request`', () => {
       expect(MSG_UPDATE_REQUEST.type).to.be('update-request');
-    });
-
-    it('should be collapsed by default', (done) => {
-      var widget = new LogWidget();
-      postMessage(widget, MSG_UPDATE_REQUEST);
-      postMessage(widget, MSG_UPDATE_REQUEST);
-      requestAnimationFrame(() => {
-        expect(widget.messages).to.eql(['update-request']);
-        done();
-      });
     });
 
   });
 
   describe('MSG_LAYOUT_REQUEST', () => {
 
-    it('should be a Message instance', () => {
+    it('should be a `Message` instance', () => {
       expect(MSG_LAYOUT_REQUEST instanceof Message).to.be(true);
     });
 
-    it('should have type "layout-request"', () => {
+    it('should have type `layout-request`', () => {
       expect(MSG_LAYOUT_REQUEST.type).to.be('layout-request');
-    });
-
-    it('should be collapsed by default', (done) => {
-      var widget = new LogWidget();
-      postMessage(widget, MSG_LAYOUT_REQUEST);
-      postMessage(widget, MSG_LAYOUT_REQUEST);
-      requestAnimationFrame(() => {
-        expect(widget.messages).to.eql(['layout-request']);
-        done();
-      });
     });
 
   });
 
   describe('MSG_AFTER_SHOW', () => {
 
-    it('should be a Message instance', () => {
+    it('should be a `Message` instance', () => {
       expect(MSG_AFTER_SHOW instanceof Message).to.be(true);
     });
 
-    it('should have type "after-show"', () => {
+    it('should have type `after-show`', () => {
       expect(MSG_AFTER_SHOW.type).to.be('after-show');
-    });
-
-    it('should not be collapsed by default', (done) => {
-      var widget = new LogWidget();
-      postMessage(widget, MSG_AFTER_SHOW);
-      postMessage(widget, MSG_AFTER_SHOW);
-      requestAnimationFrame(() => {
-        expect(widget.messages).to.eql(['after-show', 'after-show']);
-        done();
-      });
     });
 
   });
 
   describe('MSG_BEFORE_HIDE', () => {
 
-    it('should be a Message instance', () => {
+    it('should be a `Message` instance', () => {
       expect(MSG_BEFORE_HIDE instanceof Message).to.be(true);
     });
 
-    it('should have type "before-hide"', () => {
+    it('should have type `before-hide`', () => {
       expect(MSG_BEFORE_HIDE.type).to.be('before-hide');
-    });
-
-    it('should not be collapsed by default', (done) => {
-      var widget = new LogWidget();
-      postMessage(widget, MSG_BEFORE_HIDE);
-      postMessage(widget, MSG_BEFORE_HIDE);
-      requestAnimationFrame(() => {
-        expect(widget.messages).to.eql(['before-hide', 'before-hide']);
-        done();
-      });
     });
 
   });
 
   describe('MSG_AFTER_ATTACH', () => {
 
-    it('should be a Message instance', () => {
+    it('should be a `Message` instance', () => {
       expect(MSG_AFTER_ATTACH instanceof Message).to.be(true);
     });
 
-    it('should have type "after-attach"', () => {
+    it('should have type `after-attach`', () => {
       expect(MSG_AFTER_ATTACH.type).to.be('after-attach');
-    });
-
-    it('should not be collapsed by default', (done) => {
-      var widget = new LogWidget();
-      postMessage(widget, MSG_AFTER_ATTACH);
-      postMessage(widget, MSG_AFTER_ATTACH);
-      requestAnimationFrame(() => {
-        expect(widget.messages).to.eql(['after-attach', 'after-attach']);
-        done();
-      });
     });
 
   });
 
   describe('MSG_BEFORE_DETACH', () => {
 
-    it('should be a Message instance', () => {
+    it('should be a `Message` instance', () => {
       expect(MSG_BEFORE_DETACH instanceof Message).to.be(true);
     });
 
-    it('should have type "before-detach"', () => {
+    it('should have type `before-detach`', () => {
       expect(MSG_BEFORE_DETACH.type).to.be('before-detach');
-    });
-
-    it('should no be collapsed by default', (done) => {
-      var widget = new LogWidget();
-      postMessage(widget, MSG_BEFORE_DETACH);
-      postMessage(widget, MSG_BEFORE_DETACH);
-      requestAnimationFrame(() => {
-        expect(widget.messages).to.eql(['before-detach', 'before-detach']);
-        done();
-      });
     });
 
   });
 
   describe('MSG_CLOSE', () => {
 
-    it('should be a Message instance', () => {
+    it('should be a `Message` instance', () => {
       expect(MSG_CLOSE instanceof Message).to.be(true);
     });
 
-    it('should have type "close"', () => {
+    it('should have type `close`', () => {
       expect(MSG_CLOSE.type).to.be('close');
-    });
-
-    it('should be collapsed by default', (done) => {
-      var widget = new LogWidget();
-      postMessage(widget, MSG_CLOSE);
-      postMessage(widget, MSG_CLOSE);
-      requestAnimationFrame(() => {
-        expect(widget.messages).to.eql(['close', 'close']);
-        done();
-      });
     });
 
   });
@@ -220,14 +150,14 @@ describe('phosphor-widget', () => {
         expect(Widget.hiddenProperty.get(widget)).to.be(false);
       });
 
-      it('should control the presence of the `HIDDEN_CLASS`', () => {
+      it('should toggle the presence of `HIDDEN_CLASS`', () => {
         var widget = new Widget();
         expect(widget.hasClass(HIDDEN_CLASS)).to.be(false);
         Widget.hiddenProperty.set(widget, true);
         expect(widget.hasClass(HIDDEN_CLASS)).to.be(true);
       });
 
-      it('should dispatch the `MSG_AFTER_SHOW` message', () => {
+      it('should dispatch an `after-show` message', () => {
         var widget = new LogWidget();
         Widget.hiddenProperty.set(widget, true);
         attachWidget(widget, document.body);
@@ -237,7 +167,7 @@ describe('phosphor-widget', () => {
         detachWidget(widget);
       });
 
-      it('should dispatch the `MSG_BEFORE_HIDE` message', () => {
+      it('should dispatch a `before-hide` message', () => {
         var widget = new LogWidget();
         expect(widget.messages.indexOf('before-hide')).to.be(-1);
         attachWidget(widget, document.body);
@@ -336,6 +266,10 @@ describe('phosphor-widget', () => {
 
     });
 
+    describe('#compressMessage()', () => {
+
+    });
+
     describe('#onChildAdded()', () => {
 
     });
@@ -418,40 +352,18 @@ describe('phosphor-widget', () => {
       expect(() => attachWidget(widget, host)).to.throwException();
     });
 
-    it('should dispatch `MSG_AFTER_ATTACH` to the hierarchy', () => {
+    it('should dispatch an `after-attach` message', () => {
       var widget = new LogWidget();
-      var child1 = new LogWidget();
-      var child2 = new LogWidget();
-      var child3 = new LogWidget();
-      var child4 = new LogWidget();
-      child1.parent = widget;
-      child2.parent = widget;
-      child3.parent = child1;
-      child4.parent = child2;
       expect(widget.isAttached).to.be(false);
-      expect(child1.isAttached).to.be(false);
-      expect(child2.isAttached).to.be(false);
-      expect(child3.isAttached).to.be(false);
-      expect(child4.isAttached).to.be(false);
       expect(widget.messages.indexOf('after-attach')).to.be(-1);
-      expect(child1.messages.indexOf('after-attach')).to.be(-1);
-      expect(child2.messages.indexOf('after-attach')).to.be(-1);
-      expect(child3.messages.indexOf('after-attach')).to.be(-1);
-      expect(child4.messages.indexOf('after-attach')).to.be(-1);
       attachWidget(widget, document.body);
       expect(widget.isAttached).to.be(true);
-      expect(child1.isAttached).to.be(true);
-      expect(child2.isAttached).to.be(true);
-      expect(child3.isAttached).to.be(true);
-      expect(child4.isAttached).to.be(true);
       expect(widget.messages.indexOf('after-attach')).to.not.be(-1);
-      expect(child1.messages.indexOf('after-attach')).to.not.be(-1);
-      expect(child2.messages.indexOf('after-attach')).to.not.be(-1);
-      expect(child3.messages.indexOf('after-attach')).to.not.be(-1);
-      expect(child4.messages.indexOf('after-attach')).to.not.be(-1);
     });
 
   });
+
+  // TODO test hiearchy messages attach/detach/show/hide
 
   describe('detachWidget', () => {
 
