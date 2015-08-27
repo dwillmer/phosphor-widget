@@ -188,7 +188,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L185">index.ts:185</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L197">index.ts:197</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -203,6 +203,8 @@
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
 											<p>The initial children for the widget.</p>
+											<h4 id="notes">Notes</h4>
+											<p>The <a href="../globals.html#widget_class">WIDGET_CLASS</a> is added to the widget during construction.</p>
 										</div>
 									</div>
 								</li>
@@ -220,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">_children<span class="tsd-signature-symbol">:</span> <a href="widget.html" class="tsd-signature-type">Widget</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L784">index.ts:784</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L807">index.ts:807</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -230,7 +232,7 @@
 					<div class="tsd-signature tsd-kind-icon">_flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L782">index.ts:782</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L805">index.ts:805</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -240,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">_parent<span class="tsd-signature-symbol">:</span> <a href="widget.html" class="tsd-signature-type">Widget</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L783">index.ts:783</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L806">index.ts:806</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -250,14 +252,14 @@
 					<div class="tsd-signature tsd-kind-icon">disposed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L185">index.ts:185</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L197">index.ts:197</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>A signal emitted when the widget is disposed.</p>
 						</div>
-						<p><strong>See also</strong> <a href="widget.html#isdisposed">isDisposed</a></p>
+						<p><strong>See also:</strong> <a href="widget.html#isdisposed">isDisposed</a></p>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
@@ -310,7 +312,7 @@
 					<div class="tsd-signature tsd-kind-icon">property<wbr>Changed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ISignal</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IPropertyChangedArgs</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L177">index.ts:177</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L189">index.ts:189</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -325,14 +327,22 @@
 					<div class="tsd-signature tsd-kind-icon">hidden<wbr>Property<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Property</span><span class="tsd-signature-symbol">&lt;</span><a href="widget.html" class="tsd-signature-type">Widget</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L168">index.ts:168</a></li>
+							<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L180">index.ts:180</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The property descriptor for the <code>hidden</code> instance property.</p>
+							<p>A property descriptor which controls the hidden state of a widget.</p>
 						</div>
-						<p><strong>See also</strong> <a href="widget.html#hidden">hidden</a></p>
+						<h4 id="notes">Notes</h4>
+						<p>This property controls whether a widget is explicitly hidden.</p>
+						<p>Hiding a widget will cause the widget and all of its descendants
+						to become not-visible.</p>
+						<p>This property will toggle the presence of <a href="../globals.html#hidden_class">HIDDEN_CLASS</a> on a
+							widget according to the property value. It will also dispatch
+						<code>&#39;after-show&#39;</code> and <code>&#39;before-hide&#39;</code> messages as appropriate.</p>
+						<p>The default property value is <code>false</code>.</p>
+						<p><strong>See also:</strong> <a href="widget.html#hidden">hidden</a>, <a href="widget.html#isvisible">isVisible</a></p>
 					</div>
 				</section>
 			</section>
@@ -348,7 +358,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L354">index.ts:354</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L377">index.ts:377</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -357,7 +367,7 @@
 								</div>
 								<h4 id="notes">Notes</h4>
 								<p>This is a read-only property.</p>
-								<p><strong>See also</strong> <a href="widget.html#children">children</a>, <a href="widget.html#childat">childAt</a></p>
+								<p><strong>See also:</strong> <a href="widget.html#children">children</a>, <a href="widget.html#childat">childAt</a></p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
@@ -374,7 +384,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L327">index.ts:327</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L350">index.ts:350</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -384,14 +394,14 @@
 								<h4 id="notes">Notes</h4>
 								<p>When only iterating over the children, it can be faster to use
 								the child query methods, which do not perform a copy.</p>
-								<p><strong>See also</strong> <a href="widget.html#childcount">childCount</a>, <a href="widget.html#childat">childAt</a></p>
+								<p><strong>See also:</strong> <a href="widget.html#childcount">childCount</a>, <a href="widget.html#childat">childAt</a></p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <a href="widget.html" class="tsd-signature-type">Widget</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L341">index.ts:341</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L364">index.ts:364</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -402,7 +412,7 @@
 								<p>This will clear the current child widgets and add the specified
 									child widgets. Depending on the desired outcome, it can be more
 								efficient to use one of the child manipulation methods.</p>
-								<p><strong>See also</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#removechild">removeChild</a></p>
+								<p><strong>See also:</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#removechild">removeChild</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -419,39 +429,43 @@
 					<h3>hidden</h3>
 					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> hidden<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> hidden<span class="tsd-signature-symbol">(</span>hidden<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> hidden<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L277">index.ts:277</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L295">index.ts:295</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Get whether the widget is explicitly hidden.</p>
 								</div>
-								<p><strong>See also</strong> <a href="widget.html#isvisible">isVisible</a></p>
+								<h4 id="notes">Notes</h4>
+								<p>This is a pure delegate to the <a href="widget.html#hiddenproperty">hiddenProperty</a>.</p>
+								<p><strong>See also:</strong> <a href="widget.html#isvisible">isVisible</a></p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L284">index.ts:284</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L307">index.ts:307</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Set whether the widget is explicitly hidden.</p>
 								</div>
-								<p><strong>See also</strong> <a href="widget.html#isvisible">isVisible</a></p>
+								<h4 id="notes">Notes</h4>
+								<p>This is a pure delegate to the <a href="widget.html#hiddenproperty">hiddenProperty</a>.</p>
+								<p><strong>See also:</strong> <a href="widget.html#isvisible">isVisible</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>hidden: <span class="tsd-signature-type">boolean</span></h5>
+									<h5>value: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -468,7 +482,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L241">index.ts:241</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L256">index.ts:256</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -477,7 +491,7 @@
 								</div>
 								<h4 id="notes">Notes</h4>
 								<p>This is a read-only property which is always safe to access.</p>
-								<p><strong>See also</strong> <a href="../globals.html#attachwidget">attachWidget</a>, <a href="../globals.html#detachwidget">detachWidget</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#attachwidget">attachWidget</a>, <a href="../globals.html#detachwidget">detachWidget</a></p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
@@ -493,7 +507,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L253">index.ts:253</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L268">index.ts:268</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -502,7 +516,7 @@
 								</div>
 								<h4 id="notes">Notes</h4>
 								<p>This is a read-only property which is always safe to access.</p>
-								<p><strong>See also</strong> <a href="widget.html#disposed">disposed</a></p>
+								<p><strong>See also:</strong> <a href="widget.html#disposed">disposed</a></p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
@@ -518,7 +532,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L268">index.ts:268</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L283">index.ts:283</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -529,7 +543,7 @@
 								<p>A widget is visible when it is attached to the DOM, is not
 								explicitly hidden, and has no explicitly hidden ancestors.</p>
 								<p>This is a read-only property which is always safe to access.</p>
-								<p><strong>See also</strong> <a href="widget.html#hidden">hidden</a></p>
+								<p><strong>See also:</strong> <a href="widget.html#hidden">hidden</a></p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
@@ -546,7 +560,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L294">index.ts:294</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L317">index.ts:317</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -561,7 +575,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L310">index.ts:310</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L333">index.ts:333</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -573,7 +587,7 @@
 								<p>If the specified parent is <code>null</code>, this is equivalent to the
 									expression <code>widget.parent.removeChild(widget)</code>, otherwise it
 								is equivalent to the expression <code>parent.addChild(widget)</code>.</p>
-								<p><strong>See also</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#removechild">removeChild</a></p>
+								<p><strong>See also:</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#removechild">removeChild</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -598,7 +612,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L401">index.ts:401</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L424">index.ts:424</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -611,7 +625,7 @@
 										<h4 id="notes">Notes</h4>
 										<p>The child will be automatically removed from its current parent
 										before being added to this widget.</p>
-										<p><strong>See also</strong> <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#movechild">moveChild</a></p>
+										<p><strong>See also:</strong> <a href="widget.html#insertchild">insertChild</a>, <a href="widget.html#movechild">moveChild</a></p>
 									</dd>
 								</dl>
 							</div>
@@ -673,7 +687,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L368">index.ts:368</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L391">index.ts:391</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -693,7 +707,7 @@
 							<h4 class="tsd-returns-title">Returns <a href="widget.html" class="tsd-signature-type">Widget</a></h4>
 							<p>The child widget at the specified index, or <code>undefined</code>
 							if the index is out of range.</p>
-							<p><strong>See also</strong> <a href="widget.html#childcount">childCount</a>, <a href="widget.html#childindex">childIndex</a></p>
+							<p><strong>See also:</strong> <a href="widget.html#childcount">childCount</a>, <a href="widget.html#childindex">childIndex</a></p>
 						</li>
 					</ul>
 				</section>
@@ -707,7 +721,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L382">index.ts:382</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L405">index.ts:405</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -727,7 +741,7 @@
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 							<p>The index of the specified child widget, or <code>-1</code> if
 							the widget is not a child of this widget.</p>
-							<p><strong>See also</strong> <a href="widget.html#childcount">childCount</a>, <a href="widget.html#childat">childAt</a></p>
+							<p><strong>See also:</strong> <a href="widget.html#childcount">childCount</a>, <a href="widget.html#childat">childAt</a></p>
 						</li>
 					</ul>
 				</section>
@@ -741,7 +755,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L513">index.ts:513</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L536">index.ts:536</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -753,7 +767,7 @@
 									reaches zero. It is therefore possible to enter an infinite
 									loop if a message handler causes a child widget to be added
 								in response to one being removed.</p>
-								<p><strong>See also</strong> <a href="widget.html#removechild">removeChild</a>, <a href="widget.html#removechildat">removeChildAt</a></p>
+								<p><strong>See also:</strong> <a href="widget.html#removechild">removeChild</a>, <a href="widget.html#removechildat">removeChildAt</a></p>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
@@ -769,7 +783,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L550">index.ts:550</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L573">index.ts:573</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -783,7 +797,7 @@
 									<h5>flag: <a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The widget flag of interest.</p>
-										<p><strong>See also</strong> <a href="widget.html#testflag">testFlag</a>, <a href="widget.html#setflag">setFlag</a></p>
+										<p><strong>See also:</strong> <a href="widget.html#testflag">testFlag</a>, <a href="widget.html#setflag">setFlag</a></p>
 									</div>
 								</li>
 							</ul>
@@ -801,7 +815,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L633">index.ts:633</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L656">index.ts:656</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -845,7 +859,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L208">index.ts:208</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L223">index.ts:223</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -905,7 +919,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L423">index.ts:423</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L446">index.ts:446</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -918,7 +932,7 @@
 										<h4 id="notes">Notes</h4>
 										<p>The child will be automatically removed from its current parent
 										before being added to this widget.</p>
-										<p><strong>See also</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#movechild">moveChild</a></p>
+										<p><strong>See also:</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#movechild">moveChild</a></p>
 									</dd>
 								</dl>
 							</div>
@@ -953,7 +967,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L453">index.ts:453</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L476">index.ts:476</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -983,7 +997,7 @@
 							<p>This method can be more efficient than re-inserting an existing
 								child, as some widgets may be able to optimize child moves and
 							avoid making unnecessary changes to the DOM.</p>
-							<p><strong>See also</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a></p>
+							<p><strong>See also:</strong> <a href="widget.html#addchild">addChild</a>, <a href="widget.html#insertchild">insertChild</a></p>
 						</li>
 					</ul>
 				</section>
@@ -997,14 +1011,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L750">index.ts:750</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L773">index.ts:773</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on an &#39;after-attach&#39; message.</p>
+									<p>A message handler invoked on an <code>&#39;after-attach&#39;</code> message.</p>
 								</div>
-								<p><strong>See also</strong> <a href="../globals.html#msg_after_attach">MSG_AFTER_ATTACH</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#msg_after_attach">MSG_AFTER_ATTACH</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1026,15 +1040,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L734">index.ts:734</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L757">index.ts:757</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on an &#39;after-show&#39; message.</p>
+									<p>A message handler invoked on an <code>&#39;after-show&#39;</code> message.</p>
 								</div>
 								<p>The default implementation of this handler is a no-op.</p>
-								<p><strong>See also</strong> <a href="../globals.html#msg_after_show">MSG_AFTER_SHOW</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#msg_after_show">MSG_AFTER_SHOW</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1056,14 +1070,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L757">index.ts:757</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L780">index.ts:780</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;before-detach&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;before-detach&#39;</code> message.</p>
 								</div>
-								<p><strong>See also</strong> <a href="../globals.html#msg_before_detach">MSG_BEFORE_DETACH</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#msg_before_detach">MSG_BEFORE_DETACH</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1085,15 +1099,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L743">index.ts:743</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L766">index.ts:766</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;before-hide&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;before-hide&#39;</code> message.</p>
 								</div>
 								<p>The default implementation of this handler is a no-op.</p>
-								<p><strong>See also</strong> <a href="../globals.html#msg_before_hide">MSG_BEFORE_HIDE</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#msg_before_hide">MSG_BEFORE_HIDE</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1115,19 +1129,19 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L652">index.ts:652</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L675">index.ts:675</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;child-added&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;child-added&#39;</code> message.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
 								<p>The default implementation adds the child node to the widget
-									node at the proper location and dispatches an &#39;after-attach&#39;
+									node at the proper location and dispatches an <code>&#39;after-attach&#39;</code>
 								message if appropriate.</p>
 								<p>Subclasses may reimplement this method to control how the child
-									node is added, but they must dispatch an &#39;after-attach&#39; message
+									node is added, but they must dispatch an <code>&#39;after-attach&#39;</code> message
 								if appropriate.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1150,12 +1164,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L771">index.ts:771</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L794">index.ts:794</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;child-hidden&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;child-hidden&#39;</code> message.</p>
 								</div>
 								<p>The default implementation of this handler is a no-op.</p>
 							</div>
@@ -1179,20 +1193,20 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L686">index.ts:686</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L709">index.ts:709</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;child-moved&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;child-moved&#39;</code> message.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
 								<p>The default implementation moves the child node to the proper
-									location in the widget node and dispatches a &#39;before-detach&#39;
-								and &#39;after-attach&#39; message if appropriate.</p>
+									location in the widget node and dispatches a <code>&#39;before-detach&#39;</code>
+								and <code>&#39;after-attach&#39;</code> message if appropriate.</p>
 								<p>Subclasses may reimplement this method to control how the child
-									node is moved, but they must dispatch a &#39;before-detach&#39; and
-								&#39;after-attach&#39; message if appropriate.</p>
+									node is moved, but they must dispatch a <code>&#39;before-detach&#39;</code> and
+								<code>&#39;after-attach&#39;</code> message if appropriate.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1214,19 +1228,19 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L669">index.ts:669</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L692">index.ts:692</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;child-removed&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;child-removed&#39;</code> message.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
 								<p>The default implementation removes the child node from the widget
-								node and dispatches a &#39;before-detach&#39; message if appropriate.</p>
+								node and dispatches a <code>&#39;before-detach&#39;</code> message if appropriate.</p>
 								<p>Subclasses may reimplement this method to control how the child
-									node is removed, but they must  dispatch a &#39;before-detach&#39; message
-								if appropriate.</p>
+									node is removed, but they must  dispatch a <code>&#39;before-detach&#39;</code>
+								message if appropriate.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1248,12 +1262,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L764">index.ts:764</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L787">index.ts:787</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;child-shown&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;child-shown&#39;</code> message.</p>
 								</div>
 								<p>The default implementation of this handler is a no-op.</p>
 							</div>
@@ -1277,15 +1291,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L780">index.ts:780</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L803">index.ts:803</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;close&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;close&#39;</code> message.</p>
 								</div>
 								<p>The default implementation of this handler is a no-op.</p>
-								<p><strong>See also</strong> <a href="../globals.html#msg_close">MSG_CLOSE</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#msg_close">MSG_CLOSE</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1307,15 +1321,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L725">index.ts:725</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L748">index.ts:748</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;layout-request&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;layout-request&#39;</code> message.</p>
 								</div>
 								<p>The default implementation of this handler is a no-op.</p>
-								<p><strong>See also</strong> <a href="../globals.html#msg_layout_request">MSG_LAYOUT_REQUEST</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#msg_layout_request">MSG_LAYOUT_REQUEST</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1337,12 +1351,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L705">index.ts:705</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L728">index.ts:728</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on a &#39;resize&#39; message.</p>
+									<p>A message handler invoked on a <code>&#39;resize&#39;</code> message.</p>
 								</div>
 								<h4 id="notes">Notes</h4>
 								<p>Since it is not possible to efficiently know (in general) whether
@@ -1350,7 +1364,7 @@
 									default implementation of this method dispatches an <a href="resizemessage.html#unknownsize">UnknownSize</a>
 								resize message to each child.</p>
 								<p>Subclasses may reimplement this method as needed, but they must
-								dispatch resize messages to their children as appropriate.</p>
+								dispatch <code>&#39;resize&#39;</code> messages to their children as appropriate.</p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1372,15 +1386,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L716">index.ts:716</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L739">index.ts:739</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>A message handler invoked on an &#39;update-request&#39; message.</p>
+									<p>A message handler invoked on an <code>&#39;update-request&#39;</code> message.</p>
 								</div>
 								<p>The default implementation of this handler is a no-op.</p>
-								<p><strong>See also</strong> <a href="../globals.html#msg_update_request">MSG_UPDATE_REQUEST</a></p>
+								<p><strong>See also:</strong> <a href="../globals.html#msg_update_request">MSG_UPDATE_REQUEST</a></p>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -1402,7 +1416,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L562">index.ts:562</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L585">index.ts:585</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1435,7 +1449,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L496">index.ts:496</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L519">index.ts:519</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1455,7 +1469,7 @@
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 							<p>The index which the child occupied, or <code>-1</code> if the
 							child is not a child of this widget.</p>
-							<p><strong>See also</strong> <a href="widget.html#removechildat">removeChildAt</a>, <a href="widget.html#clearchildren">clearChildren</a></p>
+							<p><strong>See also:</strong> <a href="widget.html#removechildat">removeChildAt</a>, <a href="widget.html#clearchildren">clearChildren</a></p>
 						</li>
 					</ul>
 				</section>
@@ -1469,7 +1483,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L476">index.ts:476</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L499">index.ts:499</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1489,7 +1503,7 @@
 							<h4 class="tsd-returns-title">Returns <a href="widget.html" class="tsd-signature-type">Widget</a></h4>
 							<p>The removed child widget, or <code>undefined</code> if the index
 							is out of range.</p>
-							<p><strong>See also</strong> <a href="widget.html#removechild">removeChild</a>, <a href="widget.html#clearchildren">clearChildren</a></p>
+							<p><strong>See also:</strong> <a href="widget.html#removechild">removeChild</a>, <a href="widget.html#clearchildren">clearChildren</a></p>
 						</li>
 					</ul>
 				</section>
@@ -1537,7 +1551,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L539">index.ts:539</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L562">index.ts:562</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1551,7 +1565,7 @@
 									<h5>flag: <a href="../enums/widgetflag.html" class="tsd-signature-type">WidgetFlag</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>The widget flag of interest.</p>
-										<p><strong>See also</strong> <a href="widget.html#testflag">testFlag</a>, <a href="widget.html#clearflag">clearFlag</a></p>
+										<p><strong>See also:</strong> <a href="widget.html#testflag">testFlag</a>, <a href="widget.html#clearflag">clearFlag</a></p>
 									</div>
 								</li>
 							</ul>
@@ -1569,7 +1583,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L528">index.ts:528</a></li>
+									<li>Defined in <a href="https://github.com/phosphorjs/phosphor-widget/blob/HEAD/src/index.ts#L551">index.ts:551</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1588,7 +1602,7 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 							<p><code>true</code> if the flag is set, <code>false</code> otherwise.</p>
-							<p><strong>See also</strong> <a href="widget.html#setflag">setFlag</a>, <a href="widget.html#clearflag">clearFlag</a></p>
+							<p><strong>See also:</strong> <a href="widget.html#setflag">setFlag</a>, <a href="widget.html#clearflag">clearFlag</a></p>
 						</li>
 					</ul>
 				</section>
