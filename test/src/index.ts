@@ -14,9 +14,13 @@ import {
 } from 'phosphor-messaging';
 
 import {
+  Property
+} from 'phosphor-properties';
+
+import {
   HIDDEN_CLASS, MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH,
   MSG_BEFORE_HIDE, MSG_CLOSE, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
-  WIDGET_CLASS, Widget
+  WIDGET_CLASS, Widget, attachWidget, detachWidget
 } from '../../lib/index';
 
 
@@ -25,6 +29,7 @@ class LogWidget extends Widget {
   messages: string[] = [];
 
   processMessage(msg: Message): void {
+    super.processMessage(msg);
     this.messages.push(msg.type);
   }
 }
@@ -206,6 +211,41 @@ describe('phosphor-widget', () => {
 
     describe('.hiddenProperty', () => {
 
+      it('should be a property descriptor', () => {
+        expect(Widget.hiddenProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to `false`', () => {
+        var widget = new Widget();
+        expect(Widget.hiddenProperty.get(widget)).to.be(false);
+      });
+
+      it('should control the presence of the `HIDDEN_CLASS`', () => {
+        var widget = new Widget();
+        expect(widget.hasClass(HIDDEN_CLASS)).to.be(false);
+        Widget.hiddenProperty.set(widget, true);
+        expect(widget.hasClass(HIDDEN_CLASS)).to.be(true);
+      });
+
+      it('should dispatch the `MSG_AFTER_SHOW` message', () => {
+        var widget = new LogWidget();
+        Widget.hiddenProperty.set(widget, true);
+        attachWidget(widget, document.body);
+        expect(widget.messages.indexOf('after-show')).to.be(-1);
+        Widget.hiddenProperty.set(widget, false);
+        expect(widget.messages.indexOf('after-show')).to.not.be(-1);
+        detachWidget(widget);
+      });
+
+      it('should dispatch the `MSG_BEFORE_HIDE` message', () => {
+        var widget = new LogWidget();
+        expect(widget.messages.indexOf('before-hide')).to.be(-1);
+        attachWidget(widget, document.body);
+        Widget.hiddenProperty.set(widget, true);
+        expect(widget.messages.indexOf('before-hide')).to.not.be(-1);
+        detachWidget(widget);
+      });
+
     });
 
     describe('#propertyChanged', () => {
@@ -351,6 +391,65 @@ describe('phosphor-widget', () => {
   });
 
   describe('attachWidget', () => {
+
+    it('should attach a root widget to a host', () => {
+      var widget = new Widget();
+      expect(widget.isAttached).to.be(false);
+      attachWidget(widget, document.body);
+      expect(widget.isAttached).to.be(true);
+    });
+
+    it('should throw if the widget is not a root', () => {
+      var widget = new Widget();
+      var child = new Widget();
+      child.parent = widget;
+      expect(() => attachWidget(child, document.body)).to.throwException();
+    });
+
+    it('should throw if the widget is already attached', () => {
+      var widget = new Widget();
+      attachWidget(widget, document.body);
+      expect(() => attachWidget(widget, document.body)).to.throwException();
+    });
+
+    it('should throw if the host is not attached to the DOM', () => {
+      var widget = new Widget();
+      var host = document.createElement('div');
+      expect(() => attachWidget(widget, host)).to.throwException();
+    });
+
+    it('should dispatch `MSG_AFTER_ATTACH` to the hierarchy', () => {
+      var widget = new LogWidget();
+      var child1 = new LogWidget();
+      var child2 = new LogWidget();
+      var child3 = new LogWidget();
+      var child4 = new LogWidget();
+      child1.parent = widget;
+      child2.parent = widget;
+      child3.parent = child1;
+      child4.parent = child2;
+      expect(widget.isAttached).to.be(false);
+      expect(child1.isAttached).to.be(false);
+      expect(child2.isAttached).to.be(false);
+      expect(child3.isAttached).to.be(false);
+      expect(child4.isAttached).to.be(false);
+      expect(widget.messages.indexOf('after-attach')).to.be(-1);
+      expect(child1.messages.indexOf('after-attach')).to.be(-1);
+      expect(child2.messages.indexOf('after-attach')).to.be(-1);
+      expect(child3.messages.indexOf('after-attach')).to.be(-1);
+      expect(child4.messages.indexOf('after-attach')).to.be(-1);
+      attachWidget(widget, document.body);
+      expect(widget.isAttached).to.be(true);
+      expect(child1.isAttached).to.be(true);
+      expect(child2.isAttached).to.be(true);
+      expect(child3.isAttached).to.be(true);
+      expect(child4.isAttached).to.be(true);
+      expect(widget.messages.indexOf('after-attach')).to.not.be(-1);
+      expect(child1.messages.indexOf('after-attach')).to.not.be(-1);
+      expect(child2.messages.indexOf('after-attach')).to.not.be(-1);
+      expect(child3.messages.indexOf('after-attach')).to.not.be(-1);
+      expect(child4.messages.indexOf('after-attach')).to.not.be(-1);
+    });
 
   });
 

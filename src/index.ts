@@ -165,12 +165,14 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * #### Notes
    * This property controls whether a widget is explicitly hidden.
-   * Hiding a widget will cause it and all of its descendants to
-   * become not-visible.
+   * Hiding a widget will cause the widget and all of its descendants
+   * to become not-visible.
    *
-   * This property will toggle the presence of [[HIDDEN_CLASS]] on a
-   * widget according to the property value. It will also dispatch
-   * [[MSG_AFTER_SHOW]] and [[MSG_BEFORE_HIDE]] as appropriate.
+   * This property will toggle the presence of the `p-mod-hidden` class
+   * on a widget according to the property value. It will also dispatch
+   * `'after-show'` and `'before-hide'` messages as appropriate.
+   *
+   * The default property value is `false`.
    *
    * **See also:** [[hidden]], [[isVisible]]
    */
@@ -655,15 +657,15 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
-   * A message handler invoked on a 'child-added' message.
+   * A message handler invoked on a `'child-added'` message.
    *
    * #### Notes
    * The default implementation adds the child node to the widget
-   * node at the proper location and dispatches an 'after-attach'
+   * node at the proper location and dispatches an `'after-attach'`
    * message if appropriate.
    *
    * Subclasses may reimplement this method to control how the child
-   * node is added, but they must dispatch an 'after-attach' message
+   * node is added, but they must dispatch an `'after-attach'` message
    * if appropriate.
    */
   protected onChildAdded(msg: ChildMessage): void {
@@ -673,15 +675,15 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
-   * A message handler invoked on a 'child-removed' message.
+   * A message handler invoked on a `'child-removed'` message.
    *
    * #### Notes
    * The default implementation removes the child node from the widget
-   * node and dispatches a 'before-detach' message if appropriate.
+   * node and dispatches a `'before-detach'` message if appropriate.
    *
    * Subclasses may reimplement this method to control how the child
-   * node is removed, but they must  dispatch a 'before-detach' message
-   * if appropriate.
+   * node is removed, but they must  dispatch a `'before-detach'`
+   * message if appropriate.
    */
   protected onChildRemoved(msg: ChildMessage): void {
     if (this.isAttached) sendMessage(msg.child, MSG_BEFORE_DETACH);
@@ -689,16 +691,16 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
-   * A message handler invoked on a 'child-moved' message.
+   * A message handler invoked on a `'child-moved'` message.
    *
    * #### Notes
    * The default implementation moves the child node to the proper
-   * location in the widget node and dispatches a 'before-detach'
-   * and 'after-attach' message if appropriate.
+   * location in the widget node and dispatches a `'before-detach'`
+   * and `'after-attach'` message if appropriate.
    *
    * Subclasses may reimplement this method to control how the child
-   * node is moved, but they must dispatch a 'before-detach' and
-   * 'after-attach' message if appropriate.
+   * node is moved, but they must dispatch a `'before-detach'` and
+   * `'after-attach'` message if appropriate.
    */
   protected onChildMoved(msg: ChildMessage): void {
     if (this.isAttached) sendMessage(msg.child, MSG_BEFORE_DETACH);
@@ -708,7 +710,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
-   * A message handler invoked on a 'resize' message.
+   * A message handler invoked on a `'resize'` message.
    *
    * #### Notes
    * Since it is not possible to efficiently know (in general) whether
@@ -717,14 +719,14 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    * resize message to each child.
    *
    * Subclasses may reimplement this method as needed, but they must
-   * dispatch resize messages to their children as appropriate.
+   * dispatch `'resize'` messages to their children as appropriate.
    */
   protected onResize(msg: ResizeMessage): void {
     sendToAll(this._children, ResizeMessage.UnknownSize);
   }
 
   /**
-   * A message handler invoked on an 'update-request' message.
+   * A message handler invoked on an `'update-request'` message.
    *
    * The default implementation of this handler is a no-op.
    *
@@ -733,7 +735,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   protected onUpdateRequest(msg: Message): void { }
 
   /**
-   * A message handler invoked on a 'layout-request' message.
+   * A message handler invoked on a `'layout-request'` message.
    *
    * The default implementation of this handler is a no-op.
    *
@@ -742,7 +744,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   protected onLayoutRequest(msg: Message): void { }
 
   /**
-   * A message handler invoked on an 'after-show' message.
+   * A message handler invoked on an `'after-show'` message.
    *
    * The default implementation of this handler is a no-op.
    *
@@ -751,7 +753,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   protected onAfterShow(msg: Message): void { }
 
   /**
-   * A message handler invoked on a 'before-hide' message.
+   * A message handler invoked on a `'before-hide'` message.
    *
    * The default implementation of this handler is a no-op.
    *
@@ -760,35 +762,35 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   protected onBeforeHide(msg: Message): void { }
 
   /**
-   * A message handler invoked on an 'after-attach' message.
+   * A message handler invoked on an `'after-attach'` message.
    *
    * **See also:** [[MSG_AFTER_ATTACH]]
    */
   protected onAfterAttach(msg: Message): void { }
 
   /**
-   * A message handler invoked on a 'before-detach' message.
+   * A message handler invoked on a `'before-detach'` message.
    *
    * **See also:** [[MSG_BEFORE_DETACH]]
    */
   protected onBeforeDetach(msg: Message): void { }
 
   /**
-   * A message handler invoked on a 'child-shown' message.
+   * A message handler invoked on a `'child-shown'` message.
    *
    * The default implementation of this handler is a no-op.
    */
   protected onChildShown(msg: ChildMessage): void { }
 
   /**
-   * A message handler invoked on a 'child-hidden' message.
+   * A message handler invoked on a `'child-hidden'` message.
    *
    * The default implementation of this handler is a no-op.
    */
   protected onChildHidden(msg: ChildMessage): void { }
 
   /**
-   * A message handler invoked on a 'close' message.
+   * A message handler invoked on a `'close'` message.
    *
    * The default implementation of this handler is a no-op.
    *
@@ -848,8 +850,8 @@ enum WidgetFlag {
  * #### Notes
  * Only a root widget can be attached to a host node.
  *
- * This function ensures that [[MSG_AFTER_ATTACH]] is dispatched to
- * the hierarchy. It should be used in lieu of manual DOM attachment.
+ * This function ensures that an `'after-attach'` message is dispatched
+ * to the hierarchy. It should be used in lieu of manual DOM attachment.
  */
 export
 function attachWidget(widget: Widget, host: HTMLElement): void {
@@ -878,8 +880,8 @@ function attachWidget(widget: Widget, host: HTMLElement): void {
  * #### Notes
  * Only a root widget can be detached from its host node.
  *
- * This function ensures that [[MSG_BEFORE_DETACH]] is dispatched to
- * the hierarchy. It should be used in lieu of manual DOM detachment.
+ * This function ensures that a `'before-detach'` message is dispatched
+ * to the hierarchy. It should be used in lieu of manual DOM detachment.
  */
 export
 function detachWidget(widget: Widget): void {
@@ -904,7 +906,7 @@ function detachWidget(widget: Widget): void {
  *
  * #### Notes
  * This will resize the widget to fit its host and will dispatch an
- * appropriate 'resize' message.
+ * appropriate `'resize'` message.
  *
  * For this function to work properly, the host node should be an
  * offset parent; i.e. it should have `position: absolute|relative`.
