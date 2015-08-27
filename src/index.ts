@@ -812,11 +812,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
 
 /**
  * An enum of widget bit flags.
- *
- * #### Notes
- * Custom widgets may define bit flags for their own use starting with
- * the [[User]] flag and increasing by powers of two. Care should be
- * taken to ensure that custom flags do not exceed 31 bits in length.
  */
 export
 enum WidgetFlag {
@@ -834,11 +829,6 @@ enum WidgetFlag {
    * The widget has been disposed.
    */
   IsDisposed = 0x4,
-
-  /**
-   * The first available user flag.
-   */
-  User = 0x8,
 }
 
 
