@@ -1,7 +1,7 @@
 module.exports = function (config) {
   config.set({
     frameworks: ['browserify', 'mocha'],
-    reporters: ['mocha', 'coverage'],
+    reporters: ['mocha'],
     preprocessors: { 'build/index.js': ['browserify'] },
     browserify: {
         debug: true,
