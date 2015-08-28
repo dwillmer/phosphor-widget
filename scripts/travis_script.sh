@@ -5,4 +5,5 @@ set -e
 npm run clean
 npm run build
 npm test
+npm run coverage
 npm run docs
