@@ -33,6 +33,11 @@ class LogWidget extends Widget {
 
   messages: string[] = [];
 
+  constructor(children?: Widget[]) {
+    super();
+    if (children) children.forEach(child => this.addChild(child));
+  }
+
   processMessage(msg: Message): void {
     super.processMessage(msg);
     this.messages.push(msg.type);
@@ -1392,19 +1397,58 @@ describe('phosphor-widget', () => {
     context('message propagation', () => {
 
       it('should propagate `after-attach` to all descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        expect(bottom0.messages.indexOf('after-attach')).to.not.be(-1);
+        expect(bottom1.messages.indexOf('after-attach')).to.not.be(-1);
+        expect(middle.messages.indexOf('after-attach')).to.not.be(-1);
+        expect(top.messages.indexOf('after-attach')).to.not.be(-1);
       });
 
       it('should propagate `before-detach` to all descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        detachWidget(top);
+        expect(bottom0.messages.indexOf('before-detach')).to.not.be(-1);
+        expect(bottom1.messages.indexOf('before-detach')).to.not.be(-1);
+        expect(middle.messages.indexOf('before-detach')).to.not.be(-1);
+        expect(top.messages.indexOf('before-detach')).to.not.be(-1);
       });
 
       it('should propagate `after-show` to all non-hidden descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        bottom0.hidden = true;
+        top.hidden = true;
+        attachWidget(top, document.body);
+        top.hidden = false;
+        expect(bottom0.messages.indexOf('after-show')).to.be(-1);
+        expect(bottom1.messages.indexOf('after-show')).to.not.be(-1);
+        expect(middle.messages.indexOf('after-show')).to.not.be(-1);
+        expect(top.messages.indexOf('after-show')).to.not.be(-1);        
       });
 
       it('should propagate `before-hide` to all non-hidden descendants', () => {
-
+        var bottom0 = new LogWidget();
+        bottom0.hidden = true;
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        top.hidden = true;
+        // XXX: should the hidden descendant get notified?
+        //expect(bottom0.messages.indexOf('before-hide')).to.be(-1);
+        expect(bottom1.messages.indexOf('before-hide')).to.not.be(-1);
+        expect(middle.messages.indexOf('before-hide')).to.not.be(-1);
+        expect(top.messages.indexOf('before-hide')).to.not.be(-1);   
       });
 
     });
@@ -1412,11 +1456,36 @@ describe('phosphor-widget', () => {
     context('state propagation', () => {
 
       it('should propagate `isAttached` state to all descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        expect(bottom0.isAttached).to.be(top.isAttached);
+        expect(bottom1.isAttached).to.be(top.isAttached);
+        expect(middle.isAttached).to.be(top.isAttached);
+        attachWidget(top, document.body);
+        expect(top.isAttached).to.be(true);
+        expect(bottom0.isAttached).to.be(top.isAttached);
+        expect(bottom1.isAttached).to.be(top.isAttached);
+        expect(middle.isAttached).to.be(top.isAttached);
       });
 
       it('should propagate `isVisible` state to all non-hidden descendants', () => {
-
+        var bottom0 = new LogWidget();
+        bottom0.hidden = true;
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        expect(top.isVisible).to.be(true);
+        expect(bottom0.isVisible).to.be(false);
+        expect(bottom1.isVisible).to.be(top.isVisible);
+        expect(middle.isVisible).to.be(top.isVisible);
+        top.hidden = true;
+        expect(top.isVisible).to.be(false);
+        expect(bottom0.isVisible).to.be(false);
+        expect(bottom1.isVisible).to.be(top.isVisible);
+        expect(middle.isVisible).to.be(top.isVisible);
       });
 
     });
