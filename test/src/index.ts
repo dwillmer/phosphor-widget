@@ -1433,7 +1433,10 @@ describe('phosphor-widget', () => {
         expect(bottom0.messages.indexOf('after-show')).to.be(-1);
         expect(bottom1.messages.indexOf('after-show')).to.not.be(-1);
         expect(middle.messages.indexOf('after-show')).to.not.be(-1);
-        expect(top.messages.indexOf('after-show')).to.not.be(-1);        
+        expect(top.messages.indexOf('after-show')).to.not.be(-1);  
+        top.hidden = true;
+        top.hidden = false;
+        expect(bottom0.messages.indexOf('after-show')).to.be(-1);
       });
 
       it('should propagate `before-hide` to all non-hidden descendants', () => {
@@ -1443,12 +1446,12 @@ describe('phosphor-widget', () => {
         var middle = new LogWidget([bottom0, bottom1]);
         var top = new LogWidget([middle]);
         attachWidget(top, document.body);
-        top.hidden = true;
-        // XXX: should the hidden descendant get notified?
-        //expect(bottom0.messages.indexOf('before-hide')).to.be(-1);
+        bottom0.messages = [];
+        middle.hidden = true;
+        expect(bottom0.messages.indexOf('before-hide')).to.be(-1);
         expect(bottom1.messages.indexOf('before-hide')).to.not.be(-1);
         expect(middle.messages.indexOf('before-hide')).to.not.be(-1);
-        expect(top.messages.indexOf('before-hide')).to.not.be(-1);   
+        expect(top.messages.indexOf('before-hide')).to.be(-1); 
       });
 
     });
