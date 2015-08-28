@@ -1452,6 +1452,9 @@ describe('phosphor-widget', () => {
         expect(bottom1.messages.indexOf('before-hide')).to.not.be(-1);
         expect(middle.messages.indexOf('before-hide')).to.not.be(-1);
         expect(top.messages.indexOf('before-hide')).to.be(-1); 
+        middle.messages = [];
+        top.hidden = true;
+        expect(middle.messages.indexOf('before-hide')).to.be(-1);
       });
 
     });
