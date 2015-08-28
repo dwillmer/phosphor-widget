@@ -578,6 +578,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
       this.onBeforeHide(msg);
       sendToShown(this._children, msg);
       this._flags &= ~WidgetFlag.IsVisible;
+      break;
     case 'after-attach':
       var visible = !this.hidden && (!this._parent || this._parent.isVisible);
       if (visible) this._flags |= WidgetFlag.IsVisible;
