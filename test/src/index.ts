@@ -48,80 +48,80 @@ class LogWidget extends Widget {
 class VerboseWidget extends Widget {
 
   messages: Message[] = [];
-  sources: string[] = [];
+  methods: string[] = [];
 
   constructor(children?: Widget[]) {
     super();
     if (children) children.forEach(child => this.addChild(child));
   }
 
-  onChildAdded(msg: ChildMessage) {
+  protected onChildAdded(msg: ChildMessage) {
     super.onChildAdded(msg);
     this.messages.push(msg);
-    this.sources.push('child-added');
+    this.methods.push('onChildAdded');
   }
 
-  onChildRemoved(msg: ChildMessage) {
+  protected onChildRemoved(msg: ChildMessage) {
     super.onChildRemoved(msg);
     this.messages.push(msg);
-    this.sources.push('child-removed');
+    this.methods.push('onChildRemoved');
   }
 
-  onChildMoved(msg: ChildMessage) {
+  protected onChildMoved(msg: ChildMessage) {
     super.onChildMoved(msg);
     this.messages.push(msg);
-    this.sources.push('child-moved');
+    this.methods.push('onChildMoved');
   }
 
-  onResize(msg: ResizeMessage) {
+  protected onResize(msg: ResizeMessage) {
     super.onResize(msg);
     this.messages.push(msg);
-    this.sources.push('resize');
+    this.methods.push('onResize');
   }
 
-  onUpdateRequest(msg: Message) {
+  protected onUpdateRequest(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('update-request');
+    this.methods.push('onUpdateRequest');
   }
 
-  onLayoutRequest(msg: Message) {
+  protected onLayoutRequest(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('layout-request');
+    this.methods.push('onLayoutRequest');
   }
 
-  onAfterShow(msg: Message) {
+  protected onAfterShow(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('after-show');
+    this.methods.push('onAfterShow');
   }
 
-  onBeforeHide(msg: Message) {
+  protected onBeforeHide(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('before-hide');
+    this.methods.push('onBeforeHide');
   }
 
-  onAfterAttach(msg: Message) {
+  protected onAfterAttach(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('after-attach');
+    this.methods.push('onAfterAttach');
   }
 
-  onBeforeDetach(msg: Message) {
+  protected onBeforeDetach(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('before-detach');
+    this.methods.push('onBeforeDetach');
   }
 
-  onChildShown(msg: Message) {
+  protected onChildShown(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('child-shown');
+    this.methods.push('onChildShown');
   }
 
-  onChildHidden(msg: Message) {
+  protected onChildHidden(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('child-hidden');
+    this.methods.push('onChildHidden');
   }
 
-  onClose(msg: Message) {
+  protected onClose(msg: Message) {
     this.messages.push(msg);
-    this.sources.push('close');
+    this.methods.push('onClose');
   }
 }
 
@@ -736,7 +736,7 @@ describe('phosphor-widget', () => {
         var child = new Widget();
         var parent = new VerboseWidget();
         parent.addChild(child);
-        expect(parent.sources[0]).to.be('child-added');
+        expect(parent.methods[0]).to.be('onChildAdded');
       });
 
       it('should insert the child node at the current location', () => {
@@ -808,7 +808,7 @@ describe('phosphor-widget', () => {
         var child = new Widget();
         var parent = new VerboseWidget([child]);
         parent.removeChild(child);
-        expect(parent.sources[1]).to.be('child-removed');
+        expect(parent.methods[1]).to.be('onChildRemoved');
       });
 
       context('`msg` parameter', () => {
@@ -817,16 +817,14 @@ describe('phosphor-widget', () => {
            var child = new Widget();
            var parent = new VerboseWidget([child]);
            parent.removeChild(child);
-           var msg = <ChildMessage>parent.messages[1];
-           expect(msg instanceof ChildMessage).to.be(true);
+           expect(parent.messages[1] instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-removed`', () => {
            var child = new Widget();
            var parent = new VerboseWidget([child]);
            parent.removeChild(child);
-           var msg = <ChildMessage>parent.messages[1];
-           expect(msg.type).to.be('child-removed');
+           expect(parent.messages[1].type).to.be('child-removed');
         });
 
         it('should have the correct `child`', () => {
@@ -835,16 +833,14 @@ describe('phosphor-widget', () => {
            var parent = new VerboseWidget([child0, child1]);
            parent.messages = []
            parent.removeChild(child1);
-           var msg = <ChildMessage>parent.messages[0];
-           expect(msg.child).to.be(child1);
+           expect((<ChildMessage>parent.messages[0]).child).to.be(child1);
         });
 
         it('should have a `currentIndex` of -1', () => {
            var child = new Widget();
            var parent = new VerboseWidget([child]);
            parent.removeChild(child);
-           var msg = <ChildMessage>parent.messages[1];
-           expect(msg.currentIndex).to.be(-1);
+           expect((<ChildMessage>parent.messages[1]).currentIndex).to.be(-1);
         });
 
         it('should have the correct `previousIndex`', () => {
@@ -854,10 +850,8 @@ describe('phosphor-widget', () => {
            parent.messages = []
            parent.removeChild(child1);
            parent.removeChild(child0);
-           var msg = <ChildMessage>parent.messages[0];
-           expect(msg.previousIndex).to.be(1);
-           var msg = <ChildMessage>parent.messages[1];
-           expect(msg.previousIndex).to.be(0);
+           expect((<ChildMessage>parent.messages[0]).previousIndex).to.be(1);
+           expect((<ChildMessage>parent.messages[1]).previousIndex).to.be(0);
         });
 
       });
@@ -882,9 +876,9 @@ describe('phosphor-widget', () => {
          var child0 = new Widget();
          var child1 = new Widget();
          var parent = new VerboseWidget([child0, child1]);
-         parent.sources = [];
+         parent.methods = [];
          parent.moveChild(1, 0);
-         expect(parent.sources[0]).to.be('child-moved');
+         expect(parent.methods[0]).to.be('onChildMoved');
       });
 
       context('`msg` parameter', () => {
@@ -895,8 +889,7 @@ describe('phosphor-widget', () => {
          var parent = new VerboseWidget([child0, child1]);
          parent.messages = [];
          parent.moveChild(1, 0);
-         var msg = <ChildMessage>parent.messages[0];
-         expect(msg instanceof ChildMessage).to.be(true);
+         expect(parent.messages[0] instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-moved`', () => {
@@ -905,8 +898,7 @@ describe('phosphor-widget', () => {
          var parent = new VerboseWidget([child0, child1]);
          parent.messages = [];
          parent.moveChild(1, 0);
-         var msg = <ChildMessage>parent.messages[0];
-         expect(msg.type).to.be('child-moved');
+         expect(parent.messages[0].type).to.be('child-moved');
         });
 
         it('should have the correct `child`', () => {
@@ -915,8 +907,7 @@ describe('phosphor-widget', () => {
          var parent = new VerboseWidget([child0, child1]);
          parent.messages = [];
          parent.moveChild(1, 0);
-         var msg = <ChildMessage>parent.messages[0];
-         expect(msg.child).to.be(child1);
+         expect((<ChildMessage>parent.messages[0]).child).to.be(child1);
         });
 
         it('should have the correct `currentIndex`', () => {
@@ -925,8 +916,7 @@ describe('phosphor-widget', () => {
          var parent = new VerboseWidget([child0, child1]);
          parent.messages = [];
          parent.moveChild(1, 0);
-         var msg = <ChildMessage>parent.messages[0];
-         expect(msg.currentIndex).to.be(0);
+         expect((<ChildMessage>parent.messages[0]).currentIndex).to.be(0);
         });
 
         it('should have the correct `previousIndex`', () => {
@@ -935,8 +925,7 @@ describe('phosphor-widget', () => {
          var parent = new VerboseWidget([child0, child1]);
          parent.messages = [];
          parent.moveChild(1, 0);
-         var msg = <ChildMessage>parent.messages[0];
-         expect(msg.previousIndex).to.be(1);
+         expect((<ChildMessage>parent.messages[0]).previousIndex).to.be(1);
         });
 
       });
@@ -970,9 +959,9 @@ describe('phosphor-widget', () => {
       it('should be invoked when the widget is resized', () => {
         var widget = new VerboseWidget();
         attachWidget(widget, document.body);
+        widget.methods = [];
         fitWidget(widget);
-        var last = widget.messages.length - 1;
-        expect(widget.sources[last]).to.be('resize');
+        expect(widget.methods[0]).to.be('onResize');
       });
 
       context('`msg` parameter', () => {
@@ -980,31 +969,29 @@ describe('phosphor-widget', () => {
         it('should be a `ResizeMessage`', () => {
           var widget = new VerboseWidget();
           attachWidget(widget, document.body);
+          widget.messages = [];
           fitWidget(widget);
-          var last = widget.messages.length - 1;
-          expect(widget.messages[last] instanceof ResizeMessage).to.be(true);
+          expect(widget.messages[0] instanceof ResizeMessage).to.be(true);
         });
 
         it('should have a `type` of `resize`', () => {
           var widget = new VerboseWidget();
           attachWidget(widget, document.body);
+          widget.messages = [];
           fitWidget(widget);
-          var last = widget.messages.length - 1;
-          expect(widget.messages[last].type).to.be('resize');
+          expect(widget.messages[0].type).to.be('resize');
         });
 
         it('should have a `width` of `-1` if the size is unknown', () => {
           var widget = new VerboseWidget();
-          widget.processMessage(ResizeMessage.UnknownSize);
-          var last = widget.messages.length - 1;
-          expect((<ResizeMessage>widget.messages[last]).width).to.be(-1);
+          sendMessage(widget, ResizeMessage.UnknownSize);
+          expect((<ResizeMessage>widget.messages[0]).width).to.be(-1);
         });
 
         it('should have a `height` of `-1` if the size is unknown', () => {
           var widget = new VerboseWidget();
-          widget.processMessage(ResizeMessage.UnknownSize);
-          var last = widget.messages.length - 1;
-          expect((<ResizeMessage>widget.messages[last]).height).to.be(-1);
+          sendMessage(widget, ResizeMessage.UnknownSize);
+          expect((<ResizeMessage>widget.messages[0]).height).to.be(-1);
         });
 
         it('should have a valid `width` if the size is known', () => {
@@ -1014,9 +1001,10 @@ describe('phosphor-widget', () => {
           attachWidget(widget, div);
           div.style.position = 'absolute';
           div.style.width = '101px';
+          div.style.height = '101px';
+          widget.messages = [];
           fitWidget(widget);
-          var last = widget.messages.length - 1;
-          expect((<ResizeMessage>widget.messages[last]).width).to.be(101);
+          expect((<ResizeMessage>widget.messages[0]).width).to.be(101);
         });
 
         it('should have a valid `height` if the size is known', () => {
@@ -1025,10 +1013,11 @@ describe('phosphor-widget', () => {
           document.body.appendChild(div);
           attachWidget(widget, div);
           div.style.position = 'absolute';
+          div.style.width = '101px';
           div.style.height = '101px';
+          widget.messages = [];
           fitWidget(widget);
-          var last = widget.messages.length - 1;
-          expect((<ResizeMessage>widget.messages[last]).height).to.be(101);
+          expect((<ResizeMessage>widget.messages[0]).height).to.be(101);
         });
 
       });
@@ -1039,9 +1028,9 @@ describe('phosphor-widget', () => {
         var parent = new Widget([child0, child1]);
         child0.messages = [];
         child1.messages = [];
-        parent.processMessage(ResizeMessage.UnknownSize);
-        expect(child0.messages[0]).to.be(ResizeMessage.UnknownSize);
-        expect(child1.messages[0]).to.be(ResizeMessage.UnknownSize);
+        sendMessage(parent, ResizeMessage.UnknownSize);
+        expect(child0.messages[0]).to.eql(ResizeMessage.UnknownSize);
+        expect(child1.messages[0]).to.eql(ResizeMessage.UnknownSize);
       });
 
     });
@@ -1051,7 +1040,7 @@ describe('phosphor-widget', () => {
       it('should be invoked when an update is requested', () => {
         var widget = new VerboseWidget();
         sendMessage(widget, MSG_UPDATE_REQUEST);
-        expect(widget.sources[0]).to.be('update-request');
+        expect(widget.methods[0]).to.be('onUpdateRequest');
       });
 
       context('`msg` parameter', () => {
@@ -1077,7 +1066,7 @@ describe('phosphor-widget', () => {
       it('should be invoked when a layout is requested', () => {
         var widget = new VerboseWidget();
         sendMessage(widget, MSG_LAYOUT_REQUEST);
-        expect(widget.sources[0]).to.be('layout-request');
+        expect(widget.methods[0]).to.be('onLayoutRequest');
       });
 
       context('`msg` parameter', () => {
@@ -1105,7 +1094,7 @@ describe('phosphor-widget', () => {
         attachWidget(widget, document.body);
         widget.hidden = true;
         widget.hidden = false;
-        expect(widget.sources.indexOf('after-show')).to.not.be(-1);
+        expect(widget.methods.indexOf('onAfterShow')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
@@ -1138,7 +1127,7 @@ describe('phosphor-widget', () => {
         var widget = new VerboseWidget();
         attachWidget(widget, document.body);
         widget.hidden = true;
-        expect(widget.sources.indexOf('before-hide')).to.not.be(-1);
+        expect(widget.methods.indexOf('onBeforeHide')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
@@ -1168,7 +1157,7 @@ describe('phosphor-widget', () => {
       it('should be invoked just after the widget is attached', () => {
         var widget = new VerboseWidget();
         attachWidget(widget, document.body);
-        expect(widget.sources.indexOf('after-attach')).to.not.be(-1);
+        expect(widget.methods.indexOf('onAfterAttach')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
@@ -1197,7 +1186,7 @@ describe('phosphor-widget', () => {
         var widget = new VerboseWidget();
         attachWidget(widget, document.body);
         detachWidget(widget);
-        expect(widget.sources.indexOf('before-detach')).to.not.be(-1);
+        expect(widget.methods.indexOf('onBeforeDetach')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
@@ -1231,9 +1220,9 @@ describe('phosphor-widget', () => {
         parent.hidden = true;
         child.hidden = true;
         parent.hidden = false;
-        parent.sources = [];
+        parent.methods = [];
         child.hidden = false;
-        expect(parent.sources[0]).to.be('child-shown');
+        expect(parent.methods[0]).to.be('onChildShown');
       });
 
       context('`msg` parameter', () => {
@@ -1259,8 +1248,7 @@ describe('phosphor-widget', () => {
           parent.hidden = false;
           parent.messages = [];
           child.hidden = false;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.type).to.be('child-shown');
+          expect(parent.messages[0].type).to.be('child-shown');
         });
 
         it('should have the correct `child`', () => {
@@ -1273,8 +1261,7 @@ describe('phosphor-widget', () => {
           parent.hidden = false;
           parent.messages = [];
           child1.hidden = false;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.child).to.be(child1);
+          expect((<ChildMessage>parent.messages[0]).child).to.be(child1);
         });
 
         it('should have a `currentIndex` of -1', () => {
@@ -1286,8 +1273,7 @@ describe('phosphor-widget', () => {
           parent.hidden = false;
           parent.messages = [];
           child.hidden = false;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.currentIndex).to.be(-1);
+          expect((<ChildMessage>parent.messages[0]).currentIndex).to.be(-1);
         });
 
         it('should have a `previousIndex` of -1', () => {
@@ -1299,8 +1285,7 @@ describe('phosphor-widget', () => {
           parent.hidden = false;
           parent.messages = [];
           child.hidden = false;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.previousIndex).to.be(-1);
+          expect((<ChildMessage>parent.messages[0]).previousIndex).to.be(-1);
         });
 
       });
@@ -1312,9 +1297,9 @@ describe('phosphor-widget', () => {
       it('should be invoked on a `child-hidden`', () => {
         var child = new Widget();
         var parent = new VerboseWidget([child]);
-        parent.sources = [];
+        parent.methods = [];
         child.hidden = true;
-        expect(parent.sources[0]).to.be('child-hidden');
+        expect(parent.methods[0]).to.be('onChildHidden');
       });
 
       context('`msg` parameter', () => {
@@ -1332,8 +1317,7 @@ describe('phosphor-widget', () => {
           var parent = new VerboseWidget([child]);
           parent.messages = [];
           child.hidden = true;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.type).to.be('child-hidden');
+          expect(parent.messages[0].type).to.be('child-hidden');
         });
 
         it('should have the correct `child`', () => {
@@ -1342,8 +1326,7 @@ describe('phosphor-widget', () => {
           var parent = new VerboseWidget([child0, child1]);
           parent.messages = [];
           child0.hidden = true;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.child).to.be(child0);
+          expect((<ChildMessage>parent.messages[0]).child).to.be(child0);
         });
 
         it('should have a `currentIndex` of -1', () => {
@@ -1351,8 +1334,7 @@ describe('phosphor-widget', () => {
           var parent = new VerboseWidget([child]);
           parent.messages = [];
           child.hidden = true;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.currentIndex).to.be(-1);
+          expect((<ChildMessage>parent.messages[0]).currentIndex).to.be(-1);
         });
 
         it('should have a `previousIndex` of -1', () => {
@@ -1360,8 +1342,7 @@ describe('phosphor-widget', () => {
           var parent = new VerboseWidget([child]);
           parent.messages = [];
           child.hidden = true;
-          var msg = <ChildMessage>parent.messages[0];
-          expect(msg.previousIndex).to.be(-1);
+          expect((<ChildMessage>parent.messages[0]).previousIndex).to.be(-1);
         });
 
       });
@@ -1373,7 +1354,7 @@ describe('phosphor-widget', () => {
       it('should be invoked on a `close`', () => {
         var widget = new VerboseWidget();
         sendMessage(widget, MSG_CLOSE);
-        expect(widget.sources[0]).to.be('close');
+        expect(widget.methods[0]).to.be('onClose');
       });
 
       context('`msg` parameter', () => {
@@ -1433,7 +1414,7 @@ describe('phosphor-widget', () => {
         expect(bottom0.messages.indexOf('after-show')).to.be(-1);
         expect(bottom1.messages.indexOf('after-show')).to.not.be(-1);
         expect(middle.messages.indexOf('after-show')).to.not.be(-1);
-        expect(top.messages.indexOf('after-show')).to.not.be(-1);  
+        expect(top.messages.indexOf('after-show')).to.not.be(-1);
         top.hidden = true;
         top.hidden = false;
         expect(bottom0.messages.indexOf('after-show')).to.be(-1);
@@ -1451,7 +1432,7 @@ describe('phosphor-widget', () => {
         expect(bottom0.messages.indexOf('before-hide')).to.be(-1);
         expect(bottom1.messages.indexOf('before-hide')).to.not.be(-1);
         expect(middle.messages.indexOf('before-hide')).to.not.be(-1);
-        expect(top.messages.indexOf('before-hide')).to.be(-1); 
+        expect(top.messages.indexOf('before-hide')).to.be(-1);
         middle.messages = [];
         top.hidden = true;
         expect(middle.messages.indexOf('before-hide')).to.be(-1);
