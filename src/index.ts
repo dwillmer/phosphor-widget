@@ -199,15 +199,12 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   /**
    * Construct a new widget.
    *
-   * @param children - The initial children for the widget.
-   *
    * #### Notes
    * The [[WIDGET_CLASS]] is added to the widget during construction.
    */
-  constructor(children?: Widget[]) {
+  constructor() {
     super();
     this.addClass(WIDGET_CLASS);
-    if (children) children.forEach(child => this.addChild(child));
   }
 
   /**
