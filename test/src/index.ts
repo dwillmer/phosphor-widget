@@ -10,7 +10,7 @@
 import expect = require('expect.js');
 
 import {
-  Message, postMessage
+  Message, postMessage, sendMessage
 } from 'phosphor-messaging';
 
 import {
@@ -33,9 +33,95 @@ class LogWidget extends Widget {
 
   messages: string[] = [];
 
+  constructor(children?: Widget[]) {
+    super();
+    if (children) children.forEach(child => this.addChild(child));
+  }
+
   processMessage(msg: Message): void {
     super.processMessage(msg);
     this.messages.push(msg.type);
+  }
+}
+
+
+class VerboseWidget extends Widget {
+
+  messages: Message[] = [];
+  sources: string[] = [];
+
+  constructor(children?: Widget[]) {
+    super();
+    if (children) children.forEach(child => this.addChild(child));
+  }
+
+  onChildAdded(msg: ChildMessage) {
+    super.onChildAdded(msg);
+    this.messages.push(msg);
+    this.sources.push('child-added');
+  }
+
+  onChildRemoved(msg: ChildMessage) {
+    super.onChildRemoved(msg);
+    this.messages.push(msg);
+    this.sources.push('child-removed');
+  }
+
+  onChildMoved(msg: ChildMessage) {
+    super.onChildMoved(msg);
+    this.messages.push(msg);
+    this.sources.push('child-moved');
+  }
+
+  onResize(msg: ResizeMessage) {
+    super.onResize(msg);
+    this.messages.push(msg);
+    this.sources.push('resize');
+  }
+
+  onUpdateRequest(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('update-request');
+  }
+
+  onLayoutRequest(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('layout-request');
+  }
+
+  onAfterShow(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('after-show');
+  }
+
+  onBeforeHide(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('before-hide');
+  }
+
+  onAfterAttach(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('after-attach');
+  }
+
+  onBeforeDetach(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('before-detach');
+  }
+
+  onChildShown(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('child-shown');
+  }
+
+  onChildHidden(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('child-hidden');
+  }
+
+  onClose(msg: Message) {
+    this.messages.push(msg);
+    this.sources.push('close');
   }
 }
 
@@ -647,33 +733,57 @@ describe('phosphor-widget', () => {
     describe('#onChildAdded()', () => {
 
       it('should be invoked when a child is added', () => {
-
+        var child = new Widget();
+        var parent = new VerboseWidget();
+        parent.addChild(child);
+        expect(parent.sources[0]).to.be('child-added');
       });
 
-      it('should insert the child node at the corrent location', () => {
-
+      it('should insert the child node at the current location', () => {
+        var child0 = new Widget();
+        var child1 = new Widget();
+        var parent = new VerboseWidget([child0]);
+        parent.insertChild(0, child1);
+        expect(parent.messages[0].type).to.be('child-added');
+        expect(parent.children[0]).to.be(child1);
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `ChildMessage`', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          expect(parent.messages[0] instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-added`', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          expect(parent.messages[0].type).to.be('child-added');
         });
 
         it('should have the correct `child`', () => {
-
+          var child0 = new Widget();
+          var child1 = new Widget();
+          var parent = new VerboseWidget([child0]);
+          parent.messages = [];
+          parent.addChild(child1);
+          expect((<ChildMessage>parent.messages[0]).child).to.be(child1);
         });
 
         it('should have the correct `currentIndex`', () => {
-
+          var child0 = new Widget();
+          var child1 = new Widget();
+          var parent = new VerboseWidget([child0]);
+          expect((<ChildMessage>parent.messages[0]).currentIndex).to.be(0);
+          parent.addChild(child1);
+          expect((<ChildMessage>parent.messages[1]).currentIndex).to.be(1);
         });
 
         it('should have a `previousIndex` of `-1`', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          expect((<ChildMessage>parent.messages[0]).previousIndex).to.be(-1);
         });
 
       });
@@ -681,7 +791,11 @@ describe('phosphor-widget', () => {
       context('if the widget is attached', () => {
 
         it('should send an `after-attach` message to the child', () => {
-
+          var child = new LogWidget();
+          var parent = new VerboseWidget();
+          attachWidget(parent, document.body);
+          parent.addChild(child);
+          expect(child.messages[0]).to.be('after-attach');
         });
 
       });
@@ -691,29 +805,59 @@ describe('phosphor-widget', () => {
     describe('#onChildRemoved()', () => {
 
       it('should be invoked when a child is removed', () => {
-
+        var child = new Widget();
+        var parent = new VerboseWidget([child]);
+        parent.removeChild(child);
+        expect(parent.sources[1]).to.be('child-removed');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `ChildMessage`', () => {
-
+           var child = new Widget();
+           var parent = new VerboseWidget([child]);
+           parent.removeChild(child);
+           var msg = <ChildMessage>parent.messages[1];
+           expect(msg instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-removed`', () => {
-
+           var child = new Widget();
+           var parent = new VerboseWidget([child]);
+           parent.removeChild(child);
+           var msg = <ChildMessage>parent.messages[1];
+           expect(msg.type).to.be('child-removed');
         });
 
         it('should have the correct `child`', () => {
-
+           var child0 = new Widget();
+           var child1 = new Widget();
+           var parent = new VerboseWidget([child0, child1]);
+           parent.messages = []
+           parent.removeChild(child1);
+           var msg = <ChildMessage>parent.messages[0];
+           expect(msg.child).to.be(child1);
         });
 
         it('should have a `currentIndex` of -1', () => {
-
+           var child = new Widget();
+           var parent = new VerboseWidget([child]);
+           parent.removeChild(child);
+           var msg = <ChildMessage>parent.messages[1];
+           expect(msg.currentIndex).to.be(-1);
         });
 
         it('should have the correct `previousIndex`', () => {
-
+           var child0 = new Widget();
+           var child1 = new Widget();
+           var parent = new VerboseWidget([child0, child1]);
+           parent.messages = []
+           parent.removeChild(child1);
+           parent.removeChild(child0);
+           var msg = <ChildMessage>parent.messages[0];
+           expect(msg.previousIndex).to.be(1);
+           var msg = <ChildMessage>parent.messages[1];
+           expect(msg.previousIndex).to.be(0);
         });
 
       });
@@ -721,7 +865,11 @@ describe('phosphor-widget', () => {
       context('if the widget is attached', () => {
 
         it('should send a `before-detach` message to the child', () => {
-
+          var child = new LogWidget();
+          var parent = new VerboseWidget([child]);
+          attachWidget(parent, document.body);
+          parent.removeChild(child);
+          expect(child.messages[1]).to.be('before-detach');
         });
 
       });
@@ -731,29 +879,64 @@ describe('phosphor-widget', () => {
     describe('#onChildMoved()', () => {
 
       it('should be invoked when a child is moved', () => {
-
+         var child0 = new Widget();
+         var child1 = new Widget();
+         var parent = new VerboseWidget([child0, child1]);
+         parent.sources = [];
+         parent.moveChild(1, 0);
+         expect(parent.sources[0]).to.be('child-moved');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `ChildMessage`', () => {
-
+         var child0 = new Widget();
+         var child1 = new Widget();
+         var parent = new VerboseWidget([child0, child1]);
+         parent.messages = [];
+         parent.moveChild(1, 0);
+         var msg = <ChildMessage>parent.messages[0];
+         expect(msg instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-moved`', () => {
-
+         var child0 = new Widget();
+         var child1 = new Widget();
+         var parent = new VerboseWidget([child0, child1]);
+         parent.messages = [];
+         parent.moveChild(1, 0);
+         var msg = <ChildMessage>parent.messages[0];
+         expect(msg.type).to.be('child-moved');
         });
 
         it('should have the correct `child`', () => {
-
+         var child0 = new Widget();
+         var child1 = new Widget();
+         var parent = new VerboseWidget([child0, child1]);
+         parent.messages = [];
+         parent.moveChild(1, 0);
+         var msg = <ChildMessage>parent.messages[0];
+         expect(msg.child).to.be(child1);
         });
 
         it('should have the correct `currentIndex`', () => {
-
+         var child0 = new Widget();
+         var child1 = new Widget();
+         var parent = new VerboseWidget([child0, child1]);
+         parent.messages = [];
+         parent.moveChild(1, 0);
+         var msg = <ChildMessage>parent.messages[0];
+         expect(msg.currentIndex).to.be(0);
         });
 
         it('should have the correct `previousIndex`', () => {
-
+         var child0 = new Widget();
+         var child1 = new Widget();
+         var parent = new VerboseWidget([child0, child1]);
+         parent.messages = [];
+         parent.moveChild(1, 0);
+         var msg = <ChildMessage>parent.messages[0];
+         expect(msg.previousIndex).to.be(1);
         });
 
       });
@@ -761,11 +944,21 @@ describe('phosphor-widget', () => {
       context('if the widget is attached', () => {
 
         it('should send a `before-detach` message to the child', () => {
-
+          var child0 = new LogWidget();
+          var child1 = new LogWidget();
+          var parent = new VerboseWidget([child0, child1]);
+          attachWidget(parent, document.body);
+          parent.moveChild(1, 0);
+          expect(child1.messages.indexOf('before-detach')).to.not.be(-1);
         });
 
         it('should send an `after-attach` message to the child', () => {
-
+          var child0 = new LogWidget();
+          var child1 = new LogWidget();
+          var parent = new VerboseWidget([child0, child1]);
+          attachWidget(parent, document.body);
+          parent.moveChild(1, 0);
+          expect(child1.messages.indexOf('after-attach')).to.not.be(-1);
         });
 
       });
@@ -775,39 +968,80 @@ describe('phosphor-widget', () => {
     describe('#onResize()', () => {
 
       it('should be invoked when the widget is resized', () => {
-
+        var widget = new VerboseWidget();
+        attachWidget(widget, document.body);
+        fitWidget(widget);
+        var last = widget.messages.length - 1;
+        expect(widget.sources[last]).to.be('resize');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `ResizeMessage`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect(widget.messages[last] instanceof ResizeMessage).to.be(true);
         });
 
         it('should have a `type` of `resize`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect(widget.messages[last].type).to.be('resize');
         });
 
         it('should have a `width` of `-1` if the size is unknown', () => {
-
+          var widget = new VerboseWidget();
+          widget.processMessage(ResizeMessage.UnknownSize);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).width).to.be(-1);
         });
 
         it('should have a `height` of `-1` if the size is unknown', () => {
-
+          var widget = new VerboseWidget();
+          widget.processMessage(ResizeMessage.UnknownSize);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).height).to.be(-1);
         });
 
         it('should have a valid `width` if the size is known', () => {
-
+          var widget = new VerboseWidget();
+          var div = document.createElement('div');
+          document.body.appendChild(div);
+          attachWidget(widget, div);
+          div.style.position = 'absolute';
+          div.style.width = '101px';
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).width).to.be(101);
         });
 
         it('should have a valid `height` if the size is known', () => {
-
+          var widget = new VerboseWidget();
+          var div = document.createElement('div');
+          document.body.appendChild(div);
+          attachWidget(widget, div);
+          div.style.position = 'absolute';
+          div.style.height = '101px';
+          fitWidget(widget);
+          var last = widget.messages.length - 1;
+          expect((<ResizeMessage>widget.messages[last]).height).to.be(101);
         });
 
       });
 
       it('should dispatch `ResizeMessage.UnknownSize` to the children', () => {
-
+        var child0 = new VerboseWidget();
+        var child1 = new VerboseWidget();
+        var parent = new Widget([child0, child1]);
+        child0.messages = [];
+        child1.messages = [];
+        parent.processMessage(ResizeMessage.UnknownSize);
+        expect(child0.messages[0]).to.be(ResizeMessage.UnknownSize);
+        expect(child1.messages[0]).to.be(ResizeMessage.UnknownSize);
       });
 
     });
@@ -815,17 +1049,23 @@ describe('phosphor-widget', () => {
     describe('#onUpdateRequest()', () => {
 
       it('should be invoked when an update is requested', () => {
-
+        var widget = new VerboseWidget();
+        sendMessage(widget, MSG_UPDATE_REQUEST);
+        expect(widget.sources[0]).to.be('update-request');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
-
+          var widget = new VerboseWidget();
+          sendMessage(widget, MSG_UPDATE_REQUEST);
+          expect(widget.messages[0] instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `update-request`', () => {
-
+          var widget = new VerboseWidget();
+          sendMessage(widget, MSG_UPDATE_REQUEST);
+          expect(widget.messages[0].type).to.be('update-request');
         });
 
       });
@@ -835,17 +1075,23 @@ describe('phosphor-widget', () => {
     describe('#onLayoutRequest()', () => {
 
       it('should be invoked when a layout is requested', () => {
-
+        var widget = new VerboseWidget();
+        sendMessage(widget, MSG_LAYOUT_REQUEST);
+        expect(widget.sources[0]).to.be('layout-request');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
-
+          var widget = new VerboseWidget();
+          sendMessage(widget, MSG_LAYOUT_REQUEST);
+          expect(widget.messages[0] instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `layout-request`', () => {
-
+          var widget = new VerboseWidget();
+          sendMessage(widget, MSG_LAYOUT_REQUEST);
+          expect(widget.messages[0].type).to.be('layout-request');
         });
 
       });
@@ -855,17 +1101,31 @@ describe('phosphor-widget', () => {
     describe('#onAfterShow()', () => {
 
       it('should be invoked just after the widget is made visible', () => {
-
+        var widget = new VerboseWidget();
+        attachWidget(widget, document.body);
+        widget.hidden = true;
+        widget.hidden = false;
+        expect(widget.sources.indexOf('after-show')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          widget.hidden = true;
+          widget.hidden = false;
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `after-show`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          widget.hidden = true;
+          widget.hidden = false;
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg.type).to.be('after-show');
         });
 
       });
@@ -875,17 +1135,28 @@ describe('phosphor-widget', () => {
     describe('#onBeforeHide()', () => {
 
       it('should be invoked just before the widget is made not-visible', () => {
-
+        var widget = new VerboseWidget();
+        attachWidget(widget, document.body);
+        widget.hidden = true;
+        expect(widget.sources.indexOf('before-hide')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          widget.hidden = true;
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `before-hide`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          widget.hidden = true;
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg.type).to.be('before-hide');
         });
 
       });
@@ -895,17 +1166,25 @@ describe('phosphor-widget', () => {
     describe('#onAfterAttach()', () => {
 
       it('should be invoked just after the widget is attached', () => {
-
+        var widget = new VerboseWidget();
+        attachWidget(widget, document.body);
+        expect(widget.sources.indexOf('after-attach')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `after-attach`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg.type).to.be('after-attach');
         });
 
       });
@@ -915,17 +1194,28 @@ describe('phosphor-widget', () => {
     describe('#onBeforeDetach()', () => {
 
       it('should be invoked just before the widget is detached', () => {
-
+        var widget = new VerboseWidget();
+        attachWidget(widget, document.body);
+        detachWidget(widget);
+        expect(widget.sources.indexOf('before-detach')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          detachWidget(widget);
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `before-detach`', () => {
-
+          var widget = new VerboseWidget();
+          attachWidget(widget, document.body);
+          detachWidget(widget);
+          var msg = widget.messages[widget.messages.length - 1];
+          expect(msg.type).to.be('before-detach');
         });
 
       });
@@ -935,29 +1225,82 @@ describe('phosphor-widget', () => {
     describe('#onChildShown()', () => {
 
       it('should be invoked when a child is unhidden', () => {
-
+        var child = new Widget();
+        var parent = new VerboseWidget([child]);
+        attachWidget(parent, document.body);
+        parent.hidden = true;
+        child.hidden = true;
+        parent.hidden = false;
+        parent.sources = [];
+        child.hidden = false;
+        expect(parent.sources[0]).to.be('child-shown');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `ChildMessage`', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          attachWidget(parent, document.body);
+          parent.hidden = true;
+          child.hidden = true;
+          parent.hidden = false;
+          parent.messages = [];
+          child.hidden = false;
+          expect(parent.messages[0] instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-shown`', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          attachWidget(parent, document.body);
+          parent.hidden = true;
+          child.hidden = true;
+          parent.hidden = false;
+          parent.messages = [];
+          child.hidden = false;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.type).to.be('child-shown');
         });
 
         it('should have the correct `child`', () => {
-
+          var child0 = new Widget();
+          var child1 = new Widget();
+          var parent = new VerboseWidget([child0, child1]);
+          attachWidget(parent, document.body);
+          parent.hidden = true;
+          child1.hidden = true;
+          parent.hidden = false;
+          parent.messages = [];
+          child1.hidden = false;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.child).to.be(child1);
         });
 
         it('should have a `currentIndex` of -1', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          attachWidget(parent, document.body);
+          parent.hidden = true;
+          child.hidden = true;
+          parent.hidden = false;
+          parent.messages = [];
+          child.hidden = false;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.currentIndex).to.be(-1);
         });
 
         it('should have a `previousIndex` of -1', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          attachWidget(parent, document.body);
+          parent.hidden = true;
+          child.hidden = true;
+          parent.hidden = false;
+          parent.messages = [];
+          child.hidden = false;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.previousIndex).to.be(-1);
         });
 
       });
@@ -967,29 +1310,58 @@ describe('phosphor-widget', () => {
     describe('#onChildHidden()', () => {
 
       it('should be invoked on a `child-hidden`', () => {
-
+        var child = new Widget();
+        var parent = new VerboseWidget([child]);
+        parent.sources = [];
+        child.hidden = true;
+        expect(parent.sources[0]).to.be('child-hidden');
       });
 
       context('`msg` parameter', () => {
 
-        it('should be a `Message`', () => {
-
+        it('should be a `ChildMessage`', () => {
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          parent.messages = [];
+          child.hidden = true;
+          expect(parent.messages[0] instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-hidden`', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          parent.messages = [];
+          child.hidden = true;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.type).to.be('child-hidden');
         });
 
         it('should have the correct `child`', () => {
-
+          var child0 = new Widget();
+          var child1 = new Widget();
+          var parent = new VerboseWidget([child0, child1]);
+          parent.messages = [];
+          child0.hidden = true;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.child).to.be(child0);
         });
 
         it('should have a `currentIndex` of -1', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          parent.messages = [];
+          child.hidden = true;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.currentIndex).to.be(-1);
         });
 
         it('should have a `previousIndex` of -1', () => {
-
+          var child = new Widget();
+          var parent = new VerboseWidget([child]);
+          parent.messages = [];
+          child.hidden = true;
+          var msg = <ChildMessage>parent.messages[0];
+          expect(msg.previousIndex).to.be(-1);
         });
 
       });
@@ -999,17 +1371,23 @@ describe('phosphor-widget', () => {
     describe('#onClose()', () => {
 
       it('should be invoked on a `close`', () => {
-
+        var widget = new VerboseWidget();
+        sendMessage(widget, MSG_CLOSE);
+        expect(widget.sources[0]).to.be('close');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
-
+          var widget = new VerboseWidget();
+          sendMessage(widget, MSG_CLOSE);
+          expect(widget.messages[0] instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `close`', () => {
-
+          var widget = new VerboseWidget();
+          sendMessage(widget, MSG_CLOSE);
+          expect(widget.messages[0].type).to.be('close');
         });
 
       });
@@ -1019,19 +1397,64 @@ describe('phosphor-widget', () => {
     context('message propagation', () => {
 
       it('should propagate `after-attach` to all descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        expect(bottom0.messages.indexOf('after-attach')).to.not.be(-1);
+        expect(bottom1.messages.indexOf('after-attach')).to.not.be(-1);
+        expect(middle.messages.indexOf('after-attach')).to.not.be(-1);
+        expect(top.messages.indexOf('after-attach')).to.not.be(-1);
       });
 
       it('should propagate `before-detach` to all descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        detachWidget(top);
+        expect(bottom0.messages.indexOf('before-detach')).to.not.be(-1);
+        expect(bottom1.messages.indexOf('before-detach')).to.not.be(-1);
+        expect(middle.messages.indexOf('before-detach')).to.not.be(-1);
+        expect(top.messages.indexOf('before-detach')).to.not.be(-1);
       });
 
       it('should propagate `after-show` to all non-hidden descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        bottom0.hidden = true;
+        top.hidden = true;
+        attachWidget(top, document.body);
+        top.hidden = false;
+        expect(bottom0.messages.indexOf('after-show')).to.be(-1);
+        expect(bottom1.messages.indexOf('after-show')).to.not.be(-1);
+        expect(middle.messages.indexOf('after-show')).to.not.be(-1);
+        expect(top.messages.indexOf('after-show')).to.not.be(-1);  
+        top.hidden = true;
+        top.hidden = false;
+        expect(bottom0.messages.indexOf('after-show')).to.be(-1);
       });
 
       it('should propagate `before-hide` to all non-hidden descendants', () => {
-
+        var bottom0 = new LogWidget();
+        bottom0.hidden = true;
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        bottom0.messages = [];
+        middle.hidden = true;
+        expect(bottom0.messages.indexOf('before-hide')).to.be(-1);
+        expect(bottom1.messages.indexOf('before-hide')).to.not.be(-1);
+        expect(middle.messages.indexOf('before-hide')).to.not.be(-1);
+        expect(top.messages.indexOf('before-hide')).to.be(-1); 
+        middle.messages = [];
+        top.hidden = true;
+        expect(middle.messages.indexOf('before-hide')).to.be(-1);
       });
 
     });
@@ -1039,11 +1462,36 @@ describe('phosphor-widget', () => {
     context('state propagation', () => {
 
       it('should propagate `isAttached` state to all descendants', () => {
-
+        var bottom0 = new LogWidget();
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        expect(bottom0.isAttached).to.be(top.isAttached);
+        expect(bottom1.isAttached).to.be(top.isAttached);
+        expect(middle.isAttached).to.be(top.isAttached);
+        attachWidget(top, document.body);
+        expect(top.isAttached).to.be(true);
+        expect(bottom0.isAttached).to.be(top.isAttached);
+        expect(bottom1.isAttached).to.be(top.isAttached);
+        expect(middle.isAttached).to.be(top.isAttached);
       });
 
       it('should propagate `isVisible` state to all non-hidden descendants', () => {
-
+        var bottom0 = new LogWidget();
+        bottom0.hidden = true;
+        var bottom1 = new LogWidget();
+        var middle = new LogWidget([bottom0, bottom1]);
+        var top = new LogWidget([middle]);
+        attachWidget(top, document.body);
+        expect(top.isVisible).to.be(true);
+        expect(bottom0.isVisible).to.be(false);
+        expect(bottom1.isVisible).to.be(top.isVisible);
+        expect(middle.isVisible).to.be(top.isVisible);
+        top.hidden = true;
+        expect(top.isVisible).to.be(false);
+        expect(bottom0.isVisible).to.be(false);
+        expect(bottom1.isVisible).to.be(top.isVisible);
+        expect(middle.isVisible).to.be(top.isVisible);
       });
 
     });
