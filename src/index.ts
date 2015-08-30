@@ -15,7 +15,7 @@ import {
 } from 'phosphor-disposable';
 
 import {
-  IMessageHandler, Message, clearMessageData, sendMessage
+  IMessageHandler, Message, clearMessageData, postMessage, sendMessage
 } from 'phosphor-messaging';
 
 import {
@@ -61,7 +61,7 @@ const HIDDEN_CLASS = 'p-mod-hidden';
  *
  * Messages of this type are compressed by default.
  *
- * **See also:** [[onUpdateRequest]]
+ * **See also:** [[update]], [[onUpdateRequest]]
  */
 export
 const MSG_UPDATE_REQUEST = new Message('update-request');
@@ -79,10 +79,24 @@ const MSG_UPDATE_REQUEST = new Message('update-request');
  *
  * Messages of this type are compressed by default.
  *
- * **See also:** [[onLayoutRequest]]
+ * **See also:** [[layout]], [[onLayoutRequest]]
  */
 export
 const MSG_LAYOUT_REQUEST = new Message('layout-request');
+
+/**
+ * A singleton `'close-request'` message.
+ *
+ * #### Notes
+ * This message should be dispatched to a widget when it should close
+ * and remove itself from the widget hierarchy.
+ *
+ * Messages of this type are compressed by default.
+ *
+ * **See also:** [[close]], [[onCloseRequest]]
+ */
+export
+const MSG_CLOSE_REQUEST = new Message('close-request');
 
 /**
  * A singleton `'after-show'` message.
@@ -131,21 +145,6 @@ const MSG_AFTER_ATTACH = new Message('after-attach');
  */
 export
 const MSG_BEFORE_DETACH = new Message('before-detach');
-
-/**
- * A singleton `'close'` message.
- *
- * #### Notes
- * This message should be dispatched to a widget when it should close
- * and remove itself from the widget hierarchy.
- *
- * Widgets do not respond to this message by default. A subclass must
- * reimplement the message handler and take appropriate action.
- *
- * **See also:** [[onClose]]
- */
-export
-const MSG_CLOSE = new Message('close');
 
 
 /**
@@ -448,6 +447,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
     }
     if (child._parent) {
       child._parent.removeChild(child);
+    } else if (child.isAttached) {
+      detachWidget(child);
     }
     child._parent = this;
     var i = arrays.insert(this._children, index, child);
@@ -539,6 +540,66 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
+   * Dispatch an `'update-request'` message to the widget.
+   *
+   * @param immediate - Whether to dispatch the message immediately
+   *   (`true`) or in the future (`false`). The default is `false`.
+   *
+   * #### Notes
+   * This method uses `sendMessage` to dispatch the message immediately,
+   * and `postMessage` to dispatch in the future.
+   *
+   * **See also:** [[MSG_UPDATE_REQUEST]], [[onUpdateRequest]]
+   */
+  update(immediate = false): void {
+    if (immediate) {
+      sendMessage(this, MSG_UPDATE_REQUEST);
+    } else {
+      postMessage(this, MSG_UPDATE_REQUEST);
+    }
+  }
+
+  /**
+   * Dispatch a `'layout-request'` message to the widget.
+   *
+   * @param immediate - Whether to dispatch the message immediately
+   *   (`true`) or in the future (`false`). The default is `false`.
+   *
+   * #### Notes
+   * This method uses `sendMessage` to dispatch the message immediately,
+   * and `postMessage` to dispatch in the future.
+   *
+   * **See also:** [[MSG_LAYOUT_REQUEST]], [[onLayoutRequest]]
+   */
+  layout(immediate = false): void {
+    if (immediate) {
+      sendMessage(this, MSG_LAYOUT_REQUEST);
+    } else {
+      postMessage(this, MSG_LAYOUT_REQUEST);
+    }
+  }
+
+  /**
+   * Dispatch a `'close-request'` message to the widget.
+   *
+   * @param immediate - Whether to dispatch the message immediately
+   *   (`true`) or in the future (`false`). The default is `false`.
+   *
+   * #### Notes
+   * This method uses `sendMessage` to dispatch the message immediately,
+   * and `postMessage` to dispatch in the future.
+   *
+   * **See also:** [[MSG_CLOSE_REQUEST]], [[onCloseRequest]]
+   */
+  close(immediate = false): void {
+    if (immediate) {
+      sendMessage(this, MSG_CLOSE_REQUEST);
+    } else {
+      postMessage(this, MSG_CLOSE_REQUEST);
+    }
+  }
+
+  /**
    * Process a message sent to the widget.
    *
    * @param msg - The message sent to the widget.
@@ -595,8 +656,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
     case 'child-hidden':
       this.onChildHidden(<ChildMessage>msg);
       break;
-    case 'close':
-      this.onClose(msg);
+    case 'close-request':
+      this.onCloseRequest(msg);
       break;
     }
   }
@@ -613,14 +674,17 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *   delivery as normal.
    *
    * #### Notes
-   * The default implementation compresses 'update-request' and
-   * 'layout-request' messages.
+   * The default implementation compresses the following messages:
+   * `'update-request'`, `'layout-request'`, and `'close-request'`.
    *
    * Subclasses may reimplement this method as needed.
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
-    if (msg.type === 'update-request' || msg.type === 'layout-request') {
-      return pending.some(p => p.type === msg.type);
+    switch (msg.type) {
+      case 'update-request':
+      case 'layout-request':
+      case 'close-request':
+        return pending.some(other => other.type === msg.type);
     }
     return false;
   }
@@ -695,11 +759,28 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
+   * A message handler invoked on a `'close-request'` message.
+   *
+   * The default implementation of this handler will unparent or detach
+   * the widget as appropriate. Subclasses may reimplement this handler
+   * for custom close behavior.
+   *
+   * **See also:** [[close]], [[MSG_CLOSE_REQUEST]]
+   */
+  protected onCloseRequest(msg: Message): void {
+    if (this._parent) {
+      this._parent.removeChild(this);
+    } else if (this.isAttached) {
+      detachWidget(this);
+    }
+  }
+
+  /**
    * A message handler invoked on an `'update-request'` message.
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also:** [[MSG_UPDATE_REQUEST]]
+   * **See also:** [[update]], [[MSG_UPDATE_REQUEST]]
    */
   protected onUpdateRequest(msg: Message): void { }
 
@@ -708,7 +789,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also:** [[MSG_LAYOUT_REQUEST]]
+   * **See also:** [[layout]], [[MSG_LAYOUT_REQUEST]]
    */
   protected onLayoutRequest(msg: Message): void { }
 
@@ -758,15 +839,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
    */
   protected onChildHidden(msg: ChildMessage): void { }
 
-  /**
-   * A message handler invoked on a `'close'` message.
-   *
-   * The default implementation of this handler is a no-op.
-   *
-   * **See also:** [[MSG_CLOSE]]
-   */
-  protected onClose(msg: Message): void { }
-
   private _flags = 0;
   private _parent: Widget = null;
   private _children: Widget[] = [];
@@ -785,8 +857,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
  *   is not attached to the DOM.
  *
  * #### Notes
- * Only a root widget can be attached to a host node.
- *
  * This function ensures that an `'after-attach'` message is dispatched
  * to the hierarchy. It should be used in lieu of manual DOM attachment.
  */
@@ -815,8 +885,6 @@ function attachWidget(widget: Widget, host: HTMLElement): void {
  *   or if the widget is not attached to the DOM.
  *
  * #### Notes
- * Only a root widget can be detached from its host node.
- *
  * This function ensures that a `'before-detach'` message is dispatched
  * to the hierarchy. It should be used in lieu of manual DOM detachment.
  */
@@ -830,42 +898,6 @@ function detachWidget(widget: Widget): void {
   }
   sendMessage(widget, MSG_BEFORE_DETACH);
   widget.node.parentNode.removeChild(widget.node);
-}
-
-
-/**
- * Resize a widget to fit it's host node.
- *
- * @param widget - The widget to fit to its host.
- *
- * @throws Will throw an error if the widget is not a root widget,
- *   or if the widget has no host node.
- *
- * #### Notes
- * This will resize the widget to fit its host and will dispatch an
- * appropriate `'resize'` message.
- *
- * For this function to work properly, the host node should be an
- * offset parent; i.e. it should have `position: absolute|relative`.
- */
-export
-function fitWidget(widget: Widget): void {
-  if (widget.parent) {
-    throw new Error('only a root widget can be fit');
-  }
-  var host = <HTMLElement>widget.node.parentNode;
-  if (!host) {
-    throw new Error('widget does not have host node');
-  }
-  var width = host.clientWidth;
-  var height = host.clientHeight;
-  var style = widget.node.style;
-  style.position = 'absolute';
-  style.top = '0px';
-  style.left = '0px';
-  style.width = width + 'px';
-  style.height = height + 'px';
-  sendMessage(widget, new ResizeMessage(width, height));
 }
 
 
