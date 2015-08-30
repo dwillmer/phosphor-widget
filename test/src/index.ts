@@ -23,9 +23,8 @@ import {
 
 import {
   HIDDEN_CLASS, MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH,
-  MSG_BEFORE_HIDE, MSG_CLOSE, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
-  WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget,
-  detachWidget, fitWidget
+  MSG_BEFORE_HIDE, MSG_CLOSE_REQUEST, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
+  WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget, detachWidget
 } from '../../lib/index';
 
 
@@ -127,9 +126,10 @@ class VerboseWidget extends Widget {
     this.methods.push('onChildHidden');
   }
 
-  protected onClose(msg: Message) {
+  protected onCloseRequest(msg: Message) {
+    super.onCloseRequest(msg);
     this.messages.push(msg);
-    this.methods.push('onClose');
+    this.methods.push('onCloseRequest');
   }
 }
 
@@ -224,14 +224,14 @@ describe('phosphor-widget', () => {
 
   });
 
-  describe('MSG_CLOSE', () => {
+  describe('MSG_CLOSE_REQUEST', () => {
 
     it('should be a `Message` instance', () => {
-      expect(MSG_CLOSE instanceof Message).to.be(true);
+      expect(MSG_CLOSE_REQUEST instanceof Message).to.be(true);
     });
 
-    it('should have a `type` of `close`', () => {
-      expect(MSG_CLOSE.type).to.be('close');
+    it('should have a `type` of `close-request`', () => {
+      expect(MSG_CLOSE_REQUEST.type).to.be('close-request');
     });
 
   });
@@ -602,6 +602,26 @@ describe('phosphor-widget', () => {
         expect(() => { widget.addChild(widget); }).to.throwError();
       });
 
+      it('should reparent the child if appropriate', () => {
+        var child = new Widget();
+        var parent1 = new Widget();
+        var parent2 = new Widget();
+        child.parent = parent1;
+        parent2.addChild(child);
+        expect(child.parent).to.be(parent2);
+        expect(parent2.children).to.eql([child]);
+        expect(parent1.children).to.eql([]);
+      });
+
+      it('should first detach the child if appropriate', () => {
+        var child = new LogWidget();
+        var parent = new Widget();
+        attachWidget(child, document.body);
+        child.messages = [];
+        parent.addChild(child);
+        expect(child.messages[0]).to.be('before-detach');
+      });
+
     });
 
     describe('#insertChild()', () => {
@@ -636,6 +656,26 @@ describe('phosphor-widget', () => {
       it('should throw an error if the widget is added to itself', () => {
         var widget = new Widget();
         expect(() => { widget.insertChild(0, widget); }).to.throwError();
+      });
+
+      it('should reparent the child if appropriate', () => {
+        var child = new Widget();
+        var parent1 = new Widget();
+        var parent2 = new Widget();
+        child.parent = parent1;
+        parent2.insertChild(0, child);
+        expect(child.parent).to.be(parent2);
+        expect(parent2.children).to.eql([child]);
+        expect(parent1.children).to.eql([]);
+      });
+
+      it('should first detach the child if appropriate', () => {
+        var child = new LogWidget();
+        var parent = new Widget();
+        attachWidget(child, document.body);
+        child.messages = [];
+        parent.insertChild(0, child);
+        expect(child.messages[0]).to.be('before-detach');
       });
 
     });
@@ -751,6 +791,96 @@ describe('phosphor-widget', () => {
 
     });
 
+    describe('#update()', () => {
+
+      it('should post an `update-request` message by default', (done) => {
+        var widget = new LogWidget();
+        widget.update();
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['update-request']);
+          done();
+        });
+      });
+
+      it('should send an `update-request` if `immediate` is `true`', () => {
+        var widget = new LogWidget();
+        widget.update(true);
+        expect(widget.messages).to.eql(['update-request']);
+      });
+
+      it('should post an `update-request` if `immediate` is `false`', (done) => {
+        var widget = new LogWidget();
+        widget.update(false);
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['update-request']);
+          done();
+        });
+      });
+
+    });
+
+    describe('#layout()', () => {
+
+      it('should post a `layout-request` message by default', (done) => {
+        var widget = new LogWidget();
+        widget.layout();
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['layout-request']);
+          done();
+        });
+      });
+
+      it('should send a `layout-request` if `immediate` is `true`', () => {
+        var widget = new LogWidget();
+        widget.layout(true);
+        expect(widget.messages).to.eql(['layout-request']);
+      });
+
+      it('should post a `layout-request` if `immediate` is `false`', (done) => {
+        var widget = new LogWidget();
+        widget.layout(false);
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['layout-request']);
+          done();
+        });
+      });
+
+    });
+
+    describe('#close()', () => {
+
+      it('should post a `close-request` message by default', (done) => {
+        var widget = new LogWidget();
+        widget.close();
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['close-request']);
+          done();
+        });
+      });
+
+      it('should send a `close-request` if `immediate` is `true`', () => {
+        var widget = new LogWidget();
+        widget.close(true);
+        expect(widget.messages).to.eql(['close-request']);
+      });
+
+      it('should post a `close-request` if `immediate` is `false`', (done) => {
+        var widget = new LogWidget();
+        widget.close(false);
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['close-request']);
+          done();
+        });
+      });
+
+    });
+
     describe('#compressMessage()', () => {
 
       it('should compress `update-request` messages', (done) => {
@@ -775,13 +905,25 @@ describe('phosphor-widget', () => {
         });
       });
 
+      it('should compress `close-request` messages', (done) => {
+        var widget = new LogWidget();
+        postMessage(widget, MSG_CLOSE_REQUEST);
+        postMessage(widget, MSG_CLOSE_REQUEST);
+        postMessage(widget, MSG_CLOSE_REQUEST);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['close-request']);
+          done();
+        });
+      });
+
       it('should not compress other messages', (done) => {
         var widget = new LogWidget();
-        postMessage(widget, MSG_CLOSE);
-        postMessage(widget, MSG_CLOSE);
-        postMessage(widget, MSG_CLOSE);
+        var msg = new Message('foo');
+        postMessage(widget, msg);
+        postMessage(widget, msg);
+        postMessage(widget, msg);
         requestAnimationFrame(() => {
-          expect(widget.messages).to.eql(['close', 'close', 'close']);
+          expect(widget.messages).to.eql(['foo', 'foo', 'foo']);
           done();
         });
       });
@@ -1018,7 +1160,7 @@ describe('phosphor-widget', () => {
         var widget = new VerboseWidget();
         attachWidget(widget, document.body);
         widget.methods = [];
-        fitWidget(widget);
+        sendMessage(widget, ResizeMessage.UnknownSize);
         expect(widget.methods[0]).to.be('onResize');
       });
 
@@ -1028,7 +1170,7 @@ describe('phosphor-widget', () => {
           var widget = new VerboseWidget();
           attachWidget(widget, document.body);
           widget.messages = [];
-          fitWidget(widget);
+          sendMessage(widget, ResizeMessage.UnknownSize);
           expect(widget.messages[0] instanceof ResizeMessage).to.be(true);
         });
 
@@ -1036,46 +1178,8 @@ describe('phosphor-widget', () => {
           var widget = new VerboseWidget();
           attachWidget(widget, document.body);
           widget.messages = [];
-          fitWidget(widget);
+          sendMessage(widget, ResizeMessage.UnknownSize);
           expect(widget.messages[0].type).to.be('resize');
-        });
-
-        it('should have a `width` of `-1` if the size is unknown', () => {
-          var widget = new VerboseWidget();
-          sendMessage(widget, ResizeMessage.UnknownSize);
-          expect((<ResizeMessage>widget.messages[0]).width).to.be(-1);
-        });
-
-        it('should have a `height` of `-1` if the size is unknown', () => {
-          var widget = new VerboseWidget();
-          sendMessage(widget, ResizeMessage.UnknownSize);
-          expect((<ResizeMessage>widget.messages[0]).height).to.be(-1);
-        });
-
-        it('should have a valid `width` if the size is known', () => {
-          var widget = new VerboseWidget();
-          var div = document.createElement('div');
-          document.body.appendChild(div);
-          attachWidget(widget, div);
-          div.style.position = 'absolute';
-          div.style.width = '101px';
-          div.style.height = '101px';
-          widget.messages = [];
-          fitWidget(widget);
-          expect((<ResizeMessage>widget.messages[0]).width).to.be(101);
-        });
-
-        it('should have a valid `height` if the size is known', () => {
-          var widget = new VerboseWidget();
-          var div = document.createElement('div');
-          document.body.appendChild(div);
-          attachWidget(widget, div);
-          div.style.position = 'absolute';
-          div.style.width = '101px';
-          div.style.height = '101px';
-          widget.messages = [];
-          fitWidget(widget);
-          expect((<ResizeMessage>widget.messages[0]).height).to.be(101);
         });
 
       });
@@ -1408,28 +1512,44 @@ describe('phosphor-widget', () => {
 
     });
 
-    describe('#onClose()', () => {
+    describe('#onCloseRequest()', () => {
 
-      it('should be invoked on a `close`', () => {
+      it('should be invoked on a `close-request`', () => {
         var widget = new VerboseWidget();
-        sendMessage(widget, MSG_CLOSE);
-        expect(widget.methods[0]).to.be('onClose');
+        sendMessage(widget, MSG_CLOSE_REQUEST);
+        expect(widget.methods[0]).to.be('onCloseRequest');
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `Message`', () => {
           var widget = new VerboseWidget();
-          sendMessage(widget, MSG_CLOSE);
+          sendMessage(widget, MSG_CLOSE_REQUEST);
           expect(widget.messages[0] instanceof Message).to.be(true);
         });
 
-        it('should have a `type` of `close`', () => {
+        it('should have a `type` of `close-request`', () => {
           var widget = new VerboseWidget();
-          sendMessage(widget, MSG_CLOSE);
-          expect(widget.messages[0].type).to.be('close');
+          sendMessage(widget, MSG_CLOSE_REQUEST);
+          expect(widget.messages[0].type).to.be('close-request');
         });
 
+      });
+
+      it('should unparent a child widget by default', () => {
+        var parent = new Widget();
+        var child = new Widget();
+        child.parent = parent;
+        sendMessage(child, MSG_CLOSE_REQUEST);
+        expect(child.parent).to.be(null);
+        expect(parent.children).to.eql([]);
+      });
+
+      it('should detach a root widget by default', () => {
+        var widget = new Widget();
+        attachWidget(widget, document.body);
+        sendMessage(widget, MSG_CLOSE_REQUEST);
+        expect(widget.isAttached).to.be(false);
       });
 
     });
@@ -1606,44 +1726,6 @@ describe('phosphor-widget', () => {
       widget.messages = []
       detachWidget(widget);
       expect(widget.messages[0]).to.be('before-detach');
-    });
-
-  });
-
-  describe('fitWidget()', () => {
-
-    it('should resize a widget to fit its host', () => {
-      var widget = new Widget();
-      var div = document.createElement('div');
-      document.body.appendChild(div);
-      attachWidget(widget, div);
-      div.style.position = 'absolute';
-      div.style.width = '101px';
-      div.style.height = '101px';
-      fitWidget(widget);
-      expect(widget.node.style.width).to.be('101px');
-      expect(widget.node.style.width).to.be('101px');
-    });
-
-    it('should throw if widget is not a root', () => {
-      var child = new Widget();
-      var parent = new Widget();
-      child.parent = parent;
-      attachWidget(parent, document.body);
-      expect(() => { fitWidget(child) }).to.throwError();
-    });
-
-    it('should throw if the widget does not have a host', () => {
-      var widget = new Widget();
-      expect(() => { fitWidget(widget) }).to.throwError();
-    });
-
-    it('should dispatch a `resize` message to the widget', () => {
-      var widget = new LogWidget();
-      attachWidget(widget, document.body);
-      widget.messages = []
-      fitWidget(widget);
-      expect(widget.messages[0]).to.be('resize');
     });
 
   });
