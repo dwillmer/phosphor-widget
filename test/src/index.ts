@@ -80,41 +80,49 @@ class VerboseWidget extends Widget {
   }
 
   protected onUpdateRequest(msg: Message) {
+    super.onUpdateRequest(msg);
     this.messages.push(msg);
     this.methods.push('onUpdateRequest');
   }
 
   protected onLayoutRequest(msg: Message) {
+    super.onLayoutRequest(msg);
     this.messages.push(msg);
     this.methods.push('onLayoutRequest');
   }
 
   protected onAfterShow(msg: Message) {
+    super.onAfterShow(msg);
     this.messages.push(msg);
     this.methods.push('onAfterShow');
   }
 
   protected onBeforeHide(msg: Message) {
+    super.onBeforeHide(msg);
     this.messages.push(msg);
     this.methods.push('onBeforeHide');
   }
 
   protected onAfterAttach(msg: Message) {
+    super.onAfterAttach(msg);
     this.messages.push(msg);
     this.methods.push('onAfterAttach');
   }
 
   protected onBeforeDetach(msg: Message) {
+    super.onBeforeDetach(msg);
     this.messages.push(msg);
     this.methods.push('onBeforeDetach');
   }
 
-  protected onChildShown(msg: Message) {
+  protected onChildShown(msg: ChildMessage) {
+    super.onChildShown(msg);
     this.messages.push(msg);
     this.methods.push('onChildShown');
   }
 
-  protected onChildHidden(msg: Message) {
+  protected onChildHidden(msg: ChildMessage) {
+    super.onChildHidden(msg);
     this.messages.push(msg);
     this.methods.push('onChildHidden');
   }
@@ -310,12 +318,33 @@ describe('phosphor-widget', () => {
         expect(widget.isDisposed).to.be(true);
       });
 
+      it('should be a no-op if the widget already disposed', () => {
+        var called = false;
+        var widget = new Widget();
+        widget.dispose();
+        widget.disposed.connect(() => called = true);
+        widget.dispose();
+        expect(called).to.be(false);
+        expect(widget.isDisposed).to.be(true);
+      });
+
       it('should dispose of the widget descendants', () => {
         var child = new Widget();
         var parent = new Widget();
         child.parent = parent;
         parent.dispose();
         expect(child.isDisposed).to.be(true);
+      });
+
+      it('should remove the widget from its parent', () => {
+        var child = new Widget();
+        var parent = new Widget();
+        child.parent = parent;
+        child.dispose();
+        expect(parent.isDisposed).to.be(false);
+        expect(child.isDisposed).to.be(true);
+        expect(child.parent).to.be(null);
+        expect(parent.children).to.eql([]);
       });
 
       it('should automatically detach the widget', () => {
@@ -742,6 +771,17 @@ describe('phosphor-widget', () => {
         postMessage(widget, MSG_LAYOUT_REQUEST);
         requestAnimationFrame(() => {
           expect(widget.messages).to.eql(['layout-request']);
+          done();
+        });
+      });
+
+      it('should not compress other messages', (done) => {
+        var widget = new LogWidget();
+        postMessage(widget, MSG_CLOSE);
+        postMessage(widget, MSG_CLOSE);
+        postMessage(widget, MSG_CLOSE);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['close', 'close', 'close']);
           done();
         });
       });
