@@ -1,4 +1,5 @@
 #!/bin/bash
+cat ../test/coverage/Firefox*/lcov.info | ../node_modules/coveralls/bin/coveralls.js
 if [[ $TRAVIS_PULL_REQUEST == false && $TRAVIS_BRANCH == "master" ]]
 then
     echo "-- will build docs --"
