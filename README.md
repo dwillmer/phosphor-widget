@@ -4,7 +4,6 @@ phosphor-widget
 [![Build Status](https://travis-ci.org/phosphorjs/phosphor-widget.svg)](https://travis-ci.org/phosphorjs/phosphor-widget?branch=master)
 [![Coverage Status](https://coveralls.io/repos/phosphorjs/phosphor-widget/badge.svg?branch=master&service=github)](https://coveralls.io/github/phosphorjs/phosphor-widget?branch=master)
 
-
 The core Phosphor widget class.
 
 [API Docs](http://phosphorjs.github.io/phosphor-widget/api/)
