@@ -1222,6 +1222,18 @@ describe('phosphor-widget', () => {
 
       });
 
+      it('should dispatch `ResizeMessage.UnknownSize` to the children', () => {
+        var child0 = new VerboseWidget();
+        var child1 = new VerboseWidget();
+        var parent = new Widget();
+        parent.children = [child0, child1];
+        child0.messages = [];
+        child1.messages = [];
+        sendMessage(parent, MSG_UPDATE_REQUEST);
+        expect(child0.messages[0]).to.eql(ResizeMessage.UnknownSize);
+        expect(child1.messages[0]).to.eql(ResizeMessage.UnknownSize);
+      });
+
     });
 
     describe('#onLayoutRequest()', () => {
