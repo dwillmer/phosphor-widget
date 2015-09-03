@@ -3,7 +3,7 @@ module.exports = function (config) {
     frameworks: ['browserify', 'mocha'],
     reporters: ['mocha'],
     preprocessors: { 'build/index.js': ['browserify'] },
-    browserify: { debug: true },
+    browserify: { transform: ['browserify-css'], debug: true },
     files: ['build/index.js'],
     port: 9876,
     colors: true,

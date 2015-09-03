@@ -7,6 +7,8 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
+import './index.css';
+
 import * as arrays
   from 'phosphor-arrays';
 
