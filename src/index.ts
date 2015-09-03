@@ -7,8 +7,6 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
-import './index.css';
-
 import * as arrays
   from 'phosphor-arrays';
 
@@ -35,6 +33,8 @@ import {
 import {
   ISignal, clearSignalData, defineSignal
 } from 'phosphor-signaling';
+
+import './index.css';
 
 
 /**
