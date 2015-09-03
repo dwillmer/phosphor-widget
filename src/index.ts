@@ -34,6 +34,8 @@ import {
   ISignal, clearSignalData, defineSignal
 } from 'phosphor-signaling';
 
+import './index.css';
+
 
 /**
  * `p-Widget`: the class name added to Widget instances.

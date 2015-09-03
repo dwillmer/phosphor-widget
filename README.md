@@ -80,6 +80,19 @@ Earlier versions may also work, but come with no guarantees.
 - Chrome 38+
 
 
+Bundling for Browser Use
+------------------------
+
+Follow the package install instructions first.
+
+Bundling requires `browserify` and `browserify-css`.
+
+```bash
+npm install --save-dev browserify browserify-css
+browserify your_source.js -t browserify-css -o your_app.js --debug
+```
+
+
 Usage Examples
 --------------
 

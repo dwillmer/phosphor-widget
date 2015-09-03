@@ -16,6 +16,8 @@
     "phosphor-signaling": "^1.0.1"
   },
   "devDependencies": {
+    "browserify": "^11.0.1",
+    "browserify-css": "^0.6.1",
     "browserify-istanbul": "^0.2.1",
     "coveralls": "^2.11.4",
     "dts-generator": "^1.5.0",
