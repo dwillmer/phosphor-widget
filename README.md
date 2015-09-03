@@ -88,7 +88,7 @@ Follow the package install instructions first.
 Bundling requires `browserify` and `browserify-css`.
 
 ```bash
-npm install --save browserify browserify-css
+npm install --save-dev browserify browserify-css
 browserify your_source.js -t browserify-css -o your_app.js --debug
 ```
 
