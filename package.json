@@ -7,8 +7,6 @@
     "definition": "lib/phosphor-widget.d.ts"
   },
   "dependencies": {
-    "browserify": "^11.0.1",
-    "browserify-css": "^0.6.1",
     "phosphor-arrays": "^1.0.1",
     "phosphor-disposable": "^1.0.1",
     "phosphor-messaging": "^1.0.2",
@@ -18,6 +16,7 @@
     "phosphor-signaling": "^1.0.1"
   },
   "devDependencies": {
+    "browserify": "^11.0.1",
     "browserify-css": "^0.6.1",
     "browserify-istanbul": "^0.2.1",
     "coveralls": "^2.11.4",
