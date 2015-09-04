@@ -1,25 +1,22 @@
 {
   "name": "phosphor-widget",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "The core Phosphor widget class.",
   "main": "lib/index.js",
-  "typescript": {
-    "definition": "lib/phosphor-widget.d.ts"
-  },
+  "typings": "lib/index.d.ts",
   "dependencies": {
-    "phosphor-arrays": "^1.0.1",
-    "phosphor-disposable": "^1.0.1",
-    "phosphor-messaging": "^1.0.2",
-    "phosphor-nodewrapper": "^1.0.1",
-    "phosphor-properties": "^1.0.0",
-    "phosphor-queue": "^1.0.1",
-    "phosphor-signaling": "^1.0.1"
+    "phosphor-arrays": "^1.0.3",
+    "phosphor-disposable": "^1.0.2",
+    "phosphor-messaging": "^1.0.3",
+    "phosphor-nodewrapper": "^1.0.2",
+    "phosphor-properties": "^1.0.1",
+    "phosphor-queue": "^1.0.2",
+    "phosphor-signaling": "^1.0.2"
   },
   "devDependencies": {
     "browserify-css": "^0.6.1",
     "browserify-istanbul": "^0.2.1",
     "coveralls": "^2.11.4",
-    "dts-generator": "^1.5.0",
     "expect.js": "^0.3.1",
     "glob-copy": "^0.1.0",
     "karma": "^0.13.9",
@@ -32,16 +29,15 @@
     "karma-mocha-reporter": "^1.1.1",
     "mocha": "^2.2.5",
     "rimraf": "^2.4.2",
-    "typedoc": "^0.3.8",
-    "typescript": "^1.5.3"
+    "typedoc": "git://github.com/phosphorjs/typedoc.git",
+    "typescript": "1.6.0-beta"
   },
   "scripts": {
     "clean": "rimraf lib && rimraf test/build && rimraf test/coverage",
     "build:src": "tsc --project src",
-    "build:dts": "node scripts/dtsbundle.js",
     "build:test": "tsc --project test/src",
     "build:css": "node scripts/copycss.js",
-    "build": "npm run build:src && npm run build:dts && npm run build:test && npm run build:css",
+    "build": "npm run build:src && npm run build:test && npm run build:css",
     "docs": "rimraf docs/api && typedoc --options scripts/tdoptions.json",
     "prepublish": "npm run build",
     "test:chrome": "karma start --browsers=Chrome test/karma.conf.js",
@@ -57,7 +53,7 @@
   "files": [
     "lib/index.js",
     "lib/index.css",
-    "lib/phosphor-widget.d.ts"
+    "lib/index.d.ts"
   ],
   "keywords": [
     "ui",
