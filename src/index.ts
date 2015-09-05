@@ -547,10 +547,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * @param immediate - Whether to dispatch the message immediately
    *   (`true`) or in the future (`false`). The default is `false`.
    *
-   * #### Notes
-   * This method uses `sendMessage` to dispatch the message immediately,
-   * and `postMessage` to dispatch in the future.
-   *
    * **See also:** [[MSG_UPDATE_REQUEST]], [[onUpdateRequest]]
    */
   update(immediate = false): void {
@@ -566,10 +562,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * @param immediate - Whether to dispatch the message immediately
    *   (`true`) or in the future (`false`). The default is `false`.
-   *
-   * #### Notes
-   * This method uses `sendMessage` to dispatch the message immediately,
-   * and `postMessage` to dispatch in the future.
    *
    * **See also:** [[MSG_CLOSE_REQUEST]], [[onCloseRequest]]
    */
@@ -728,10 +720,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * A message handler invoked on a `'resize'` message.
    *
    * #### Notes
-   * Since it is not possible to efficiently know (in general) whether
-   * a child widget has been resized due to a resize of its parent, the
-   * default implementation of this method dispatches an [[UnknownSize]]
-   * resize message to each child.
+   * The default implementation of this handler sends an [[UnknownSize]]
+   * resize message to each child. This ensures that the resize messages
+   * propagate through all widgets in the hierarchy.
    *
    * Subclasses may reimplement this method as needed, but they must
    * dispatch `'resize'` messages to their children as appropriate.
@@ -743,6 +734,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   /**
    * A message handler invoked on an `'update-request'` message.
    *
+   * #### Notes
    * The default implementation of this handler sends an [[UnknownSize]]
    * resize message to each child. This ensures that the resize messages
    * propagate through all widgets in the hierarchy.
@@ -759,6 +751,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   /**
    * A message handler invoked on a `'close-request'` message.
    *
+   * #### Notes
    * The default implementation of this handler will unparent or detach
    * the widget as appropriate. Subclasses may reimplement this handler
    * for custom close behavior.
