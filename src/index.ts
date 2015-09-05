@@ -761,6 +761,22 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
   }
 
   /**
+   * A message handler invoked on an `'update-request'` message.
+   *
+   * The default implementation of this handler sends an [[UnknownSize]]
+   * resize message to each child. This ensures that the resize messages
+   * propagate through all widgets in the hierarchy.
+   *
+   * Subclass may reimplement this method as needed, but they should
+   * dispatch `'resize'` messages to their children as appropriate.
+   *
+   * **See also:** [[update]], [[MSG_UPDATE_REQUEST]]
+   */
+  protected onUpdateRequest(msg: Message): void {
+    sendToAll(this._children, ResizeMessage.UnknownSize);
+  }
+
+  /**
    * A message handler invoked on a `'close-request'` message.
    *
    * The default implementation of this handler will unparent or detach
@@ -775,22 +791,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
     } else if (this.isAttached) {
       detachWidget(this);
     }
-  }
-
-  /**
-   * A message handler invoked on an `'update-request'` message.
-   *
-   * The default implementation of this handler sends an [[UnknownSize]]
-   * resize message to each child. This ensures that the resize messages
-   * propagate through all widgets in the hierarchy.
-   *
-   * Subclass may reimplement this method as needed, but they should
-   * dispatch `'resize'` messages to their children as appropriate.
-   *
-   * **See also:** [[update]], [[MSG_UPDATE_REQUEST]]
-   */
-  protected onUpdateRequest(msg: Message): void {
-    sendToAll(this._children, ResizeMessage.UnknownSize);
   }
 
   /**
