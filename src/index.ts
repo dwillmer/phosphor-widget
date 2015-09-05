@@ -81,7 +81,7 @@ const MSG_UPDATE_REQUEST = new Message('update-request');
  *
  * Messages of this type are compressed by default.
  *
- * **See also:** [[layout]], [[onLayoutRequest]]
+ * **See also:** [[onLayoutRequest]]
  */
 export
 const MSG_LAYOUT_REQUEST = new Message('layout-request');
@@ -562,26 +562,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
-   * Dispatch a `'layout-request'` message to the widget.
-   *
-   * @param immediate - Whether to dispatch the message immediately
-   *   (`true`) or in the future (`false`). The default is `false`.
-   *
-   * #### Notes
-   * This method uses `sendMessage` to dispatch the message immediately,
-   * and `postMessage` to dispatch in the future.
-   *
-   * **See also:** [[MSG_LAYOUT_REQUEST]], [[onLayoutRequest]]
-   */
-  layout(immediate = false): void {
-    if (immediate) {
-      sendMessage(this, MSG_LAYOUT_REQUEST);
-    } else {
-      postMessage(this, MSG_LAYOUT_REQUEST);
-    }
-  }
-
-  /**
    * Dispatch a `'close-request'` message to the widget.
    *
    * @param immediate - Whether to dispatch the message immediately
@@ -798,7 +778,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also:** [[layout]], [[MSG_LAYOUT_REQUEST]]
+   * **See also:** [[MSG_LAYOUT_REQUEST]]
    */
   protected onLayoutRequest(msg: Message): void { }
 
