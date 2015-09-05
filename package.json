@@ -1,6 +1,6 @@
 {
   "name": "phosphor-widget",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "The core Phosphor widget class.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
