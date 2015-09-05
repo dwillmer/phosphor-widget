@@ -23,7 +23,7 @@ import {
 } from 'phosphor-nodewrapper';
 
 import {
-  IPropertyChangedArgs, IPropertyOwner, Property, clearPropertyData
+  Property, clearPropertyData
 } from 'phosphor-properties';
 
 import {
@@ -31,7 +31,7 @@ import {
 } from 'phosphor-queue';
 
 import {
-  ISignal, clearSignalData, defineSignal
+  ISignal, Signal, clearSignalData
 } from 'phosphor-signaling';
 
 import './index.css';
@@ -160,7 +160,14 @@ const MSG_BEFORE_DETACH = new Message('before-detach');
  * its content can then be embedded within a Phosphor widget hierarchy.
  */
 export
-class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPropertyOwner {
+class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
+  /**
+   * A signal emitted when the widget is disposed.
+   *
+   * **See also:** [[disposed]], [[isDisposed]]
+   */
+  static disposedSignal = new Signal<Widget, void>();
+
   /**
    * A property descriptor which controls the hidden state of a widget.
    *
@@ -182,20 +189,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
     value: false,
     changed: onHiddenChanged,
   });
-
-  /**
-   * A signal emitted when a widget property is changed.
-   */
-  @defineSignal
-  propertyChanged: ISignal<IPropertyChangedArgs>;
-
-  /**
-   * A signal emitted when the widget is disposed.
-   *
-   * **See also:** [[isDisposed]]
-   */
-  @defineSignal
-  disposed: ISignal<void>;
 
   /**
    * Construct a new widget.
@@ -241,6 +234,13 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler, IPrope
     clearSignalData(this);
     clearMessageData(this);
     clearPropertyData(this);
+  }
+
+  /**
+   * A signal emitted when the widget is disposed.
+   */
+  get disposed(): ISignal<Widget, void> {
+    return Widget.disposedSignal.bind(this);
   }
 
   /**
