@@ -18,8 +18,8 @@ import {
 } from 'phosphor-properties';
 
 import {
-  Queue
-} from 'phosphor-queue';
+  Signal
+} from 'phosphor-signaling';
 
 import {
   HIDDEN_CLASS, MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH,
@@ -238,6 +238,14 @@ describe('phosphor-widget', () => {
 
   describe('Widget', () => {
 
+    describe('.disposedSignal', () => {
+
+      it('should be a signal', () => {
+        expect(Widget.disposedSignal instanceof Signal).to.be(true);
+      });
+
+    });
+
     describe('.hiddenProperty', () => {
 
       it('should be a property descriptor', () => {
@@ -273,30 +281,6 @@ describe('phosphor-widget', () => {
         Widget.hiddenProperty.set(widget, true);
         expect(widget.messages.indexOf('before-hide')).to.not.be(-1);
         detachWidget(widget);
-      });
-
-    });
-
-    describe('#propertyChanged', () => {
-
-      it('should be emitted when a widget property changes', () => {
-        var called = false;
-        var widget = new Widget();
-        widget.propertyChanged.connect(() => { called = true; });
-        widget.hidden = true;
-        expect(called).to.be(true);
-      });
-
-    });
-
-    describe('#disposed', () => {
-
-      it('should be emitted when the widget is disposed', () => {
-        var called = false;
-        var widget = new Widget();
-        widget.disposed.connect(() => { called = true; });
-        widget.dispose();
-        expect(called).to.be(true);
       });
 
     });
@@ -353,6 +337,18 @@ describe('phosphor-widget', () => {
         expect(widget.isAttached).to.be(true);
         widget.dispose();
         expect(widget.isAttached).to.be(false);
+      });
+
+    });
+
+    describe('#disposed', () => {
+
+      it('should be emitted when the widget is disposed', () => {
+        var called = false;
+        var widget = new Widget();
+        widget.disposed.connect(() => { called = true; });
+        widget.dispose();
+        expect(called).to.be(true);
       });
 
     });
