@@ -9,9 +9,9 @@
     "phosphor-disposable": "^1.0.2",
     "phosphor-messaging": "^1.0.3",
     "phosphor-nodewrapper": "^1.0.2",
-    "phosphor-properties": "^1.0.1",
+    "phosphor-properties": "^1.1.0",
     "phosphor-queue": "^1.0.2",
-    "phosphor-signaling": "^1.0.2"
+    "phosphor-signaling": "^1.1.0"
   },
   "devDependencies": {
     "browserify-css": "^0.6.1",
