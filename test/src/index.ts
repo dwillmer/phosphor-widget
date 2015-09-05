@@ -817,36 +817,6 @@ describe('phosphor-widget', () => {
 
     });
 
-    describe('#layout()', () => {
-
-      it('should post a `layout-request` message by default', (done) => {
-        var widget = new LogWidget();
-        widget.layout();
-        expect(widget.messages).to.eql([]);
-        requestAnimationFrame(() => {
-          expect(widget.messages).to.eql(['layout-request']);
-          done();
-        });
-      });
-
-      it('should send a `layout-request` if `immediate` is `true`', () => {
-        var widget = new LogWidget();
-        widget.layout(true);
-        expect(widget.messages).to.eql(['layout-request']);
-      });
-
-      it('should post a `layout-request` if `immediate` is `false`', (done) => {
-        var widget = new LogWidget();
-        widget.layout(false);
-        expect(widget.messages).to.eql([]);
-        requestAnimationFrame(() => {
-          expect(widget.messages).to.eql(['layout-request']);
-          done();
-        });
-      });
-
-    });
-
     describe('#close()', () => {
 
       it('should post a `close-request` message by default', (done) => {
