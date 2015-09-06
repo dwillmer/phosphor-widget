@@ -238,6 +238,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
 
   /**
    * A signal emitted when the widget is disposed.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[disposedSignal]].
    */
   get disposed(): ISignal<Widget, void> {
     return Widget.disposedSignal.bind(this);
