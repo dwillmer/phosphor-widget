@@ -911,6 +911,8 @@ type LayoutRect = { top: number, left: number, width: number, height: number };
  * set the geometry of the widget.
  *
  * This function does **not** read any data from the DOM.
+ *
+ * **See also:** [[setLayoutGeometry]], [[clearLayoutGeometry]]
  */
 export
 function getLayoutGeometry(widget: Widget): LayoutRect {
@@ -944,6 +946,13 @@ function getLayoutGeometry(widget: Widget): LayoutRect {
  * the size constraints of the widget.
  *
  * This function does **not** read any data from the DOM.
+ *
+ * Code which uses this function to layout a widget is responsible for
+ * calling [[clearLayoutGeometry]] when it no longer manages the layout
+ * for the widget. The layout geometry **is not** cleared automatically
+ * by the base [[Widget]] class.
+ *
+ * **See also:** [[getLayoutGeometry]], [[clearLayoutGeometry]]
  */
 export
 function setLayoutGeometry(widget: Widget, left: number, top: number, width: number, height: number): void {
@@ -994,6 +1003,12 @@ function setLayoutGeometry(widget: Widget, left: number, top: number, width: num
  * This function will **not** send a [[ResizeMessage]] to the widget.
  *
  * This function does **not** read any data from the DOM.
+ *
+ * This function should be called when the widget's layout manager no
+ * longer manages the widget. This will allow the widget to be added
+ * to another panel without conflict.
+ *
+ * **See also:** [[getLayoutGeometry]], [[setLayoutGeometry]]
  */
 export
 function clearLayoutGeometry(widget: Widget): void {
