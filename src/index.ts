@@ -887,6 +887,129 @@ function detachWidget(widget: Widget): void {
 
 
 /**
+ * A type alias for a widget layout geometry rect.
+ *
+ * **See also:** [[getLayoutGeometry]]
+ */
+export
+type LayoutRect = { top: number, left: number, width: number, height: number };
+
+
+/**
+ * Get the current layout geometry rect for a widget.
+ *
+ * @param widget - The widget of interest.
+ *
+ * @returns The current layout geometry rect for the specified widget,
+ *   or `undefined` if the widget has no current layout geometry.
+ *
+ * #### Notes
+ * This information is only useful when using absolute positioning to
+ * layout a widget. It will reflect the data from the most recent call
+ * to [[setLayoutGeometry]]. It will **not** reflect the current widget
+ * geometry if any method other than [[setLayoutGeometry]] was used to
+ * set the geometry of the widget.
+ *
+ * This function does **not** read any data from the DOM.
+ */
+export
+function getLayoutGeometry(widget: Widget): LayoutRect {
+  var rect = layoutGeometryMap.get(widget);
+  return rect ? cloneRect(rect) : void 0;
+}
+
+
+/**
+ * Set the layout geometry for a widget.
+ *
+ * @param widget - The widget of interest.
+ *
+ * @param left - The left edge of the widget, in pixels.
+ *
+ * @param top - The top edge of the widget, in pixels.
+ *
+ * @param width - The width of the widget, in pixels.
+ *
+ * @param height - The height of the widget, in pixels.
+ *
+ * #### Notes
+ * This function is only useful when using absolute positioning to set
+ * the layout a widget. It will update the inline style of the widget
+ * with the specified values. If the either the width or the height is
+ * different from the previous value, a [[ResizeMessage]] will be sent
+ * to the widget.
+ *
+ * This function does **not** take into account the size limits of the
+ * widget. It is assumed that the given width and height do not violate
+ * the size constraints of the widget.
+ *
+ * This function does **not** read any data from the DOM.
+ */
+export
+function setLayoutGeometry(widget: Widget, left: number, top: number, width: number, height: number): void {
+  var resized = false;
+  var style = widget.node.style;
+  var rect = layoutGeometryMap.get(widget);
+  if (!rect) {
+    resized = true;
+    style.top = top + 'px';
+    style.left = left + 'px';
+    style.width = width + 'px';
+    style.height = height + 'px';
+    layoutGeometryMap.set(widget, makeRect(left, top, width, height));
+  } else {
+    if (top !== rect.top) {
+      rect.top = top;
+      style.top = top + 'px';
+    }
+    if (left !== rect.left) {
+      rect.left = left;
+      style.left = left + 'px';
+    }
+    if (width !== rect.width) {
+      resized = true;
+      rect.width = width;
+      style.width = width + 'px';
+    }
+    if (height !== rect.height) {
+      resized = true;
+      rect.height = height;
+      style.height = height + 'px';
+    }
+  }
+  if (resized) sendMessage(widget, new ResizeMessage(width, height));
+}
+
+
+/**
+ * Clear the current layout geometry for a widget.
+ *
+ * @param widget - The widget of interest.
+ *
+ * #### Notes
+ * This function is only useful when using absolute positioning to set
+ * the layout a widget. It will reset the inline style of the widget
+ * and clear the stored geometry values.
+ *
+ * This function will **not** send a [[ResizeMessage]] to the widget.
+ *
+ * This function does **not** read any data from the DOM.
+ */
+export
+function clearLayoutGeometry(widget: Widget): void {
+  if (!layoutGeometryMap.has(widget)) {
+    return;
+  }
+  layoutGeometryMap.delete(widget);
+  var style = widget.node.style;
+  style.top = '';
+  style.left = '';
+  style.width = '';
+  style.height = '';
+}
+
+
+/**
  * A message class for child-related messages.
  */
 export
@@ -1006,6 +1129,12 @@ class ResizeMessage extends Message {
 
 
 /**
+ * The mapping of widget to layout geometry rect.
+ */
+var layoutGeometryMap = new WeakMap<Widget, LayoutRect>();
+
+
+/**
  * An enum of widget bit flags.
  */
 enum WidgetFlag {
@@ -1023,6 +1152,22 @@ enum WidgetFlag {
    * The widget has been disposed.
    */
   IsDisposed = 0x4,
+}
+
+
+/**
+ * Create a layout rect from the given parameters.
+ */
+function makeRect(left: number, top: number, width: number, height: number): LayoutRect {
+  return { top: top, left: left, width: width, height: height };
+}
+
+
+/**
+ * Create a clone of the given layout rect.
+ */
+function cloneRect(r: LayoutRect): LayoutRect {
+  return { top: r.top, left: r.left, width: r.width, height: r.height };
 }
 
 
