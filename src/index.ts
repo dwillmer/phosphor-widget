@@ -15,6 +15,10 @@ import {
 } from 'phosphor-disposable';
 
 import {
+  IBoxSizing, ISizeLimits, boxSizing, sizeLimits
+} from 'phosphor-domutil';
+
+import {
   IMessageHandler, Message, clearMessageData, postMessage, sendMessage
 } from 'phosphor-messaging';
 
@@ -310,6 +314,68 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
+   * Get the box sizing for the widget's DOM node.
+   *
+   * #### Notes
+   * This value is computed once and then cached in order to avoid
+   * excessive style recomputations. The cache can be cleared via
+   * [[clearBoxSizing]].
+   *
+   * Layout widgets rely on this property when computing their layout.
+   * If a layout widget's box sizing changes at runtime, the box sizing
+   * cache should be cleared and the layout widget should be posted a
+   *`'layout-request'` message.
+   *
+   * This is a read-only property.
+   *
+   * **See also:** [[clearBoxSizing]]
+   */
+  get boxSizing(): IBoxSizing {
+    if (this._box) return this._box;
+    return this._box = Object.freeze(boxSizing(this.node));
+  }
+
+  /**
+   * Get the size limits for the widget's DOM node.
+   *
+   * #### Notes
+   * This value is computed once and then cached in order to avoid
+   * excessive style recomputations. The cache can be cleared by
+   * calling [[clearSizeLimits]].
+   *
+   * Layout widgets rely on this property of their child widgets when
+   * computing the layout. If a child widget's size limits change at
+   * runtime, the size limits should be cleared and the layout widget
+   * should be posted a `'layout-request'` message.
+   *
+   * This is a read-only property.
+   *
+   * **See also:** [[setSizeLimits]], [[clearSizeLimits]]
+   */
+  get sizeLimits(): ISizeLimits {
+    if (this._limits) return this._limits;
+    return this._limits = Object.freeze(sizeLimits(this.node));
+  }
+
+  /**
+   * Get the current offset geometry rect for the widget.
+   *
+   * #### Notes
+   * If the widget geometry has been set using [[setOffsetGeometry]],
+   * those values will be used to populate the rect, and no data will
+   * be read from the DOM. Otherwise, the offset geometry of the node
+   * **will** be read from the DOM, which may cause a reflow.
+   *
+   * This is a read-only property.
+   *
+   * **See also:** [[setOffsetGeometry]], [[clearOffsetGeometry]]
+   */
+  get offsetRect(): IOffsetRect {
+    if (this._rect) return cloneOffsetRect(this._rect);
+    return getOffsetRect(this.node);
+  }
+
+  /**
    * Get the parent of the widget.
    *
    * #### Notes
@@ -577,6 +643,156 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
+   * Clear the cached box sizing for the widget.
+   *
+   * #### Notes
+   * This method does **not** read from the DOM.
+   *
+   * This method does **not** write to the DOM.
+   *
+   * **See also:** [[boxSizing]]
+   */
+  clearBoxSizing(): void {
+    this._box = null;
+  }
+
+  /**
+   * Set the size limits for the widget's DOM node.
+   *
+   * @param minWidth - The min width for the widget, in pixels.
+   *
+   * @param minHeight - The min height for the widget, in pixels.
+   *
+   * @param maxWidth - The max width for the widget, in pixels.
+   *
+   * @param maxHeight - The max height for the widget, in pixels.
+   *
+   * #### Notes
+   * This method does **not** read from the DOM.
+   *
+   * **See also:** [[sizeLimits]], [[clearSizeLimits]]
+   */
+  setSizeLimits(minWidth: number, minHeight: number, maxWidth: number, maxHeight: number): void {
+    var minW = Math.max(0, minWidth);
+    var maxW = Math.max(0, maxWidth);
+    var minH = Math.max(0, minHeight);
+    var maxH = Math.max(0, maxHeight);
+    this._limits = Object.freeze({
+      minWidth: minW,
+      maxWidth: maxW,
+      minHeight: minH,
+      maxHeight: maxH,
+    });
+    var style = this.node.style;
+    style.minWidth = minW + 'px';
+    style.maxWidth = maxW + 'px';
+    style.minHeight = minH + 'px';
+    style.maxHeight = maxH + 'px';
+  }
+
+  /**
+   * Clear the cached size limits for the widget.
+   *
+   * #### Notes
+   * This method does **not** read from the DOM.
+   *
+   * **See also:** [[sizeLimits]], [[setSizeLimits]]
+   */
+  clearSizeLimits(): void {
+    this._limits = null;
+    var style = this.node.style;
+    style.minWidth = '';
+    style.maxWidth = '';
+    style.minHeight = '';
+    style.maxHeight = '';
+  }
+
+  /**
+   * Set the offset geometry for the widget.
+   *
+   * @param left - The offset left edge of the widget, in pixels.
+   *
+   * @param top - The offset top edge of the widget, in pixels.
+   *
+   * @param width - The offset width of the widget, in pixels.
+   *
+   * @param height - The offset height of the widget, in pixels.
+   *
+   * #### Notes
+   * This method is only useful when using absolute positioning to set
+   * the layout geometry of the widget. It will update the inline style
+   * of the widget with the specified values. If the width or height is
+   * different from the previous value, a [[ResizeMessage]] will be sent
+   * to the widget.
+   *
+   * This method does **not** take into account the size limits of the
+   * widget. It is assumed that the specified width and height do not
+   * violate the size constraints of the widget.
+   *
+   * This method does **not** read any data from the DOM.
+   *
+   * Code which uses this method to layout a widget is responsible for
+   * calling [[clearOffsetGeometry]] when it is finished managing the
+   * widget.
+   *
+   * **See also:** [[offsetRect]], [[clearOffsetGeometry]]
+   */
+  setOffsetGeometry(left: number, top: number, width: number, height: number): void {
+    var rect = this._rect || (this._rect = makeOffsetRect());
+    var style = this.node.style;
+    var resized = false;
+    if (top !== rect.top) {
+      rect.top = top;
+      style.top = top + 'px';
+    }
+    if (left !== rect.left) {
+      rect.left = left;
+      style.left = left + 'px';
+    }
+    if (width !== rect.width) {
+      resized = true;
+      rect.width = width;
+      style.width = width + 'px';
+    }
+    if (height !== rect.height) {
+      resized = true;
+      rect.height = height;
+      style.height = height + 'px';
+    }
+    if (resized) sendMessage(this, new ResizeMessage(width, height));
+  }
+
+  /**
+   * Clear the offset geometry for the widget.
+   *
+   * #### Notes
+   * This method is only useful when using absolute positioning to set
+   * the layout geometry of the widget. It will reset the inline style
+   * of the widget and clear the stored offset geometry values.
+   *
+   * This method will **not** dispatch a [[ResizeMessage]].
+   *
+   * This method does **not** read any data from the DOM.
+   *
+   * This method should be called by the widget's layout manager when
+   * it no longer manages the widget. It allows the widget to be added
+   * to another layout panel without conflict.
+   *
+   * **See also:** [[offsetRect]], [[setOffsetGeometry]]
+   */
+  clearOffsetGeometry(): void {
+    if (!this._rect) {
+      return;
+    }
+    this._rect = null;
+    var style = this.node.style;
+    style.top = '';
+    style.left = '';
+    style.width = '';
+    style.height = '';
+  }
+
+  /**
    * Process a message sent to the widget.
    *
    * @param msg - The message sent to the widget.
@@ -827,6 +1043,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   private _flags = 0;
   private _parent: Widget = null;
   private _children: Widget[] = [];
+  private _box: IBoxSizing = null;
+  private _rect: IOffsetRect = null;
+  private _limits: ISizeLimits = null;
 }
 
 
@@ -883,144 +1102,6 @@ function detachWidget(widget: Widget): void {
   }
   sendMessage(widget, MSG_BEFORE_DETACH);
   widget.node.parentNode.removeChild(widget.node);
-}
-
-
-/**
- * A type alias for a widget layout geometry rect.
- *
- * **See also:** [[getLayoutGeometry]]
- */
-export
-type LayoutRect = { top: number, left: number, width: number, height: number };
-
-
-/**
- * Get the current layout geometry rect for a widget.
- *
- * @param widget - The widget of interest.
- *
- * @returns The current layout geometry rect for the specified widget,
- *   or `undefined` if the widget has no current layout geometry.
- *
- * #### Notes
- * This information is only useful when using absolute positioning to
- * layout a widget. It will reflect the data from the most recent call
- * to [[setLayoutGeometry]]. It will **not** reflect the current widget
- * geometry if any method other than [[setLayoutGeometry]] was used to
- * set the geometry of the widget.
- *
- * This function does **not** read any data from the DOM.
- *
- * **See also:** [[setLayoutGeometry]], [[clearLayoutGeometry]]
- */
-export
-function getLayoutGeometry(widget: Widget): LayoutRect {
-  var rect = layoutGeometryMap.get(widget);
-  return rect ? cloneRect(rect) : void 0;
-}
-
-
-/**
- * Set the layout geometry for a widget.
- *
- * @param widget - The widget of interest.
- *
- * @param left - The left edge of the widget, in pixels.
- *
- * @param top - The top edge of the widget, in pixels.
- *
- * @param width - The width of the widget, in pixels.
- *
- * @param height - The height of the widget, in pixels.
- *
- * #### Notes
- * This function is only useful when using absolute positioning to set
- * the layout a widget. It will update the inline style of the widget
- * with the specified values. If the either the width or the height is
- * different from the previous value, a [[ResizeMessage]] will be sent
- * to the widget.
- *
- * This function does **not** take into account the size limits of the
- * widget. It is assumed that the given width and height do not violate
- * the size constraints of the widget.
- *
- * This function does **not** read any data from the DOM.
- *
- * Code which uses this function to layout a widget is responsible for
- * calling [[clearLayoutGeometry]] when it no longer manages the layout
- * for the widget. The layout geometry **is not** cleared automatically
- * by the base [[Widget]] class.
- *
- * **See also:** [[getLayoutGeometry]], [[clearLayoutGeometry]]
- */
-export
-function setLayoutGeometry(widget: Widget, left: number, top: number, width: number, height: number): void {
-  var resized = false;
-  var style = widget.node.style;
-  var rect = layoutGeometryMap.get(widget);
-  if (!rect) {
-    resized = true;
-    style.top = top + 'px';
-    style.left = left + 'px';
-    style.width = width + 'px';
-    style.height = height + 'px';
-    layoutGeometryMap.set(widget, makeRect(left, top, width, height));
-  } else {
-    if (top !== rect.top) {
-      rect.top = top;
-      style.top = top + 'px';
-    }
-    if (left !== rect.left) {
-      rect.left = left;
-      style.left = left + 'px';
-    }
-    if (width !== rect.width) {
-      resized = true;
-      rect.width = width;
-      style.width = width + 'px';
-    }
-    if (height !== rect.height) {
-      resized = true;
-      rect.height = height;
-      style.height = height + 'px';
-    }
-  }
-  if (resized) sendMessage(widget, new ResizeMessage(width, height));
-}
-
-
-/**
- * Clear the current layout geometry for a widget.
- *
- * @param widget - The widget of interest.
- *
- * #### Notes
- * This function is only useful when using absolute positioning to set
- * the layout a widget. It will reset the inline style of the widget
- * and clear the stored geometry values.
- *
- * This function will **not** send a [[ResizeMessage]] to the widget.
- *
- * This function does **not** read any data from the DOM.
- *
- * This function should be called when the widget's layout manager no
- * longer manages the widget. This will allow the widget to be added
- * to another panel without conflict.
- *
- * **See also:** [[getLayoutGeometry]], [[setLayoutGeometry]]
- */
-export
-function clearLayoutGeometry(widget: Widget): void {
-  if (!layoutGeometryMap.has(widget)) {
-    return;
-  }
-  layoutGeometryMap.delete(widget);
-  var style = widget.node.style;
-  style.top = '';
-  style.left = '';
-  style.width = '';
-  style.height = '';
 }
 
 
@@ -1144,9 +1225,30 @@ class ResizeMessage extends Message {
 
 
 /**
- * The mapping of widget to layout geometry rect.
+ * An object which stores offset geometry information.
  */
-var layoutGeometryMap = new WeakMap<Widget, LayoutRect>();
+export
+interface IOffsetRect {
+  /**
+   * The offset top edge, in pixels.
+   */
+  top: number;
+
+  /**
+   * The offset left edge, in pixels.
+   */
+  left: number;
+
+  /**
+   * The offset width, in pixels.
+   */
+  width: number;
+
+  /**
+   * The offset height, in pixels.
+   */
+  height: number;
+}
 
 
 /**
@@ -1171,18 +1273,36 @@ enum WidgetFlag {
 
 
 /**
- * Create a layout rect from the given parameters.
+ * Create a new offset rect full of NaN's.
  */
-function makeRect(left: number, top: number, width: number, height: number): LayoutRect {
-  return { top: top, left: left, width: width, height: height };
+function makeOffsetRect(): IOffsetRect {
+  return { top: NaN, left: NaN, width: NaN, height: NaN };
 }
 
 
 /**
- * Create a clone of the given layout rect.
+ * Clone an offset rect object.
  */
-function cloneRect(r: LayoutRect): LayoutRect {
-  return { top: r.top, left: r.left, width: r.width, height: r.height };
+function cloneOffsetRect(rect: IOffsetRect): IOffsetRect {
+  return {
+    top: rect.top,
+    left: rect.left,
+    width: rect.width,
+    height: rect.height
+  };
+}
+
+
+/**
+ * Get the offset rect for a DOM node.
+ */
+function getOffsetRect(node: HTMLElement): IOffsetRect {
+  return {
+    top: node.offsetTop,
+    left: node.offsetLeft,
+    width: node.offsetWidth,
+    height: node.offsetHeight,
+  };
 }
 
 

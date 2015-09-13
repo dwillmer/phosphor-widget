@@ -7,6 +7,7 @@
   "dependencies": {
     "phosphor-arrays": "^1.0.3",
     "phosphor-disposable": "^1.0.2",
+    "phosphor-domutil": "^0.9.2",
     "phosphor-messaging": "^1.0.3",
     "phosphor-nodewrapper": "^1.0.2",
     "phosphor-properties": "^1.1.0",
