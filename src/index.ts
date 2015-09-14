@@ -674,20 +674,20 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   setSizeLimits(minWidth: number, minHeight: number, maxWidth: number, maxHeight: number): void {
     var minW = Math.max(0, minWidth);
-    var maxW = Math.max(0, maxWidth);
     var minH = Math.max(0, minHeight);
+    var maxW = Math.max(0, maxWidth);
     var maxH = Math.max(0, maxHeight);
     this._limits = Object.freeze({
       minWidth: minW,
-      maxWidth: maxW,
       minHeight: minH,
+      maxWidth: maxW,
       maxHeight: maxH,
     });
     var style = this.node.style;
     style.minWidth = minW + 'px';
-    style.maxWidth = maxW + 'px';
     style.minHeight = minH + 'px';
-    style.maxHeight = maxH + 'px';
+    style.maxWidth = (maxW === Infinity) ? '' : maxW + 'px';
+    style.maxHeight = (maxH === Infinity) ? '' : maxH + 'px';
   }
 
   /**
