@@ -27,7 +27,6 @@ import {
   WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget, detachWidget
 } from '../../lib/index';
 
-
 import './index.css';
 
 
@@ -504,6 +503,18 @@ describe('phosphor-widget', () => {
       it('should be read only', () => {
         var widget = new Widget();
         expect(() => { widget.offsetRect = null; }).to.throwError();
+      });
+
+      it('should not read from the node if setOffsetGeometry has been called', () => {
+        var widget = new Widget();
+        widget.setOffsetGeometry(10, 10, 110, 110);
+        widget.addClass('offset-rect');
+        attachWidget(widget, document.body);
+        var offsets = widget.offsetRect;
+        expect(offsets.top).to.be(10);
+        expect(offsets.left).to.be(10);
+        expect(offsets.width).to.be(110);
+        expect(offsets.height).to.be(110);
       });
     });
 
@@ -1002,7 +1013,7 @@ describe('phosphor-widget', () => {
         expect(offsets.height).to.be(105);
       });
 
-      it('should be cached', () => {
+      it('should update the inline style of the node', () => {
         var widget = new Widget();
         widget.setOffsetGeometry(5, 5, 105, 105);
         attachWidget(widget, document.body);
@@ -1017,7 +1028,7 @@ describe('phosphor-widget', () => {
 
     describe('#clearOffsetGeometry()', () => {
 
-      it('should clear the cache', () => {
+      it('should clear the inline geometry', () => {
         var widget = new Widget();
         widget.setOffsetGeometry(5, 5, 105, 105);
         attachWidget(widget, document.body);
@@ -1029,7 +1040,7 @@ describe('phosphor-widget', () => {
         expect(newOffsets.top).to.be(0);
       });
 
-      it('should be a no-op if there is no stored cache', () => {
+      it('should be a no-op if the geometry was not set', () => {
         var widget = new Widget();
         widget.clearOffsetGeometry();
       });
