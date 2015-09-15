@@ -27,6 +27,8 @@ import {
   WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget, detachWidget
 } from '../../lib/index';
 
+import './index.css';
+
 
 class LogWidget extends Widget {
 
@@ -428,6 +430,92 @@ describe('phosphor-widget', () => {
         expect(widget.hidden).to.be(false);
       });
 
+    });
+
+    describe('#boxSizing', () => {
+
+      it('should be computed on the node', () => {
+        var widget = new Widget();
+        widget.addClass('box-sizing');
+        attachWidget(widget, document.body);
+        var sizing = widget.boxSizing;
+        expect(sizing.borderTop).to.be(10);
+        expect(sizing.borderLeft).to.be(15);
+        expect(sizing.borderRight).to.be(0);
+        expect(sizing.borderBottom).to.be(0);
+        expect(sizing.paddingTop).to.be(15);
+        expect(sizing.paddingLeft).to.be(12);
+        expect(sizing.paddingRight).to.be(8);
+        expect(sizing.paddingBottom).to.be(9);
+        expect(sizing.verticalSum).to.be(34);
+        expect(sizing.horizontalSum).to.be(35);
+      });
+
+      it('should be cached', () => {
+        var widget = new Widget();
+        widget.addClass('box-sizing');
+        attachWidget(widget, document.body);
+        var sizing = widget.boxSizing;
+        expect(sizing.borderTop).to.be(10);
+        widget.removeClass('box-sizing');
+        var newSizing = widget.boxSizing;
+        expect(newSizing.borderTop).to.be(10);
+      });
+
+      it('should be ready only', () => {
+        var widget = new Widget();
+        expect(() => { widget.boxSizing = null; }).to.throwError();
+      });
+    });
+
+    describe('#sizeLimits', () => {
+
+      it('should be computed on the node', () => {
+        var widget = new Widget();
+        widget.addClass('size-limits');
+        attachWidget(widget, document.body);
+        var limits = widget.sizeLimits;
+        expect(limits.minWidth).to.be(90);
+        expect(limits.minHeight).to.be(95);
+        expect(limits.maxWidth).to.be(100);
+        expect(limits.maxHeight).to.be(105);
+      });
+
+      it('should be read only', () => {
+        var widget = new Widget();
+        expect(() => { widget.sizeLimits = null; }).to.throwError();
+      });
+    });
+
+    describe('#offsetRect', () => {
+
+      it('should be computed on the node', () => {
+        var widget = new Widget();
+        widget.addClass('offset-rect');
+        attachWidget(widget, document.body);
+        var offsets = widget.offsetRect;
+        expect(offsets.top).to.be(0);
+        expect(offsets.left).to.be(0);
+        expect(offsets.width).to.be(100);
+        expect(offsets.height).to.be(100);
+      });
+
+      it('should be read only', () => {
+        var widget = new Widget();
+        expect(() => { widget.offsetRect = null; }).to.throwError();
+      });
+
+      it('should not read from the node if setOffsetGeometry has been called', () => {
+        var widget = new Widget();
+        widget.setOffsetGeometry(10, 10, 110, 110);
+        widget.addClass('offset-rect');
+        attachWidget(widget, document.body);
+        var offsets = widget.offsetRect;
+        expect(offsets.top).to.be(10);
+        expect(offsets.left).to.be(10);
+        expect(offsets.width).to.be(110);
+        expect(offsets.height).to.be(110);
+      });
     });
 
     describe('#parent', () => {
@@ -843,6 +931,118 @@ describe('phosphor-widget', () => {
           expect(widget.messages).to.eql(['close-request']);
           done();
         });
+      });
+
+    });
+
+    describe('#clearBoxSizing()', () => {
+
+      it('should clear the boxSizing cache', () => {
+        var widget = new Widget();
+        widget.addClass('box-sizing');
+        attachWidget(widget, document.body);
+        var sizing = widget.boxSizing;
+        expect(sizing.borderTop).to.be(10);
+        widget.clearBoxSizing();
+        widget.removeClass('box-sizing');
+        var newSizing = widget.boxSizing;
+        expect(newSizing.borderTop).to.be(0);
+      });
+
+      it('should be a no-op if there is no stored cache', () => {
+        var widget = new Widget();
+        widget.clearBoxSizing();
+      });
+
+    });
+
+    describe('#setSizeLimits()', () => {
+
+      it('should set the size limits for the widget', () => {
+        var widget = new Widget();
+        widget.setSizeLimits(94, 84, 99, 104);
+        var limits = widget.sizeLimits;
+        expect(limits.minWidth).to.be(94);
+        expect(limits.minHeight).to.be(84);
+        expect(limits.maxWidth).to.be(99);
+        expect(limits.maxHeight).to.be(104);
+      });
+
+      it('should be cached', () => {
+        var widget = new Widget();
+        widget.setSizeLimits(94, 84, 99, 104);
+        var limits = widget.sizeLimits;
+        expect(limits.minWidth).to.be(94);
+        widget.addClass('size-limits');
+        var newLimits = widget.sizeLimits;
+        expect(newLimits.minWidth).to.be(94);
+      });
+
+    });
+
+    describe('#clearSizeLimits()', () => {
+
+      it('should clear the cached size limits for the widget', () => {
+        var widget = new Widget();
+        widget.setSizeLimits(94, 84, 99, 104);
+        var limits = widget.sizeLimits;
+        expect(limits.minWidth).to.be(94);
+        widget.addClass('size-limits');
+        widget.clearSizeLimits();
+        var newLimits = widget.sizeLimits;
+        expect(newLimits.minWidth).to.be(90);
+      });
+
+      it('should be a no-op if there is no stored cache', () => {
+        var widget = new Widget();
+        widget.clearSizeLimits();
+      });
+
+    });
+
+    describe('#setOffsetGeometry()', () => {
+
+      it('should set the offest geometry for the widget', () => {
+        var widget = new Widget();
+        widget.setOffsetGeometry(5, 5, 105, 105);
+        attachWidget(widget, document.body);
+        var offsets = widget.offsetRect;
+        expect(offsets.top).to.be(5);
+        expect(offsets.left).to.be(5);
+        expect(offsets.width).to.be(105);
+        expect(offsets.height).to.be(105);
+      });
+
+      it('should update the inline style of the node', () => {
+        var widget = new Widget();
+        widget.setOffsetGeometry(5, 5, 105, 105);
+        attachWidget(widget, document.body);
+        var offsets = widget.offsetRect;
+        expect(offsets.top).to.be(5);
+        widget.addClass('offset-rect');
+        var newOffset = widget.offsetRect;
+        expect(offsets.top).to.be(5);
+      });
+
+    });
+
+    describe('#clearOffsetGeometry()', () => {
+
+      it('should clear the inline geometry', () => {
+        var widget = new Widget();
+        widget.setOffsetGeometry(5, 5, 105, 105);
+        attachWidget(widget, document.body);
+        var offsets = widget.offsetRect;
+        expect(offsets.top).to.be(5);
+        widget.addClass('offset-rect');
+        widget.clearOffsetGeometry();
+        var newOffsets = widget.offsetRect;
+        expect(newOffsets.top).to.be(0);
+      });
+
+      it('should be a no-op if the geometry was not set', () => {
+        var widget = new Widget();
+        widget.clearOffsetGeometry();
       });
 
     });
