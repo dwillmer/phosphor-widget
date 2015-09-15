@@ -471,7 +471,7 @@ describe('phosphor-widget', () => {
 
     describe('#sizeLimits', () => {
 
-      it('should be a size limits object with correct parameters', () => {
+      it('should be computed on the node', () => {
         var widget = new Widget();
         widget.addClass('size-limits');
         attachWidget(widget, document.body);
@@ -490,7 +490,7 @@ describe('phosphor-widget', () => {
 
     describe('#offsetRect', () => {
 
-      it('should be a size limits object with correct parameters', () => {
+      it('should be computed on the node', () => {
         var widget = new Widget();
         widget.addClass('offset-rect');
         attachWidget(widget, document.body);
