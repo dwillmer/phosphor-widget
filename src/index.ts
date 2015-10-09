@@ -42,18 +42,6 @@ import './index.css';
 
 
 /**
- * `p-Widget`: the class name added to Widget instances.
- */
-export
-const WIDGET_CLASS = 'p-Widget';
-
-/**
- * `p-mod-hidden`: the class name added to hidden widgets.
- */
-export
-const HIDDEN_CLASS = 'p-mod-hidden';
-
-/**
  * A singleton `'update-request'` message.
  *
  * #### Notes
@@ -166,6 +154,16 @@ const MSG_BEFORE_DETACH = new Message('before-detach');
 export
 class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   /**
+   * The class name added to Widget instances.
+   */
+  static p_Widget = 'p-Widget';
+
+  /**
+   * The modifier class name added to hidden widgets.
+   */
+  static p_mod_hidden = 'p-mod-hidden';
+
+  /**
    * A signal emitted when the widget is disposed.
    *
    * **See also:** [[disposed]], [[isDisposed]]
@@ -181,9 +179,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * Hiding a widget will cause the widget and all of its descendants
    * to become not-visible.
    *
-   * This property will toggle the presence of [[HIDDEN_CLASS]] on a
-   * widget according to the property value. It will also dispatch
-   * `'after-show'` and `'before-hide'` messages as appropriate.
+   * This property will toggle the presence of [[p_mod_hidden]] on a
+   * widget. It will also dispatch `'after-show'` and `'before-hide'`
+   * messages as appropriate.
    *
    * The default property value is `false`.
    *
@@ -196,13 +194,10 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
 
   /**
    * Construct a new widget.
-   *
-   * #### Notes
-   * The [[WIDGET_CLASS]] is added to the widget during construction.
    */
   constructor() {
     super();
-    this.addClass(WIDGET_CLASS);
+    this.addClass(Widget.p_Widget);
   }
 
   /**
@@ -1314,12 +1309,12 @@ function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
     if (owner.isAttached && (!owner.parent || owner.parent.isVisible)) {
       sendMessage(owner, MSG_BEFORE_HIDE);
     }
-    owner.addClass(HIDDEN_CLASS);
+    owner.addClass(Widget.p_mod_hidden);
     if (owner.parent) {
       sendMessage(owner.parent, new ChildMessage('child-hidden', owner));
     }
   } else {
-    owner.removeClass(HIDDEN_CLASS);
+    owner.removeClass(Widget.p_mod_hidden);
     if (owner.isAttached && (!owner.parent || owner.parent.isVisible)) {
       sendMessage(owner, MSG_AFTER_SHOW);
     }

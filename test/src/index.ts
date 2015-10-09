@@ -22,9 +22,9 @@ import {
 } from 'phosphor-signaling';
 
 import {
-  HIDDEN_CLASS, MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH,
-  MSG_BEFORE_HIDE, MSG_CLOSE_REQUEST, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
-  WIDGET_CLASS, ChildMessage, ResizeMessage, Widget, attachWidget, detachWidget
+  MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH, MSG_BEFORE_HIDE,
+  MSG_CLOSE_REQUEST, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST, ChildMessage,
+  ResizeMessage, Widget, attachWidget, detachWidget
 } from '../../lib/index';
 
 import './index.css';
@@ -49,6 +49,7 @@ class LogWidget extends Widget {
 class VerboseWidget extends Widget {
 
   messages: Message[] = [];
+
   methods: string[] = [];
 
   constructor(children?: Widget[]) {
@@ -138,22 +139,6 @@ class VerboseWidget extends Widget {
 
 describe('phosphor-widget', () => {
 
-  describe('WIDGET_CLASS', () => {
-
-    it('should equal `p-Widget`', () => {
-      expect(WIDGET_CLASS).to.be('p-Widget');
-    });
-
-  });
-
-  describe('HIDDEN_CLASS', () => {
-
-    it('should equal `p-mod-hidden`', () => {
-      expect(HIDDEN_CLASS).to.be('p-mod-hidden');
-    });
-
-  });
-
   describe('MSG_UPDATE_REQUEST', () => {
 
     it('should be a `Message` instance', () => {
@@ -240,6 +225,22 @@ describe('phosphor-widget', () => {
 
   describe('Widget', () => {
 
+    describe('.p_Widget', () => {
+
+      it('should equal `p-Widget`', () => {
+        expect(Widget.p_Widget).to.be('p-Widget');
+      });
+
+    });
+
+    describe('.p_mod_hidden', () => {
+
+      it('should equal `p-mod-hidden`', () => {
+        expect(Widget.p_mod_hidden).to.be('p-mod-hidden');
+      });
+
+    });
+
     describe('.disposedSignal', () => {
 
       it('should be a signal', () => {
@@ -259,11 +260,11 @@ describe('phosphor-widget', () => {
         expect(Widget.hiddenProperty.get(widget)).to.be(false);
       });
 
-      it('should toggle the presence of `HIDDEN_CLASS`', () => {
+      it('should toggle the presence of `p-mod-hidden`', () => {
         var widget = new Widget();
-        expect(widget.hasClass(HIDDEN_CLASS)).to.be(false);
+        expect(widget.hasClass(Widget.p_mod_hidden)).to.be(false);
         Widget.hiddenProperty.set(widget, true);
-        expect(widget.hasClass(HIDDEN_CLASS)).to.be(true);
+        expect(widget.hasClass(Widget.p_mod_hidden)).to.be(true);
       });
 
       it('should dispatch an `after-show` message', () => {
@@ -292,6 +293,11 @@ describe('phosphor-widget', () => {
       it('should accept no arguments', () => {
         var widget = new Widget();
         expect(widget instanceof Widget).to.be(true);
+      });
+
+      it('should add the `p-Widget` class', () => {
+        var widget = new Widget();
+        expect(widget.hasClass(Widget.p_Widget)).to.be(true);
       });
 
     });
