@@ -140,6 +140,16 @@ const MSG_AFTER_ATTACH = new Message('after-attach');
 export
 const MSG_BEFORE_DETACH = new Message('before-detach');
 
+/**
+ * The class name added to Widget instances.
+ */
+const WIDGET_CLASS = 'p-Widget';
+
+/**
+ * The modifier class name added to hidden widgets.
+ */
+const HIDDEN_CLASS = 'p-mod-hidden';
+
 
 /**
  * The base class of the Phosphor widget hierarchy.
@@ -153,16 +163,6 @@ const MSG_BEFORE_DETACH = new Message('before-detach');
  */
 export
 class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
-  /**
-   * The class name added to Widget instances.
-   */
-  static p_Widget = 'p-Widget';
-
-  /**
-   * The modifier class name added to hidden widgets.
-   */
-  static p_mod_hidden = 'p-mod-hidden';
-
   /**
    * A signal emitted when the widget is disposed.
    *
@@ -179,7 +179,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * Hiding a widget will cause the widget and all of its descendants
    * to become not-visible.
    *
-   * This property will toggle the presence of [[p_mod_hidden]] on a
+   * This property will toggle the presence of `'p-mod-hidden'` on a
    * widget. It will also dispatch `'after-show'` and `'before-hide'`
    * messages as appropriate.
    *
@@ -197,7 +197,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   constructor() {
     super();
-    this.addClass(Widget.p_Widget);
+    this.addClass(WIDGET_CLASS);
   }
 
   /**
@@ -1309,12 +1309,12 @@ function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
     if (owner.isAttached && (!owner.parent || owner.parent.isVisible)) {
       sendMessage(owner, MSG_BEFORE_HIDE);
     }
-    owner.addClass(Widget.p_mod_hidden);
+    owner.addClass(HIDDEN_CLASS);
     if (owner.parent) {
       sendMessage(owner.parent, new ChildMessage('child-hidden', owner));
     }
   } else {
-    owner.removeClass(Widget.p_mod_hidden);
+    owner.removeClass(HIDDEN_CLASS);
     if (owner.isAttached && (!owner.parent || owner.parent.isVisible)) {
       sendMessage(owner, MSG_AFTER_SHOW);
     }
