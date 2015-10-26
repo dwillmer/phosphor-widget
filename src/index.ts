@@ -193,6 +193,29 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   });
 
   /**
+   * A property descriptor for the widget title.
+   *
+   * #### Notes
+   */
+  static titleProperty = new Property<Widget, string>({
+    value: '',
+  });
+
+  /**
+   * A property descriptor
+   */
+  static iconProperty = new Property<Widget, string>({
+    value: '',
+  });
+
+  /**
+   *
+   */
+  static closableProperty = new Property<Widget, boolean>({
+    value: true,
+  });
+
+  /**
    * Construct a new widget.
    */
   constructor() {
@@ -306,6 +329,48 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set hidden(value: boolean) {
     Widget.hiddenProperty.set(this, value);
+  }
+
+  /**
+   *
+   */
+  get title(): string {
+    return Widget.titleProperty.get(this);
+  }
+
+  /**
+   *
+   */
+  set title(value: string) {
+    Widget.titleProperty.set(this, value);
+  }
+
+  /**
+   *
+   */
+  get icon(): string {
+    return Widget.iconProperty.get(this);
+  }
+
+  /**
+   *
+   */
+  set icon(value: string) {
+    Widget.iconProperty.set(this, value);
+  }
+
+  /**
+   *
+   */
+  get closable(): boolean {
+    return Widget.closableProperty.get(this);
+  }
+
+  /**
+   *
+   */
+  set closable(value: boolean) {
+    Widget.closableProperty.set(this, value);
   }
 
   /**
