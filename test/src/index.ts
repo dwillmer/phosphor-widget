@@ -23,8 +23,9 @@ import {
 
 import {
   MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH, MSG_BEFORE_HIDE,
-  MSG_CLOSE_REQUEST, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST, ChildMessage,
-  ResizeMessage, Widget, attachWidget, detachWidget
+  MSG_CLOSE_REQUEST, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
+  ChangeTitleMessage, ChildMessage, ResizeMessage, Widget, attachWidget,
+  detachWidget
 } from '../../lib/index';
 
 import './index.css';
@@ -57,82 +58,88 @@ class VerboseWidget extends Widget {
     if (children) children.forEach(child => this.addChild(child));
   }
 
-  protected onChildAdded(msg: ChildMessage) {
+  protected onChildAdded(msg: ChildMessage): void {
     super.onChildAdded(msg);
     this.messages.push(msg);
     this.methods.push('onChildAdded');
   }
 
-  protected onChildRemoved(msg: ChildMessage) {
+  protected onChildRemoved(msg: ChildMessage): void {
     super.onChildRemoved(msg);
     this.messages.push(msg);
     this.methods.push('onChildRemoved');
   }
 
-  protected onChildMoved(msg: ChildMessage) {
+  protected onChildMoved(msg: ChildMessage): void {
     super.onChildMoved(msg);
     this.messages.push(msg);
     this.methods.push('onChildMoved');
   }
 
-  protected onResize(msg: ResizeMessage) {
+  protected onResize(msg: ResizeMessage): void {
     super.onResize(msg);
     this.messages.push(msg);
     this.methods.push('onResize');
   }
 
-  protected onUpdateRequest(msg: Message) {
+  protected onUpdateRequest(msg: Message): void {
     super.onUpdateRequest(msg);
     this.messages.push(msg);
     this.methods.push('onUpdateRequest');
   }
 
-  protected onLayoutRequest(msg: Message) {
+  protected onLayoutRequest(msg: Message): void {
     super.onLayoutRequest(msg);
     this.messages.push(msg);
     this.methods.push('onLayoutRequest');
   }
 
-  protected onAfterShow(msg: Message) {
+  protected onAfterShow(msg: Message): void {
     super.onAfterShow(msg);
     this.messages.push(msg);
     this.methods.push('onAfterShow');
   }
 
-  protected onBeforeHide(msg: Message) {
+  protected onBeforeHide(msg: Message): void {
     super.onBeforeHide(msg);
     this.messages.push(msg);
     this.methods.push('onBeforeHide');
   }
 
-  protected onAfterAttach(msg: Message) {
+  protected onAfterAttach(msg: Message): void {
     super.onAfterAttach(msg);
     this.messages.push(msg);
     this.methods.push('onAfterAttach');
   }
 
-  protected onBeforeDetach(msg: Message) {
+  protected onBeforeDetach(msg: Message): void {
     super.onBeforeDetach(msg);
     this.messages.push(msg);
     this.methods.push('onBeforeDetach');
   }
 
-  protected onChildShown(msg: ChildMessage) {
+  protected onChildShown(msg: ChildMessage): void {
     super.onChildShown(msg);
     this.messages.push(msg);
     this.methods.push('onChildShown');
   }
 
-  protected onChildHidden(msg: ChildMessage) {
+  protected onChildHidden(msg: ChildMessage): void {
     super.onChildHidden(msg);
     this.messages.push(msg);
     this.methods.push('onChildHidden');
   }
 
-  protected onCloseRequest(msg: Message) {
+  protected onCloseRequest(msg: Message): void {
     super.onCloseRequest(msg);
     this.messages.push(msg);
     this.methods.push('onCloseRequest');
+  }
+
+  protected onChangeTitle(msg: ChangeTitleMessage): void {
+    super.onChangeTitle(msg);
+    this.messages.push(msg);
+    this.methods.push('onChangeTitle');
   }
 }
 
@@ -268,6 +275,58 @@ describe('phosphor-widget', () => {
         Widget.hiddenProperty.set(widget, true);
         expect(widget.messages.indexOf('before-hide')).to.not.be(-1);
         detachWidget(widget);
+      });
+
+    });
+
+    describe('.titleProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Widget.titleProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to an empty string', () => {
+        var widget = new Widget();
+        expect(Widget.titleProperty.get(widget)).to.be('');
+      });
+
+    });
+
+    describe('.titleIconProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Widget.titleIconProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to an empty string', () => {
+        var widget = new Widget();
+        expect(Widget.titleIconProperty.get(widget)).to.be('');
+      });
+
+    });
+
+    describe('.titleEditableHintProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Widget.titleEditableHintProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to `false`', () => {
+        var widget = new Widget();
+        expect(Widget.titleEditableHintProperty.get(widget)).to.be(false);
+      });
+
+    });
+
+    describe('.closableHintProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Widget.closableHintProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to `false`', () => {
+        var widget = new Widget();
+        expect(Widget.closableHintProperty.get(widget)).to.be(false);
       });
 
     });
@@ -418,6 +477,54 @@ describe('phosphor-widget', () => {
         expect(Widget.hiddenProperty.get(widget)).to.be(true);
         Widget.hiddenProperty.set(widget, false);
         expect(widget.hidden).to.be(false);
+      });
+
+    });
+
+    describe('#title', () => {
+
+      it('should be a pure delegate to the `titleProperty`', () => {
+        var widget = new Widget();
+        widget.title = 'Foo';
+        expect(Widget.titleProperty.get(widget)).to.be('Foo');
+        Widget.titleProperty.set(widget, 'Bar');
+        expect(widget.title).to.be('Bar');
+      });
+
+    });
+
+    describe('#titleIcon', () => {
+
+      it('should be a pure delegate to the `titleIconProperty`', () => {
+        var widget = new Widget();
+        widget.titleIcon = 'fa fa-close';
+        expect(Widget.titleIconProperty.get(widget)).to.be('fa fa-close');
+        Widget.titleIconProperty.set(widget, 'fa fa-open');
+        expect(widget.titleIcon).to.be('fa fa-open');
+      });
+
+    });
+
+    describe('#titleEditableHint', () => {
+
+      it('should be a pure delegate to the `titleEditableHintProperty`', () => {
+        var widget = new Widget();
+        widget.titleEditableHint = true;
+        expect(Widget.titleEditableHintProperty.get(widget)).to.be(true);
+        Widget.titleEditableHintProperty.set(widget, false);
+        expect(widget.titleEditableHint).to.be(false);
+      });
+
+    });
+
+    describe('#closableHint', () => {
+
+      it('should be a pure delegate to the `closableHintProperty`', () => {
+        var widget = new Widget();
+        widget.closableHint = true;
+        expect(Widget.closableHintProperty.get(widget)).to.be(true);
+        Widget.closableHintProperty.set(widget, false);
+        expect(widget.closableHint).to.be(false);
       });
 
     });
@@ -1722,6 +1829,39 @@ describe('phosphor-widget', () => {
 
     });
 
+    describe('#onChangeTitle', () => {
+
+      it('should be invoked on a `change-title`', () => {
+        var widget = new VerboseWidget();
+        sendMessage(widget, new ChangeTitleMessage('Foo'));
+        expect(widget.methods[0]).to.be('onChangeTitle');
+      });
+
+      context('`msg` parameter', () => {
+
+        it('should be a `ChangeTitleMessage`', () => {
+          var widget = new VerboseWidget();
+          sendMessage(widget, new ChangeTitleMessage('Foo'));
+          expect(widget.messages[0] instanceof ChangeTitleMessage).to.be(true);
+        });
+
+        it('should have a `type` of `change-title`', () => {
+          var widget = new VerboseWidget();
+          sendMessage(widget, new ChangeTitleMessage('Foo'));
+          expect(widget.messages[0].type).to.be('change-title');
+        });
+
+      });
+
+      it('should update the widget title by default', () => {
+        var widget = new Widget();
+        expect(widget.title).to.be('');
+        sendMessage(widget, new ChangeTitleMessage('Foo'));
+        expect(widget.title).to.be('Foo');
+      });
+
+    });
+
     context('message propagation', () => {
 
       it('should propagate `after-attach` to all descendants', () => {
@@ -2039,6 +2179,38 @@ describe('phosphor-widget', () => {
       it('should be a read-only property', () => {
         var msg = new ResizeMessage(100, 200);
         expect(() => { msg.height = 200; }).to.throwError();
+      });
+
+    });
+
+  });
+
+  describe('ChangeTitleMessage', () => {
+
+    describe('#constructor()', () => {
+
+      it('should accept a title', () => {
+        var msg = new ChangeTitleMessage('Foo');
+        expect(msg instanceof ChangeTitleMessage).to.be(true);
+      });
+
+      it('should have type `change-title`', () => {
+        var msg = new ChangeTitleMessage('Foo');
+        expect(msg.type).to.be('change-title');
+      });
+
+    });
+
+    describe('#title', () => {
+
+      it('should be the title passed to the constructor', () => {
+        var msg = new ChangeTitleMessage('Foo');
+        expect(msg.title).to.be('Foo');
+      });
+
+      it('should be a read-only property', () => {
+        var msg = new ChangeTitleMessage('Foo');
+        expect(() => { msg.title = 'Bar'; }).to.throwError();
       });
 
     });
