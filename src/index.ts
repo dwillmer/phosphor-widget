@@ -146,7 +146,7 @@ const MSG_BEFORE_DETACH = new Message('before-detach');
 const WIDGET_CLASS = 'p-Widget';
 
 /**
- * The modifier class name added to hidden widgets.
+ * The class name added to hidden widgets.
  */
 const HIDDEN_CLASS = 'p-mod-hidden';
 
@@ -190,6 +190,81 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   static hiddenProperty = new Property<Widget, boolean>({
     value: false,
     changed: onHiddenChanged,
+  });
+
+  /**
+   * A property descriptor for the widget title.
+   *
+   * #### Notes
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when displaying
+   * the widget in a context where a title is appropriate.
+   *
+   * The value is the display text to use for the widget title.
+   *
+   * Code should not modify this property directly in response to user
+   * input events. Instead, a [[ChangeTitleMessage]] should be sent to
+   * the widget, which allows the widget an opportunity to update its
+   * internal state before updating its public property.
+   *
+   * The default value is an empty string.
+   *
+   * **See also:** [[title]], [[ChangeTitleMessage]], [[onChangeTitle]]
+   */
+  static titleProperty = new Property<Widget, string>({
+    value: '',
+  });
+
+  /**
+   * A property descriptor for the widget title icon class.
+   *
+   * #### Notes
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when displaying
+   * the widget in a context where an icon is appropriate.
+   *
+   * The value is the *class name* to be added to the DOM node which
+   * displays the actual icon. Multiple class names can be separated
+   * with whitespace.
+   *
+   * The default value is an empty string.
+   *
+   * **See also:** [[titleIcon]]
+   */
+  static titleIconProperty = new Property<Widget, string>({
+    value: '',
+  });
+
+  /**
+   * A property descriptor for the widget title editable hint.
+   *
+   * #### Notes
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when deciding
+   * whether to allow the user to edit the widget title.
+   *
+   * The default value is `false`.
+   *
+   * **See also:** [[titleEditableHint]], [[titleProperty]]
+   */
+  static titleEditableHintProperty = new Property<Widget, boolean>({
+    value: false,
+  });
+
+  /**
+   * A property descriptor which controls the widget closable hint.
+   *
+   * #### Notes
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when deciding
+   * whether to display a close indicator to the user.
+   *
+   * The default value is `false`.
+   *
+   * **See also:** [[closableHint]], [[close]]
+   */
+  static closableHintProperty = new Property<Widget, boolean>({
+    value: false,
   });
 
   /**
@@ -306,6 +381,86 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set hidden(value: boolean) {
     Widget.hiddenProperty.set(this, value);
+  }
+
+  /**
+   * Get the title for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleProperty]].
+   */
+  get title(): string {
+    return Widget.titleProperty.get(this);
+  }
+
+  /**
+   * Set the title for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleProperty]].
+   */
+  set title(value: string) {
+    Widget.titleProperty.set(this, value);
+  }
+
+  /**
+   * Get the title icon class name for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleIconProperty]].
+   */
+  get titleIcon(): string {
+    return Widget.titleIconProperty.get(this);
+  }
+
+  /**
+   * Set the title icon class name for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleIconProperty]].
+   */
+  set titleIcon(value: string) {
+    Widget.titleIconProperty.set(this, value);
+  }
+
+  /**
+   * Get the title editable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleEditableHintProperty]].
+   */
+  get titleEditableHint(): boolean {
+    return Widget.titleEditableHintProperty.get(this);
+  }
+
+  /**
+   * Set the title editable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleEditableHintProperty]].
+   */
+  set titleEditableHint(value: boolean) {
+    Widget.titleEditableHintProperty.set(this, value);
+  }
+
+  /**
+   * Get the closable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[closableHintProperty]].
+   */
+  get closableHint(): boolean {
+    return Widget.closableHintProperty.get(this);
+  }
+
+  /**
+   * Set the closable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[closableHintProperty]].
+   */
+  set closableHint(value: boolean) {
+    Widget.closableHintProperty.set(this, value);
   }
 
   /**
@@ -847,6 +1002,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     case 'close-request':
       this.onCloseRequest(msg);
       break;
+    case 'change-title':
+      this.onChangeTitle(<ChangeTitleMessage>msg);
+      break;
     }
   }
 
@@ -978,6 +1136,20 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     } else if (this.isAttached) {
       detachWidget(this);
     }
+  }
+
+  /**
+   * A message handler invoked on a `'change-title'` message.
+   *
+   * #### Notes
+   * The default implementation of this handler will change the `title`
+   * of the widget to the title provided by the message. Subclasses may
+   * reimplement this handler for custom title change behavior.
+   *
+   * **See also:** [[titleProperty]]
+   */
+  protected onChangeTitle(msg: ChangeTitleMessage): void {
+    this.title = msg.title;
   }
 
   /**
@@ -1166,7 +1338,7 @@ class ChildMessage extends Message {
 
 
 /**
- * A message class for 'resize' messages.
+ * A message class for `'resize'` messages.
  */
 export
 class ResizeMessage extends Message {
@@ -1216,6 +1388,40 @@ class ResizeMessage extends Message {
 
   private _width: number;
   private _height: number;
+}
+
+
+/**
+ * A message class for `'change-title'` messages.
+ *
+ * Messages of this type are used to change the `title` property of a
+ * widget in response to a user input event.
+ *
+ * **See also:** [[titleProperty]], [[onChangeTitle]]
+ */
+export
+class ChangeTitleMessage extends Message {
+  /**
+   * Construct a new change title message.
+   *
+   * @param title - The title to use for the widget.
+   */
+  constructor(title: string) {
+    super('change-title');
+    this._title = title;
+  }
+
+  /**
+   * The title for the widget.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get title(): string {
+    return this._title;
+  }
+
+  private _title: string;
 }
 
 
