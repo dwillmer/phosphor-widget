@@ -404,26 +404,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
-   * Get the title editable hint for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleEditableHintProperty]].
-   */
-  get titleEditableHint(): boolean {
-    return Widget.titleEditableHintProperty.get(this);
-  }
-
-  /**
-   * Set the title editable hint for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleEditableHintProperty]].
-   */
-  set titleEditableHint(value: boolean) {
-    Widget.titleEditableHintProperty.set(this, value);
-  }
-
-  /**
    * Get the title icon class name for the widget.
    *
    * #### Notes
@@ -441,6 +421,26 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set titleIcon(value: string) {
     Widget.titleIconProperty.set(this, value);
+  }
+
+  /**
+   * Get the title editable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleEditableHintProperty]].
+   */
+  get titleEditableHint(): boolean {
+    return Widget.titleEditableHintProperty.get(this);
+  }
+
+  /**
+   * Set the title editable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleEditableHintProperty]].
+   */
+  set titleEditableHint(value: boolean) {
+    Widget.titleEditableHintProperty.set(this, value);
   }
 
   /**
