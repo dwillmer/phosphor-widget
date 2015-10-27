@@ -1,6 +1,6 @@
 {
   "name": "phosphor-widget",
-  "version": "0.9.11",
+  "version": "0.9.12",
   "description": "The core Phosphor widget class.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -58,7 +58,9 @@
     "lib/index.d.ts"
   ],
   "browserify": {
-    "transform": ["browserify-css"]
+    "transform": [
+      "browserify-css"
+    ]
   },
   "keywords": [
     "ui",
