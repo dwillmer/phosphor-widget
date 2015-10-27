@@ -146,7 +146,7 @@ const MSG_BEFORE_DETACH = new Message('before-detach');
 const WIDGET_CLASS = 'p-Widget';
 
 /**
- * The modifier class name added to hidden widgets.
+ * The class name added to hidden widgets.
  */
 const HIDDEN_CLASS = 'p-mod-hidden';
 
@@ -196,20 +196,57 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * A property descriptor for the widget title.
    *
    * #### Notes
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when displaying
+   * the widget in a context where a title is appropriate.
+   *
+   * The value is the display text to use for the widget title.
+   *
+   * The default value is an empty string.
+   *
+   * **See also:** [[title]], [[icon]]
    */
   static titleProperty = new Property<Widget, string>({
     value: '',
   });
 
   /**
-   * A property descriptor
+   * A property descriptor for the widget icon class.
+   *
+   * #### Notes
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when displaying
+   * the widget in a context where an icon is appropriate.
+   *
+   * The value is the *class name* to be added to the DOM node which
+   * displays the actual icon.
+   *
+   * The default value is an empty string.
+   *
+   * **See also:** [[icon]], [[title]]
    */
   static iconProperty = new Property<Widget, string>({
     value: '',
   });
 
   /**
+   * A property descriptor which controls the widget closable state.
    *
+   * #### Notes
+   * This property controls whether the widget can be closed via user
+   * interaction with the UI.
+   *
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when deciding
+   * whether to support a user close action for the widget.
+   *
+   * This property **does not** affect the logic of the default close
+   * handler, and the widget can still be closed programmatically even
+   * if this value is `false`.
+   *
+   * The default value is `true`.
+   *
+   * **See also:** [[closable]], [[close]]
    */
   static closableProperty = new Property<Widget, boolean>({
     value: true,
@@ -332,42 +369,60 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
+   * Get the title for the widget.
    *
+   * #### Notes
+   * This is a pure delegate to the [[titleProperty]].
    */
   get title(): string {
     return Widget.titleProperty.get(this);
   }
 
   /**
+   * Set the title for the widget.
    *
+   * #### Notes
+   * This is a pure delegate to the [[titleProperty]].
    */
   set title(value: string) {
     Widget.titleProperty.set(this, value);
   }
 
   /**
+   * Get the icon class name for the widget.
    *
+   * #### Notes
+   * This is a pure delegate to the [[iconProperty]].
    */
   get icon(): string {
     return Widget.iconProperty.get(this);
   }
 
   /**
+   * Set the icon class name for the widget.
    *
+   * #### Notes
+   * This is a pure delegate to the [[iconProperty]].
    */
   set icon(value: string) {
     Widget.iconProperty.set(this, value);
   }
 
   /**
+   * Get the closable state for the widget.
    *
+   * #### Notes
+   * This is a pure delegate to the [[closableProperty]].
    */
   get closable(): boolean {
     return Widget.closableProperty.get(this);
   }
 
   /**
+   * Set the closable state for the widget.
    *
+   * #### Notes
+   * This is a pure delegate to the [[closableProperty]].
    */
   set closable(value: boolean) {
     Widget.closableProperty.set(this, value);
