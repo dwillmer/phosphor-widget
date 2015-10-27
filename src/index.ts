@@ -216,7 +216,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   });
 
   /**
-   * A property descriptor for the widget icon class.
+   * A property descriptor for the widget title icon class.
    *
    * #### Notes
    * This property has no direct effect on the behavior of the widget.
@@ -224,37 +224,31 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * the widget in a context where an icon is appropriate.
    *
    * The value is the *class name* to be added to the DOM node which
-   * displays the actual icon.
+   * displays the actual icon. Multiple class names can be separated
+   * with whitespace.
    *
    * The default value is an empty string.
    *
-   * **See also:** [[icon]]
+   * **See also:** [[titleIcon]]
    */
-  static iconProperty = new Property<Widget, string>({
+  static titleIconProperty = new Property<Widget, string>({
     value: '',
   });
 
   /**
-   * A property descriptor which controls the widget closable state.
+   * A property descriptor which controls the widget closable hint.
    *
    * #### Notes
-   * This property controls whether the widget can be closed via user
-   * interaction with the UI.
-   *
    * This property has no direct effect on the behavior of the widget.
    * It is intended to be consumed by container widgets when deciding
-   * whether to support a user close action for the widget.
+   * whether to display a close indicator to the user.
    *
-   * This property **does not** affect the logic of the default close
-   * handler, and the widget can still be closed programmatically even
-   * if this value is `false`.
+   * The default value is `false`.
    *
-   * The default value is `true`.
-   *
-   * **See also:** [[closable]], [[close]]
+   * **See also:** [[closableHint]], [[close]]
    */
-  static closableProperty = new Property<Widget, boolean>({
-    value: true,
+  static closableHintProperty = new Property<Widget, boolean>({
+    value: false,
   });
 
   /**
@@ -394,43 +388,43 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
-   * Get the icon class name for the widget.
+   * Get the title icon class name for the widget.
    *
    * #### Notes
-   * This is a pure delegate to the [[iconProperty]].
+   * This is a pure delegate to the [[titleIconProperty]].
    */
-  get icon(): string {
-    return Widget.iconProperty.get(this);
+  get titleIcon(): string {
+    return Widget.titleIconProperty.get(this);
   }
 
   /**
-   * Set the icon class name for the widget.
+   * Set the title icon class name for the widget.
    *
    * #### Notes
-   * This is a pure delegate to the [[iconProperty]].
+   * This is a pure delegate to the [[titleIconProperty]].
    */
-  set icon(value: string) {
-    Widget.iconProperty.set(this, value);
+  set titleIcon(value: string) {
+    Widget.titleIconProperty.set(this, value);
   }
 
   /**
-   * Get the closable state for the widget.
+   * Get the closable hint for the widget.
    *
    * #### Notes
-   * This is a pure delegate to the [[closableProperty]].
+   * This is a pure delegate to the [[closableHintProperty]].
    */
-  get closable(): boolean {
-    return Widget.closableProperty.get(this);
+  get closableHint(): boolean {
+    return Widget.closableHintProperty.get(this);
   }
 
   /**
-   * Set the closable state for the widget.
+   * Set the closable hint for the widget.
    *
    * #### Notes
-   * This is a pure delegate to the [[closableProperty]].
+   * This is a pure delegate to the [[closableHintProperty]].
    */
-  set closable(value: boolean) {
-    Widget.closableProperty.set(this, value);
+  set closableHint(value: boolean) {
+    Widget.closableHintProperty.set(this, value);
   }
 
   /**
