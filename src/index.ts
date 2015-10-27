@@ -202,9 +202,14 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * The value is the display text to use for the widget title.
    *
+   * Code should not modify this property directly in response to user
+   * input events. Instead, a [[ChangeTitleMessage]] should be sent to
+   * the widget, which allows the widget an opportunity to update its
+   * internal state before updating its public property.
+   *
    * The default value is an empty string.
    *
-   * **See also:** [[title]], [[icon]]
+   * **See also:** [[title]], [[ChangeTitleMessage]], [[onChangeTitle]]
    */
   static titleProperty = new Property<Widget, string>({
     value: '',
@@ -223,7 +228,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * The default value is an empty string.
    *
-   * **See also:** [[icon]], [[title]]
+   * **See also:** [[icon]]
    */
   static iconProperty = new Property<Widget, string>({
     value: '',
@@ -967,6 +972,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     case 'close-request':
       this.onCloseRequest(msg);
       break;
+    case 'change-title':
+      this.onChangeTitle(<ChangeTitleMessage>msg);
+      break;
     }
   }
 
@@ -1098,6 +1106,20 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     } else if (this.isAttached) {
       detachWidget(this);
     }
+  }
+
+  /**
+   * A message handler invoked on a `'change-title'` message.
+   *
+   * #### Notes
+   * The default implementation of this handler will change the `title`
+   * of the widget to the title provided by the message. Subclasses may
+   * reimplement this handler for custom title change behavior.
+   *
+   * **See also:** [[titleProperty]]
+   */
+  protected onChangeTitle(msg: ChangeTitleMessage): void {
+    this.title = msg.title;
   }
 
   /**
@@ -1286,7 +1308,7 @@ class ChildMessage extends Message {
 
 
 /**
- * A message class for 'resize' messages.
+ * A message class for `'resize'` messages.
  */
 export
 class ResizeMessage extends Message {
@@ -1336,6 +1358,40 @@ class ResizeMessage extends Message {
 
   private _width: number;
   private _height: number;
+}
+
+
+/**
+ * A message class for `'change-title'` messages.
+ *
+ * Messages of this type are used to change the `title` property of a
+ * widget in response to a user input event.
+ *
+ * **See also:** [[titleProperty]], [[onChangeTitle]]
+ */
+export
+class ChangeTitleMessage extends Message {
+  /**
+   * Construct a new change title message.
+   *
+   * @param title - The title to use for the widget.
+   */
+  constructor(title: string) {
+    super('change-title');
+    this._title = title;
+  }
+
+  /**
+   * The title for the widget.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get title(): string {
+    return this._title;
+  }
+
+  private _title: string;
 }
 
 
