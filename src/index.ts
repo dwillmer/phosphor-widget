@@ -236,6 +236,22 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   });
 
   /**
+   * A property descriptor for the widget title editable hint.
+   *
+   * #### Notes
+   * This property has no direct effect on the behavior of the widget.
+   * It is intended to be consumed by container widgets when deciding
+   * whether to allow the user to edit the widget title.
+   *
+   * The default value is `false`.
+   *
+   * **See also:** [[titleEditableHint]], [[titleProperty]]
+   */
+  static titleEditableHintProperty = new Property<Widget, boolean>({
+    value: false,
+  });
+
+  /**
    * A property descriptor which controls the widget closable hint.
    *
    * #### Notes
@@ -385,6 +401,26 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set title(value: string) {
     Widget.titleProperty.set(this, value);
+  }
+
+  /**
+   * Get the title editable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleEditableHintProperty]].
+   */
+  get titleEditableHint(): boolean {
+    return Widget.titleEditableHintProperty.get(this);
+  }
+
+  /**
+   * Set the title editable hint for the widget.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[titleEditableHintProperty]].
+   */
+  set titleEditableHint(value: boolean) {
+    Widget.titleEditableHintProperty.set(this, value);
   }
 
   /**
