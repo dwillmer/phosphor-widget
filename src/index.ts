@@ -15,10 +15,6 @@ import {
 } from 'phosphor-disposable';
 
 import {
-  IBoxSizing, ISizeLimits, boxSizing, sizeLimits
-} from 'phosphor-domutil';
-
-import {
   IMessageHandler, Message, clearMessageData, postMessage, sendMessage
 } from 'phosphor-messaging';
 
@@ -42,105 +38,6 @@ import './index.css';
 
 
 /**
- * A singleton `'update-request'` message.
- *
- * #### Notes
- * This message can be dispatched to supporting widgets in order to
- * update their content. Not all widgets will respond to messages of
- * this type.
- *
- * This message is typically used to update the position and size of
- * a widget's children, or to update a widget's content to reflect the
- * current state of the widget.
- *
- * Messages of this type are compressed by default.
- *
- * **See also:** [[update]], [[onUpdateRequest]]
- */
-export
-const MSG_UPDATE_REQUEST = new Message('update-request');
-
-/**
- * A singleton `'layout-request'` message.
- *
- * #### Notes
- * This message can be dispatched to supporting widgets in order to
- * update their layout. Not all widgets will respond to messages of
- * this type.
- *
- * This message is typically used to update the size contraints of
- * a widget and to update the position and size of its children.
- *
- * Messages of this type are compressed by default.
- *
- * **See also:** [[onLayoutRequest]]
- */
-export
-const MSG_LAYOUT_REQUEST = new Message('layout-request');
-
-/**
- * A singleton `'close-request'` message.
- *
- * #### Notes
- * This message should be dispatched to a widget when it should close
- * and remove itself from the widget hierarchy.
- *
- * Messages of this type are compressed by default.
- *
- * **See also:** [[close]], [[onCloseRequest]]
- */
-export
-const MSG_CLOSE_REQUEST = new Message('close-request');
-
-/**
- * A singleton `'after-show'` message.
- *
- * #### Notes
- * This message is sent to a widget when it becomes visible.
- *
- * This message is **not** sent when the widget is attached.
- *
- * **See also:** [[isVisible]], [[onAfterShow]]
- */
-export
-const MSG_AFTER_SHOW = new Message('after-show');
-
-/**
- * A singleton `'before-hide'` message.
- *
- * #### Notes
- * This message is sent to a widget when it becomes not-visible.
- *
- * This message is **not** sent when the widget is detached.
- *
- * **See also:** [[isVisible]], [[onBeforeHide]]
- */
-export
-const MSG_BEFORE_HIDE = new Message('before-hide');
-
-/**
- * A singleton `'after-attach'` message.
- *
- * #### Notes
- * This message is sent to a widget after it is attached to the DOM.
- *
- * **See also:** [[isAttached]], [[onAfterAttach]]
- */
-export
-const MSG_AFTER_ATTACH = new Message('after-attach');
-
-/**
- * A singleton `'before-detach'` message.
- *
- * #### Notes
- * This message is sent to a widget before it is detached from the DOM.
- *
- * **See also:** [[isAttached]], [[onBeforeDetach]]
- */
-export
-const MSG_BEFORE_DETACH = new Message('before-detach');
-
-/**
  * The class name added to Widget instances.
  */
 const WIDGET_CLASS = 'p-Widget';
@@ -158,11 +55,157 @@ const HIDDEN_CLASS = 'p-mod-hidden';
  * This class will typically be subclassed in order to create a useful
  * widget. However, it can be used by itself to host foreign content
  * such as a React or Bootstrap component. Simply instantiate an empty
- * widget and add the content directly to its [[node]]. The widget and
+ * widget and add the content directly to its `.node`. The widget and
  * its content can then be embedded within a Phosphor widget hierarchy.
  */
 export
 class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
+  /**
+   * A singleton `'update-request'` message.
+   *
+   * #### Notes
+   * This message can be dispatched to supporting widgets in order to
+   * update their content. Not all widgets will respond to messages of
+   * this type.
+   *
+   * This message is typically used to update the position and size of
+   * a widget's children, or to update a widget's content to reflect the
+   * current state of the widget.
+   *
+   * Messages of this type are compressed by default.
+   *
+   * **See also:** [[update]], [[onUpdateRequest]]
+   */
+  static MsgUpdateRequest = new Message('update-request');
+
+  /**
+   * A singleton `'layout-request'` message.
+   *
+   * #### Notes
+   * This message can be dispatched to supporting widgets in order to
+   * update their layout. Not all widgets will respond to messages of
+   * this type.
+   *
+   * This message is typically used to update the size contraints of
+   * a widget and to update the position and size of its children.
+   *
+   * Messages of this type are compressed by default.
+   *
+   * **See also:** [[onLayoutRequest]]
+   */
+  static MsgLayoutRequest = new Message('layout-request');
+
+  /**
+   * A singleton `'close-request'` message.
+   *
+   * #### Notes
+   * This message should be dispatched to a widget when it should close
+   * and remove itself from the widget hierarchy.
+   *
+   * Messages of this type are compressed by default.
+   *
+   * **See also:** [[close]], [[onCloseRequest]]
+   */
+  static MsgCloseRequest = new Message('close-request');
+
+  /**
+   * A singleton `'after-show'` message.
+   *
+   * #### Notes
+   * This message is sent to a widget when it becomes visible.
+   *
+   * This message is **not** sent when the widget is attached.
+   *
+   * **See also:** [[isVisible]], [[onAfterShow]]
+   */
+  static MsgAfterShow = new Message('after-show');
+
+  /**
+   * A singleton `'before-hide'` message.
+   *
+   * #### Notes
+   * This message is sent to a widget when it becomes not-visible.
+   *
+   * This message is **not** sent when the widget is detached.
+   *
+   * **See also:** [[isVisible]], [[onBeforeHide]]
+   */
+  static MsgBeforeHide = new Message('before-hide');
+
+  /**
+   * A singleton `'after-attach'` message.
+   *
+   * #### Notes
+   * This message is sent to a widget after it is attached to the DOM.
+   *
+   * **See also:** [[isAttached]], [[onAfterAttach]]
+   */
+  static MsgAfterAttach = new Message('after-attach');
+
+  /**
+   * A singleton `'before-detach'` message.
+   *
+   * #### Notes
+   * This message is sent to a widget before it is detached from the DOM.
+   *
+   * **See also:** [[isAttached]], [[onBeforeDetach]]
+   */
+  static MsgBeforeDetach = new Message('before-detach');
+
+  /**
+   * Attach a widget to a host DOM node.
+   *
+   * @param widget - The widget to attach to the DOM.
+   *
+   * @param host - The node to use as the widget's host.
+   *
+   * @throws Will throw an error if the widget is not a root widget,
+   *   if the widget is already attached to the DOM, or if the host
+   *   is not attached to the DOM.
+   *
+   * #### Notes
+   * The function should be used in lieu of manual DOM attachment. It
+   * ensures that an `'after-attach'` message is properly dispatched
+   * to the widget hierarchy.
+   */
+  static attach(widget: Widget, host: HTMLElement): void {
+    if (widget.parent) {
+      throw new Error('only a root widget can be attached to the DOM');
+    }
+    if (widget.isAttached || document.body.contains(widget.node)) {
+      throw new Error('widget is already attached to the DOM');
+    }
+    if (!document.body.contains(host)) {
+      throw new Error('host is not attached to the DOM');
+    }
+    host.appendChild(widget.node);
+    sendMessage(widget, Widget.MsgAfterAttach);
+  }
+
+  /**
+   * Detach a widget from its host DOM node.
+   *
+   * @param widget - The widget to detach from the DOM.
+   *
+   * @throws Will throw an error if the widget is not a root widget,
+   *   or if the widget is not attached to the DOM.
+   *
+   * #### Notes
+   * The function should be used in lieu of manual DOM detachment. It
+   * ensures that a `'before-detach'` message is properly dispatched
+   * to the widget hierarchy.
+   */
+  static detach(widget: Widget): void {
+    if (widget.parent) {
+      throw new Error('only a root widget can be detached from the DOM');
+    }
+    if (!widget.isAttached || !document.body.contains(widget.node)) {
+      throw new Error('widget is not attached to the DOM');
+    }
+    sendMessage(widget, Widget.MsgBeforeDetach);
+    widget.node.parentNode.removeChild(widget.node);
+  }
+
   /**
    * A signal emitted when the widget is disposed.
    *
@@ -190,81 +233,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   static hiddenProperty = new Property<Widget, boolean>({
     value: false,
     changed: onHiddenChanged,
-  });
-
-  /**
-   * A property descriptor for the widget title.
-   *
-   * #### Notes
-   * This property has no direct effect on the behavior of the widget.
-   * It is intended to be consumed by container widgets when displaying
-   * the widget in a context where a title is appropriate.
-   *
-   * The value is the display text to use for the widget title.
-   *
-   * Code should not modify this property directly in response to user
-   * input events. Instead, a [[ChangeTitleMessage]] should be sent to
-   * the widget, which allows the widget an opportunity to update its
-   * internal state before updating its public property.
-   *
-   * The default value is an empty string.
-   *
-   * **See also:** [[title]], [[ChangeTitleMessage]], [[onChangeTitle]]
-   */
-  static titleProperty = new Property<Widget, string>({
-    value: '',
-  });
-
-  /**
-   * A property descriptor for the widget title icon class.
-   *
-   * #### Notes
-   * This property has no direct effect on the behavior of the widget.
-   * It is intended to be consumed by container widgets when displaying
-   * the widget in a context where an icon is appropriate.
-   *
-   * The value is the *class name* to be added to the DOM node which
-   * displays the actual icon. Multiple class names can be separated
-   * with whitespace.
-   *
-   * The default value is an empty string.
-   *
-   * **See also:** [[titleIcon]]
-   */
-  static titleIconProperty = new Property<Widget, string>({
-    value: '',
-  });
-
-  /**
-   * A property descriptor for the widget title editable hint.
-   *
-   * #### Notes
-   * This property has no direct effect on the behavior of the widget.
-   * It is intended to be consumed by container widgets when deciding
-   * whether to allow the user to edit the widget title.
-   *
-   * The default value is `false`.
-   *
-   * **See also:** [[titleEditableHint]], [[titleProperty]]
-   */
-  static titleEditableHintProperty = new Property<Widget, boolean>({
-    value: false,
-  });
-
-  /**
-   * A property descriptor which controls the widget closable hint.
-   *
-   * #### Notes
-   * This property has no direct effect on the behavior of the widget.
-   * It is intended to be consumed by container widgets when deciding
-   * whether to display a close indicator to the user.
-   *
-   * The default value is `false`.
-   *
-   * **See also:** [[closableHint]], [[close]]
-   */
-  static closableHintProperty = new Property<Widget, boolean>({
-    value: false,
   });
 
   /**
@@ -296,7 +264,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     if (this._parent) {
       this._parent.removeChild(this);
     } else if (this.isAttached) {
-      detachWidget(this);
+      Widget.detach(this);
     }
 
     while (this._children.length > 0) {
@@ -326,7 +294,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * #### Notes
    * This is a read-only property which is always safe to access.
    *
-   * **See also:** [[attachWidget]], [[detachWidget]]
+   * **See also:** [[attach]], [[detach]]
    */
   get isAttached(): boolean {
     return (this._flags & WidgetFlag.IsAttached) !== 0;
@@ -381,148 +349,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set hidden(value: boolean) {
     Widget.hiddenProperty.set(this, value);
-  }
-
-  /**
-   * Get the title for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleProperty]].
-   */
-  get title(): string {
-    return Widget.titleProperty.get(this);
-  }
-
-  /**
-   * Set the title for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleProperty]].
-   */
-  set title(value: string) {
-    Widget.titleProperty.set(this, value);
-  }
-
-  /**
-   * Get the title icon class name for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleIconProperty]].
-   */
-  get titleIcon(): string {
-    return Widget.titleIconProperty.get(this);
-  }
-
-  /**
-   * Set the title icon class name for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleIconProperty]].
-   */
-  set titleIcon(value: string) {
-    Widget.titleIconProperty.set(this, value);
-  }
-
-  /**
-   * Get the title editable hint for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleEditableHintProperty]].
-   */
-  get titleEditableHint(): boolean {
-    return Widget.titleEditableHintProperty.get(this);
-  }
-
-  /**
-   * Set the title editable hint for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[titleEditableHintProperty]].
-   */
-  set titleEditableHint(value: boolean) {
-    Widget.titleEditableHintProperty.set(this, value);
-  }
-
-  /**
-   * Get the closable hint for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[closableHintProperty]].
-   */
-  get closableHint(): boolean {
-    return Widget.closableHintProperty.get(this);
-  }
-
-  /**
-   * Set the closable hint for the widget.
-   *
-   * #### Notes
-   * This is a pure delegate to the [[closableHintProperty]].
-   */
-  set closableHint(value: boolean) {
-    Widget.closableHintProperty.set(this, value);
-  }
-
-  /**
-   * Get the box sizing for the widget's DOM node.
-   *
-   * #### Notes
-   * This value is computed once and then cached in order to avoid
-   * excessive style recomputations. The cache can be cleared via
-   * [[clearBoxSizing]].
-   *
-   * Layout widgets rely on this property when computing their layout.
-   * If a layout widget's box sizing changes at runtime, the box sizing
-   * cache should be cleared and the layout widget should be posted a
-   *`'layout-request'` message.
-   *
-   * This is a read-only property.
-   *
-   * **See also:** [[clearBoxSizing]]
-   */
-  get boxSizing(): IBoxSizing {
-    if (this._box) return this._box;
-    return this._box = Object.freeze(boxSizing(this.node));
-  }
-
-  /**
-   * Get the size limits for the widget's DOM node.
-   *
-   * #### Notes
-   * This value is computed once and then cached in order to avoid
-   * excessive style recomputations. The cache can be cleared by
-   * calling [[clearSizeLimits]].
-   *
-   * Layout widgets rely on this property of their child widgets when
-   * computing the layout. If a child widget's size limits change at
-   * runtime, the size limits should be cleared and the layout widget
-   * should be posted a `'layout-request'` message.
-   *
-   * This is a read-only property.
-   *
-   * **See also:** [[setSizeLimits]], [[clearSizeLimits]]
-   */
-  get sizeLimits(): ISizeLimits {
-    if (this._limits) return this._limits;
-    return this._limits = Object.freeze(sizeLimits(this.node));
-  }
-
-  /**
-   * Get the current offset geometry rect for the widget.
-   *
-   * #### Notes
-   * If the widget geometry has been set using [[setOffsetGeometry]],
-   * those values will be used to populate the rect, and no data will
-   * be read from the DOM. Otherwise, the offset geometry of the node
-   * **will** be read from the DOM, which may cause a reflow.
-   *
-   * This is a read-only property.
-   *
-   * **See also:** [[setOffsetGeometry]], [[clearOffsetGeometry]]
-   */
-  get offsetRect(): IOffsetRect {
-    if (this._rect) return cloneOffsetRect(this._rect);
-    return getOffsetRect(this.node);
   }
 
   /**
@@ -582,9 +408,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set children(children: Widget[]) {
     this.clearChildren();
-    for (let child of children) {
-      this.addChild(child);
-    }
+    children.forEach(child => { this.addChild(child); });
   }
 
   /**
@@ -671,7 +495,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     if (child._parent) {
       child._parent.removeChild(child);
     } else if (child.isAttached) {
-      detachWidget(child);
+      Widget.detach(child);
     }
     child._parent = this;
     var i = arrays.insert(this._children, index, child);
@@ -768,13 +592,13 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * @param immediate - Whether to dispatch the message immediately
    *   (`true`) or in the future (`false`). The default is `false`.
    *
-   * **See also:** [[MSG_UPDATE_REQUEST]], [[onUpdateRequest]]
+   * **See also:** [[MsgUpdateRequest]], [[onUpdateRequest]]
    */
   update(immediate = false): void {
     if (immediate) {
-      sendMessage(this, MSG_UPDATE_REQUEST);
+      sendMessage(this, Widget.MsgUpdateRequest);
     } else {
-      postMessage(this, MSG_UPDATE_REQUEST);
+      postMessage(this, Widget.MsgUpdateRequest);
     }
   }
 
@@ -784,164 +608,14 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * @param immediate - Whether to dispatch the message immediately
    *   (`true`) or in the future (`false`). The default is `false`.
    *
-   * **See also:** [[MSG_CLOSE_REQUEST]], [[onCloseRequest]]
+   * **See also:** [[MsgCloseRequest]], [[onCloseRequest]]
    */
   close(immediate = false): void {
     if (immediate) {
-      sendMessage(this, MSG_CLOSE_REQUEST);
+      sendMessage(this, Widget.MsgCloseRequest);
     } else {
-      postMessage(this, MSG_CLOSE_REQUEST);
+      postMessage(this, Widget.MsgCloseRequest);
     }
-  }
-
-  /**
-   * Clear the cached box sizing for the widget.
-   *
-   * #### Notes
-   * This method does **not** read from the DOM.
-   *
-   * This method does **not** write to the DOM.
-   *
-   * **See also:** [[boxSizing]]
-   */
-  clearBoxSizing(): void {
-    this._box = null;
-  }
-
-  /**
-   * Set the size limits for the widget's DOM node.
-   *
-   * @param minWidth - The min width for the widget, in pixels.
-   *
-   * @param minHeight - The min height for the widget, in pixels.
-   *
-   * @param maxWidth - The max width for the widget, in pixels.
-   *
-   * @param maxHeight - The max height for the widget, in pixels.
-   *
-   * #### Notes
-   * This method does **not** read from the DOM.
-   *
-   * **See also:** [[sizeLimits]], [[clearSizeLimits]]
-   */
-  setSizeLimits(minWidth: number, minHeight: number, maxWidth: number, maxHeight: number): void {
-    var minW = Math.max(0, minWidth);
-    var minH = Math.max(0, minHeight);
-    var maxW = Math.max(0, maxWidth);
-    var maxH = Math.max(0, maxHeight);
-    this._limits = Object.freeze({
-      minWidth: minW,
-      minHeight: minH,
-      maxWidth: maxW,
-      maxHeight: maxH,
-    });
-    var style = this.node.style;
-    style.minWidth = minW + 'px';
-    style.minHeight = minH + 'px';
-    style.maxWidth = (maxW === Infinity) ? '' : maxW + 'px';
-    style.maxHeight = (maxH === Infinity) ? '' : maxH + 'px';
-  }
-
-  /**
-   * Clear the cached size limits for the widget.
-   *
-   * #### Notes
-   * This method does **not** read from the DOM.
-   *
-   * **See also:** [[sizeLimits]], [[setSizeLimits]]
-   */
-  clearSizeLimits(): void {
-    this._limits = null;
-    var style = this.node.style;
-    style.minWidth = '';
-    style.maxWidth = '';
-    style.minHeight = '';
-    style.maxHeight = '';
-  }
-
-  /**
-   * Set the offset geometry for the widget.
-   *
-   * @param left - The offset left edge of the widget, in pixels.
-   *
-   * @param top - The offset top edge of the widget, in pixels.
-   *
-   * @param width - The offset width of the widget, in pixels.
-   *
-   * @param height - The offset height of the widget, in pixels.
-   *
-   * #### Notes
-   * This method is only useful when using absolute positioning to set
-   * the layout geometry of the widget. It will update the inline style
-   * of the widget with the specified values. If the width or height is
-   * different from the previous value, a [[ResizeMessage]] will be sent
-   * to the widget.
-   *
-   * This method does **not** take into account the size limits of the
-   * widget. It is assumed that the specified width and height do not
-   * violate the size constraints of the widget.
-   *
-   * This method does **not** read any data from the DOM.
-   *
-   * Code which uses this method to layout a widget is responsible for
-   * calling [[clearOffsetGeometry]] when it is finished managing the
-   * widget.
-   *
-   * **See also:** [[offsetRect]], [[clearOffsetGeometry]]
-   */
-  setOffsetGeometry(left: number, top: number, width: number, height: number): void {
-    var rect = this._rect || (this._rect = makeOffsetRect());
-    var style = this.node.style;
-    var resized = false;
-    if (top !== rect.top) {
-      rect.top = top;
-      style.top = top + 'px';
-    }
-    if (left !== rect.left) {
-      rect.left = left;
-      style.left = left + 'px';
-    }
-    if (width !== rect.width) {
-      resized = true;
-      rect.width = width;
-      style.width = width + 'px';
-    }
-    if (height !== rect.height) {
-      resized = true;
-      rect.height = height;
-      style.height = height + 'px';
-    }
-    if (resized) sendMessage(this, new ResizeMessage(width, height));
-  }
-
-  /**
-   * Clear the offset geometry for the widget.
-   *
-   * #### Notes
-   * This method is only useful when using absolute positioning to set
-   * the layout geometry of the widget. It will reset the inline style
-   * of the widget and clear the stored offset geometry values.
-   *
-   * This method will **not** dispatch a [[ResizeMessage]].
-   *
-   * This method does **not** read any data from the DOM.
-   *
-   * This method should be called by the widget's layout manager when
-   * it no longer manages the widget. It allows the widget to be added
-   * to another layout panel without conflict.
-   *
-   * **See also:** [[offsetRect]], [[setOffsetGeometry]]
-   */
-  clearOffsetGeometry(): void {
-    if (!this._rect) {
-      return;
-    }
-    this._rect = null;
-    var style = this.node.style;
-    style.top = '';
-    style.left = '';
-    style.width = '';
-    style.height = '';
   }
 
   /**
@@ -1004,9 +678,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     case 'close-request':
       this.onCloseRequest(msg);
       break;
-    case 'change-title':
-      this.onChangeTitle(<ChangeTitleMessage>msg);
-      break;
     }
   }
 
@@ -1052,7 +723,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   protected onChildAdded(msg: ChildMessage): void {
     var next = this.childAt(msg.currentIndex + 1);
     this.node.insertBefore(msg.child.node, next && next.node);
-    if (this.isAttached) sendMessage(msg.child, MSG_AFTER_ATTACH);
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgAfterAttach);
   }
 
   /**
@@ -1067,7 +738,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * message if appropriate.
    */
   protected onChildRemoved(msg: ChildMessage): void {
-    if (this.isAttached) sendMessage(msg.child, MSG_BEFORE_DETACH);
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgBeforeDetach);
     this.node.removeChild(msg.child.node);
   }
 
@@ -1084,10 +755,10 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * `'after-attach'` message if appropriate.
    */
   protected onChildMoved(msg: ChildMessage): void {
-    if (this.isAttached) sendMessage(msg.child, MSG_BEFORE_DETACH);
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgBeforeDetach);
     var next = this.childAt(msg.currentIndex + 1);
     this.node.insertBefore(msg.child.node, next && next.node);
-    if (this.isAttached) sendMessage(msg.child, MSG_AFTER_ATTACH);
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgAfterAttach);
   }
 
   /**
@@ -1116,7 +787,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * Subclass may reimplement this method as needed, but they should
    * dispatch `'resize'` messages to their children as appropriate.
    *
-   * **See also:** [[update]], [[MSG_UPDATE_REQUEST]]
+   * **See also:** [[update]], [[MsgUpdateRequest]]
    */
   protected onUpdateRequest(msg: Message): void {
     sendToAll(this._children, ResizeMessage.UnknownSize);
@@ -1130,28 +801,14 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * the widget as appropriate. Subclasses may reimplement this handler
    * for custom close behavior.
    *
-   * **See also:** [[close]], [[MSG_CLOSE_REQUEST]]
+   * **See also:** [[close]], [[MsgCloseRequest]]
    */
   protected onCloseRequest(msg: Message): void {
     if (this._parent) {
       this._parent.removeChild(this);
     } else if (this.isAttached) {
-      detachWidget(this);
+      Widget.detach(this);
     }
-  }
-
-  /**
-   * A message handler invoked on a `'change-title'` message.
-   *
-   * #### Notes
-   * The default implementation of this handler will change the `title`
-   * of the widget to the title provided by the message. Subclasses may
-   * reimplement this handler for custom title change behavior.
-   *
-   * **See also:** [[titleProperty]]
-   */
-  protected onChangeTitle(msg: ChangeTitleMessage): void {
-    this.title = msg.title;
   }
 
   /**
@@ -1159,7 +816,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also:** [[MSG_LAYOUT_REQUEST]]
+   * **See also:** [[MsgLayoutRequest]]
    */
   protected onLayoutRequest(msg: Message): void { }
 
@@ -1168,7 +825,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also:** [[MSG_AFTER_SHOW]]
+   * **See also:** [[MsgAfterShow]]
    */
   protected onAfterShow(msg: Message): void { }
 
@@ -1177,21 +834,25 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also:** [[MSG_BEFORE_HIDE]]
+   * **See also:** [[MsgBeforeHide]]
    */
   protected onBeforeHide(msg: Message): void { }
 
   /**
    * A message handler invoked on an `'after-attach'` message.
    *
-   * **See also:** [[MSG_AFTER_ATTACH]]
+   * The default implementation of this handler is a no-op.
+   *
+   * **See also:** [[MsgAfterAttach]]
    */
   protected onAfterAttach(msg: Message): void { }
 
   /**
    * A message handler invoked on a `'before-detach'` message.
    *
-   * **See also:** [[MSG_BEFORE_DETACH]]
+   * The default implementation of this handler is a no-op.
+   *
+   * **See also:** [[MsgBeforeDetach]]
    */
   protected onBeforeDetach(msg: Message): void { }
 
@@ -1212,65 +873,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   private _flags = 0;
   private _parent: Widget = null;
   private _children: Widget[] = [];
-  private _box: IBoxSizing = null;
-  private _rect: IOffsetRect = null;
-  private _limits: ISizeLimits = null;
-}
-
-
-/**
- * Attach a widget to a host DOM node.
- *
- * @param widget - The widget to attach to the DOM.
- *
- * @param host - The node to use as the widget's host.
- *
- * @throws Will throw an error if the widget is not a root widget,
- *   if the widget is already attached to the DOM, or if the host
- *   is not attached to the DOM.
- *
- * #### Notes
- * This function ensures that an `'after-attach'` message is dispatched
- * to the hierarchy. It should be used in lieu of manual DOM attachment.
- */
-export
-function attachWidget(widget: Widget, host: HTMLElement): void {
-  if (widget.parent) {
-    throw new Error('only a root widget can be attached to the DOM');
-  }
-  if (widget.isAttached || document.body.contains(widget.node)) {
-    throw new Error('widget is already attached to the DOM');
-  }
-  if (!document.body.contains(host)) {
-    throw new Error('host is not attached to the DOM');
-  }
-  host.appendChild(widget.node);
-  sendMessage(widget, MSG_AFTER_ATTACH);
-}
-
-
-/**
- * Detach a widget from its host DOM node.
- *
- * @param widget - The widget to detach from the DOM.
- *
- * @throws Will throw an error if the widget is not a root widget,
- *   or if the widget is not attached to the DOM.
- *
- * #### Notes
- * This function ensures that a `'before-detach'` message is dispatched
- * to the hierarchy. It should be used in lieu of manual DOM detachment.
- */
-export
-function detachWidget(widget: Widget): void {
-  if (widget.parent) {
-    throw new Error('only a root widget can be detached from the DOM');
-  }
-  if (!widget.isAttached || !document.body.contains(widget.node)) {
-    throw new Error('widget is not attached to the DOM');
-  }
-  sendMessage(widget, MSG_BEFORE_DETACH);
-  widget.node.parentNode.removeChild(widget.node);
 }
 
 
@@ -1345,7 +947,7 @@ class ChildMessage extends Message {
 export
 class ResizeMessage extends Message {
   /**
-   * A singleton 'resize' message with an unknown size.
+   * A singleton `'resize'` message with an unknown size.
    */
   static UnknownSize = new ResizeMessage(-1, -1);
 
@@ -1394,67 +996,6 @@ class ResizeMessage extends Message {
 
 
 /**
- * A message class for `'change-title'` messages.
- *
- * Messages of this type are used to change the `title` property of a
- * widget in response to a user input event.
- *
- * **See also:** [[titleProperty]], [[onChangeTitle]]
- */
-export
-class ChangeTitleMessage extends Message {
-  /**
-   * Construct a new change title message.
-   *
-   * @param title - The title to use for the widget.
-   */
-  constructor(title: string) {
-    super('change-title');
-    this._title = title;
-  }
-
-  /**
-   * The title for the widget.
-   *
-   * #### Notes
-   * This is a read-only property.
-   */
-  get title(): string {
-    return this._title;
-  }
-
-  private _title: string;
-}
-
-
-/**
- * An object which stores offset geometry information.
- */
-export
-interface IOffsetRect {
-  /**
-   * The offset top edge, in pixels.
-   */
-  top: number;
-
-  /**
-   * The offset left edge, in pixels.
-   */
-  left: number;
-
-  /**
-   * The offset width, in pixels.
-   */
-  width: number;
-
-  /**
-   * The offset height, in pixels.
-   */
-  height: number;
-}
-
-
-/**
  * An enum of widget bit flags.
  */
 enum WidgetFlag {
@@ -1476,46 +1017,12 @@ enum WidgetFlag {
 
 
 /**
- * Create a new offset rect full of NaN's.
- */
-function makeOffsetRect(): IOffsetRect {
-  return { top: NaN, left: NaN, width: NaN, height: NaN };
-}
-
-
-/**
- * Clone an offset rect object.
- */
-function cloneOffsetRect(rect: IOffsetRect): IOffsetRect {
-  return {
-    top: rect.top,
-    left: rect.left,
-    width: rect.width,
-    height: rect.height
-  };
-}
-
-
-/**
- * Get the offset rect for a DOM node.
- */
-function getOffsetRect(node: HTMLElement): IOffsetRect {
-  return {
-    top: node.offsetTop,
-    left: node.offsetLeft,
-    width: node.offsetWidth,
-    height: node.offsetHeight,
-  };
-}
-
-
-/**
  * The change handler for the [[hiddenProperty]].
  */
 function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
   if (hidden) {
     if (owner.isAttached && (!owner.parent || owner.parent.isVisible)) {
-      sendMessage(owner, MSG_BEFORE_HIDE);
+      sendMessage(owner, Widget.MsgBeforeHide);
     }
     owner.addClass(HIDDEN_CLASS);
     if (owner.parent) {
@@ -1524,7 +1031,7 @@ function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
   } else {
     owner.removeClass(HIDDEN_CLASS);
     if (owner.isAttached && (!owner.parent || owner.parent.isVisible)) {
-      sendMessage(owner, MSG_AFTER_SHOW);
+      sendMessage(owner, Widget.MsgAfterShow);
     }
     if (owner.parent) {
       sendMessage(owner.parent, new ChildMessage('child-shown', owner));
@@ -1537,9 +1044,7 @@ function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
  * Send a message to all widgets in an array.
  */
 function sendToAll(widgets: Widget[], msg: Message): void {
-  for (let widget of widgets) {
-    sendMessage(widget, msg);
-  }
+  widgets.forEach(w => { sendMessage(w, msg); });
 }
 
 
@@ -1547,9 +1052,5 @@ function sendToAll(widgets: Widget[], msg: Message): void {
  * Send a message to all non-hidden widgets in an array.
  */
 function sendToShown(widgets: Widget[], msg: Message): void {
-  for (let widget of widgets) {
-    if (!widget.hidden) {
-      sendMessage(widget, msg);
-    }
-  }
+  widgets.forEach(w => { if (!w.hidden) sendMessage(w, msg); });
 }
