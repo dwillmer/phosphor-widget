@@ -582,7 +582,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set children(children: Widget[]) {
     this.clearChildren();
-    children.forEach(child => this.addChild(child));
+    for (var i = 0, n = children.length; i < n; ++i) {
+      this.addChild(children[i]);
+    }
   }
 
   /**
