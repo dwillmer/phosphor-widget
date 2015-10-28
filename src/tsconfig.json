@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
     "declaration": true,
     "noImplicitAny": true,
     "noEmitOnError": true,
@@ -9,9 +8,5 @@
     "moduleResolution": "node",
     "target": "ES5",
     "outDir": "../lib"
-  },
-  "files": [
-    "../typings/es6-collections/es6-collections.d.ts",
-    "index.ts"
-  ]
+  }
 }
