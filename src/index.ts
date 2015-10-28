@@ -582,8 +582,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set children(children: Widget[]) {
     this.clearChildren();
-    for (var i = 0, n = children.length; i < n; ++i) {
-      this.addChild(children[i]);
+    for (let child of children) {
+      this.addChild(child);
     }
   }
 
@@ -1536,9 +1536,9 @@ function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
 /**
  * Send a message to all widgets in an array.
  */
-function sendToAll(array: Widget[], msg: Message): void {
-  for (var i = 0; i < array.length; ++i) {
-    sendMessage(array[i], msg);
+function sendToAll(widgets: Widget[], msg: Message): void {
+  for (let widget of widgets) {
+    sendMessage(widget, msg);
   }
 }
 
@@ -1546,8 +1546,10 @@ function sendToAll(array: Widget[], msg: Message): void {
 /**
  * Send a message to all non-hidden widgets in an array.
  */
-function sendToShown(array: Widget[], msg: Message): void {
-  for (var i = 0; i < array.length; ++i) {
-    if (!array[i].hidden) sendMessage(array[i], msg);
+function sendToShown(widgets: Widget[], msg: Message): void {
+  for (let widget of widgets) {
+    if (!widget.hidden) {
+      sendMessage(widget, msg);
+    }
   }
 }
