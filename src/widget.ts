@@ -34,6 +34,10 @@ import {
   ISignal, Signal, clearSignalData
 } from 'phosphor-signaling';
 
+import {
+  Title
+} from './title';
+
 
 /**
  * The class name added to Widget instances.
@@ -347,6 +351,20 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set hidden(value: boolean) {
     Widget.hiddenProperty.set(this, value);
+  }
+
+  /**
+   * Get the title data object for the widget.
+   *
+   * #### Notes
+   * The title data is used by some container widgets when displaying
+   * the widget along with a titl, such as a tab panel or dock panel.
+   *
+   * Not all widgets will make use of the title data, so it is created
+   * on-demand the first time it is accessed.
+   */
+  get title(): Title {
+    return getTitle(this);
   }
 
   /**
@@ -1011,6 +1029,22 @@ enum WidgetFlag {
    * The widget has been disposed.
    */
   IsDisposed = 0x4,
+}
+
+
+/**
+ * A private attached property for the title data for a widget.
+ */
+const titleProperty = new Property<Widget, Title>({
+  create: () => new Title(),
+});
+
+
+/**
+ * Lookup the title data for the given widget.
+ */
+function getTitle(widget: Widget): Title {
+  return titleProperty.get(widget);
 }
 
 
