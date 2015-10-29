@@ -7,6 +7,8 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
+export * from './geometry';
+export * from './title';
 export * from './widget';
 
 import './index.css';

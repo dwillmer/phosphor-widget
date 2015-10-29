@@ -35,6 +35,10 @@ import {
 } from 'phosphor-signaling';
 
 import {
+  Geometry
+} from './geometry';
+
+import {
   Title
 } from './title';
 
@@ -358,13 +362,33 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * #### Notes
    * The title data is used by some container widgets when displaying
-   * the widget along with a titl, such as a tab panel or dock panel.
+   * the widget along with a title, such as a tab panel or dock panel.
    *
    * Not all widgets will make use of the title data, so it is created
    * on-demand the first time it is accessed.
    */
   get title(): Title {
     return getTitle(this);
+  }
+
+  /**
+   * Get the geometry data object for the widget.
+   *
+   * #### Notes
+   * The geometry data is used by some container widgets when laying
+   * out the widget using absolute positioning.
+   *
+   * Not all widgets will make use of the geometry data object, so it
+   * is created on-demand the first time it is accessed.
+   *
+   * If external code resizes the widget using the `setRect` method of
+   * the geometry, it **must** send a `'resize'` event to the widget.
+   *
+   * Using this object correctly is non-trivial, and is best left to
+   * dedicated layout widgets and advanced use cases.
+   */
+  get geometry(): Geometry {
+    return getGeometry(this);
   }
 
   /**
@@ -1041,10 +1065,26 @@ const titleProperty = new Property<Widget, Title>({
 
 
 /**
+ * A private attached property for the geometry data for a widget.
+ */
+const geometryProperty = new Property<Widget, Geometry>({
+  create: owner => new Geometry(owner.node),
+});
+
+
+/**
  * Lookup the title data for the given widget.
  */
 function getTitle(widget: Widget): Title {
   return titleProperty.get(widget);
+}
+
+
+/**
+ * Lookup the geometry data for the given widget.
+ */
+function getGeometry(widget: Widget): Geometry {
+  return geometryProperty.get(widget);
 }
 
 
