@@ -22,10 +22,7 @@ import {
 } from 'phosphor-signaling';
 
 import {
-  MSG_AFTER_ATTACH, MSG_AFTER_SHOW, MSG_BEFORE_DETACH, MSG_BEFORE_HIDE,
-  MSG_CLOSE_REQUEST, MSG_LAYOUT_REQUEST, MSG_UPDATE_REQUEST,
-  ChangeTitleMessage, ChildMessage, ResizeMessage, Widget, attachWidget,
-  detachWidget
+  ChildMessage, ResizeMessage, Title, Widget
 } from '../../lib/index';
 
 import './index.css';
@@ -37,7 +34,7 @@ class LogWidget extends Widget {
 
   constructor(children?: Widget[]) {
     super();
-    if (children) children.forEach(child => this.addChild(child));
+    if (children) this.children = children;
   }
 
   processMessage(msg: Message): void {
@@ -55,7 +52,7 @@ class VerboseWidget extends Widget {
 
   constructor(children?: Widget[]) {
     super();
-    if (children) children.forEach(child => this.addChild(child));
+    if (children) this.children = children;
   }
 
   protected onChildAdded(msg: ChildMessage): void {
@@ -135,102 +132,168 @@ class VerboseWidget extends Widget {
     this.messages.push(msg);
     this.methods.push('onCloseRequest');
   }
-
-  protected onChangeTitle(msg: ChangeTitleMessage): void {
-    super.onChangeTitle(msg);
-    this.messages.push(msg);
-    this.methods.push('onChangeTitle');
-  }
 }
 
 
 describe('phosphor-widget', () => {
 
-  describe('MSG_UPDATE_REQUEST', () => {
-
-    it('should be a `Message` instance', () => {
-      expect(MSG_UPDATE_REQUEST instanceof Message).to.be(true);
-    });
-
-    it('should have a `type` of `update-request`', () => {
-      expect(MSG_UPDATE_REQUEST.type).to.be('update-request');
-    });
-
-  });
-
-  describe('MSG_LAYOUT_REQUEST', () => {
-
-    it('should be a `Message` instance', () => {
-      expect(MSG_LAYOUT_REQUEST instanceof Message).to.be(true);
-    });
-
-    it('should have a `type` of `layout-request`', () => {
-      expect(MSG_LAYOUT_REQUEST.type).to.be('layout-request');
-    });
-
-  });
-
-  describe('MSG_AFTER_SHOW', () => {
-
-    it('should be a `Message` instance', () => {
-      expect(MSG_AFTER_SHOW instanceof Message).to.be(true);
-    });
-
-    it('should have a `type` of `after-show`', () => {
-      expect(MSG_AFTER_SHOW.type).to.be('after-show');
-    });
-
-  });
-
-  describe('MSG_BEFORE_HIDE', () => {
-
-    it('should be a `Message` instance', () => {
-      expect(MSG_BEFORE_HIDE instanceof Message).to.be(true);
-    });
-
-    it('should have a `type` of `before-hide`', () => {
-      expect(MSG_BEFORE_HIDE.type).to.be('before-hide');
-    });
-
-  });
-
-  describe('MSG_AFTER_ATTACH', () => {
-
-    it('should be a `Message` instance', () => {
-      expect(MSG_AFTER_ATTACH instanceof Message).to.be(true);
-    });
-
-    it('should have a `type` of `after-attach`', () => {
-      expect(MSG_AFTER_ATTACH.type).to.be('after-attach');
-    });
-
-  });
-
-  describe('MSG_BEFORE_DETACH', () => {
-
-    it('should be a `Message` instance', () => {
-      expect(MSG_BEFORE_DETACH instanceof Message).to.be(true);
-    });
-
-    it('should have a `type` of `before-detach`', () => {
-      expect(MSG_BEFORE_DETACH.type).to.be('before-detach');
-    });
-
-  });
-
-  describe('MSG_CLOSE_REQUEST', () => {
-
-    it('should be a `Message` instance', () => {
-      expect(MSG_CLOSE_REQUEST instanceof Message).to.be(true);
-    });
-
-    it('should have a `type` of `close-request`', () => {
-      expect(MSG_CLOSE_REQUEST.type).to.be('close-request');
-    });
-
-  });
-
   describe('Widget', () => {
+
+    describe('.MsgUpdateRequest', () => {
+
+      it('should be a `Message` instance', () => {
+        expect(Widget.MsgUpdateRequest instanceof Message).to.be(true);
+      });
+
+      it('should have a `type` of `update-request`', () => {
+        expect(Widget.MsgUpdateRequest.type).to.be('update-request');
+      });
+
+    });
+
+    describe('.MsgLayoutRequest', () => {
+
+      it('should be a `Message` instance', () => {
+        expect(Widget.MsgLayoutRequest instanceof Message).to.be(true);
+      });
+
+      it('should have a `type` of `layout-request`', () => {
+        expect(Widget.MsgLayoutRequest.type).to.be('layout-request');
+      });
+
+    });
+
+    describe('.MsgCloseRequest', () => {
+
+      it('should be a `Message` instance', () => {
+        expect(Widget.MsgCloseRequest instanceof Message).to.be(true);
+      });
+
+      it('should have a `type` of `close-request`', () => {
+        expect(Widget.MsgCloseRequest.type).to.be('close-request');
+      });
+
+    });
+
+    describe('.MsgAfterShow', () => {
+
+      it('should be a `Message` instance', () => {
+        expect(Widget.MsgAfterShow instanceof Message).to.be(true);
+      });
+
+      it('should have a `type` of `after-show`', () => {
+        expect(Widget.MsgAfterShow.type).to.be('after-show');
+      });
+
+    });
+
+    describe('.MsgBeforeHide', () => {
+
+      it('should be a `Message` instance', () => {
+        expect(Widget.MsgBeforeHide instanceof Message).to.be(true);
+      });
+
+      it('should have a `type` of `before-hide`', () => {
+        expect(Widget.MsgBeforeHide.type).to.be('before-hide');
+      });
+
+    });
+
+    describe('.MsgAfterAttach', () => {
+
+      it('should be a `Message` instance', () => {
+        expect(Widget.MsgAfterAttach instanceof Message).to.be(true);
+      });
+
+      it('should have a `type` of `after-attach`', () => {
+        expect(Widget.MsgAfterAttach.type).to.be('after-attach');
+      });
+
+    });
+
+    describe('.MsgBeforeDetach', () => {
+
+      it('should be a `Message` instance', () => {
+        expect(Widget.MsgBeforeDetach instanceof Message).to.be(true);
+      });
+
+      it('should have a `type` of `before-detach`', () => {
+        expect(Widget.MsgBeforeDetach.type).to.be('before-detach');
+      });
+
+    });
+
+    describe('.attach()', () => {
+
+      it('should attach a root widget to a host', () => {
+        var widget = new Widget();
+        expect(widget.isAttached).to.be(false);
+        Widget.attach(widget, document.body);
+        expect(widget.isAttached).to.be(true);
+      });
+
+      it('should throw if the widget is not a root', () => {
+        var widget = new Widget();
+        var child = new Widget();
+        child.parent = widget;
+        expect(() => Widget.attach(child, document.body)).to.throwError();
+      });
+
+      it('should throw if the widget is already attached', () => {
+        var widget = new Widget();
+        Widget.attach(widget, document.body);
+        expect(() => Widget.attach(widget, document.body)).to.throwError();
+      });
+
+      it('should throw if the host is not attached to the DOM', () => {
+        var widget = new Widget();
+        var host = document.createElement('div');
+        expect(() => Widget.attach(widget, host)).to.throwError();
+      });
+
+      it('should dispatch an `after-attach` message', () => {
+        var widget = new LogWidget();
+        expect(widget.isAttached).to.be(false);
+        expect(widget.messages.indexOf('after-attach')).to.be(-1);
+        Widget.attach(widget, document.body);
+        expect(widget.isAttached).to.be(true);
+        expect(widget.messages.indexOf('after-attach')).to.not.be(-1);
+      });
+
+    });
+
+    describe('.detach()', () => {
+
+      it('should detach a root widget from its host', () => {
+        var widget = new Widget();
+        Widget.attach(widget, document.body);
+        expect(widget.isAttached).to.be(true);
+        Widget.detach(widget);
+        expect(widget.isAttached).to.be(false);
+      });
+
+      it('should throw if the widget is not a root', () => {
+        var child = new Widget();
+        var parent = new Widget();
+        child.parent = parent;
+        Widget.attach(parent, document.body);
+        expect(() => { Widget.detach(child); }).to.throwError();
+      });
+
+      it('should throw if the widget is not attached', () => {
+        var widget = new Widget();
+        expect(() => { Widget.detach(widget); }).to.throwError();
+      });
+
+      it('should dispatch a `before-detach` message', () => {
+        var widget = new LogWidget();
+        Widget.attach(widget, document.body);
+        widget.messages = []
+        Widget.detach(widget);
+        expect(widget.messages[0]).to.be('before-detach');
+      });
+
+    });
 
     describe('.disposedSignal', () => {
 
@@ -261,72 +324,20 @@ describe('phosphor-widget', () => {
       it('should dispatch an `after-show` message', () => {
         var widget = new LogWidget();
         Widget.hiddenProperty.set(widget, true);
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         expect(widget.messages.indexOf('after-show')).to.be(-1);
         Widget.hiddenProperty.set(widget, false);
         expect(widget.messages.indexOf('after-show')).to.not.be(-1);
-        detachWidget(widget);
+        Widget.detach(widget);
       });
 
       it('should dispatch a `before-hide` message', () => {
         var widget = new LogWidget();
         expect(widget.messages.indexOf('before-hide')).to.be(-1);
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         Widget.hiddenProperty.set(widget, true);
         expect(widget.messages.indexOf('before-hide')).to.not.be(-1);
-        detachWidget(widget);
-      });
-
-    });
-
-    describe('.titleProperty', () => {
-
-      it('should be a property descriptor', () => {
-        expect(Widget.titleProperty instanceof Property).to.be(true);
-      });
-
-      it('should default to an empty string', () => {
-        var widget = new Widget();
-        expect(Widget.titleProperty.get(widget)).to.be('');
-      });
-
-    });
-
-    describe('.titleIconProperty', () => {
-
-      it('should be a property descriptor', () => {
-        expect(Widget.titleIconProperty instanceof Property).to.be(true);
-      });
-
-      it('should default to an empty string', () => {
-        var widget = new Widget();
-        expect(Widget.titleIconProperty.get(widget)).to.be('');
-      });
-
-    });
-
-    describe('.titleEditableHintProperty', () => {
-
-      it('should be a property descriptor', () => {
-        expect(Widget.titleEditableHintProperty instanceof Property).to.be(true);
-      });
-
-      it('should default to `false`', () => {
-        var widget = new Widget();
-        expect(Widget.titleEditableHintProperty.get(widget)).to.be(false);
-      });
-
-    });
-
-    describe('.closableHintProperty', () => {
-
-      it('should be a property descriptor', () => {
-        expect(Widget.closableHintProperty instanceof Property).to.be(true);
-      });
-
-      it('should default to `false`', () => {
-        var widget = new Widget();
-        expect(Widget.closableHintProperty.get(widget)).to.be(false);
+        Widget.detach(widget);
       });
 
     });
@@ -384,7 +395,7 @@ describe('phosphor-widget', () => {
 
       it('should automatically detach the widget', () => {
         var widget = new Widget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         expect(widget.isAttached).to.be(true);
         widget.dispose();
         expect(widget.isAttached).to.be(false);
@@ -408,7 +419,7 @@ describe('phosphor-widget', () => {
 
       it('should be `true` if the widget is attached', () => {
         var widget = new Widget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         expect(widget.isAttached).to.be(true);
       });
 
@@ -438,13 +449,13 @@ describe('phosphor-widget', () => {
 
       it('should be `true` if the widget is visible', () => {
         var widget = new Widget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         expect(widget.isVisible).to.be(true);
       });
 
       it('should be `false` if the widget is not visible', () => {
         var widget = new Widget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         widget.hidden = true;
         expect(widget.isVisible).to.be(false);
       });
@@ -456,18 +467,32 @@ describe('phosphor-widget', () => {
 
     });
 
+    describe('#title', () => {
+
+      it('should be a `Title` instance', () => {
+        var widget = new Widget();
+        expect(widget.title instanceof Title).to.be(true);
+      });
+
+      it('should be a read-only property', () => {
+        var widget = new Widget();
+        expect(() => { widget.title = null; }).to.throwError();
+      });
+
+    });
+
     describe('#hidden', () => {
 
       it('should be `true` if the widget is hidden', () => {
         var widget = new Widget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         widget.hidden = true;
         expect(widget.hidden).to.be(true);
       });
 
       it('should be `false` if the widget is not hidden', () => {
         var widget = new Widget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         expect(widget.hidden).to.be(false);
       });
 
@@ -479,140 +504,6 @@ describe('phosphor-widget', () => {
         expect(widget.hidden).to.be(false);
       });
 
-    });
-
-    describe('#title', () => {
-
-      it('should be a pure delegate to the `titleProperty`', () => {
-        var widget = new Widget();
-        widget.title = 'Foo';
-        expect(Widget.titleProperty.get(widget)).to.be('Foo');
-        Widget.titleProperty.set(widget, 'Bar');
-        expect(widget.title).to.be('Bar');
-      });
-
-    });
-
-    describe('#titleIcon', () => {
-
-      it('should be a pure delegate to the `titleIconProperty`', () => {
-        var widget = new Widget();
-        widget.titleIcon = 'fa fa-close';
-        expect(Widget.titleIconProperty.get(widget)).to.be('fa fa-close');
-        Widget.titleIconProperty.set(widget, 'fa fa-open');
-        expect(widget.titleIcon).to.be('fa fa-open');
-      });
-
-    });
-
-    describe('#titleEditableHint', () => {
-
-      it('should be a pure delegate to the `titleEditableHintProperty`', () => {
-        var widget = new Widget();
-        widget.titleEditableHint = true;
-        expect(Widget.titleEditableHintProperty.get(widget)).to.be(true);
-        Widget.titleEditableHintProperty.set(widget, false);
-        expect(widget.titleEditableHint).to.be(false);
-      });
-
-    });
-
-    describe('#closableHint', () => {
-
-      it('should be a pure delegate to the `closableHintProperty`', () => {
-        var widget = new Widget();
-        widget.closableHint = true;
-        expect(Widget.closableHintProperty.get(widget)).to.be(true);
-        Widget.closableHintProperty.set(widget, false);
-        expect(widget.closableHint).to.be(false);
-      });
-
-    });
-
-    describe('#boxSizing', () => {
-
-      it('should be computed on the node', () => {
-        var widget = new Widget();
-        widget.addClass('box-sizing');
-        attachWidget(widget, document.body);
-        var sizing = widget.boxSizing;
-        expect(sizing.borderTop).to.be(10);
-        expect(sizing.borderLeft).to.be(15);
-        expect(sizing.borderRight).to.be(0);
-        expect(sizing.borderBottom).to.be(0);
-        expect(sizing.paddingTop).to.be(15);
-        expect(sizing.paddingLeft).to.be(12);
-        expect(sizing.paddingRight).to.be(8);
-        expect(sizing.paddingBottom).to.be(9);
-        expect(sizing.verticalSum).to.be(34);
-        expect(sizing.horizontalSum).to.be(35);
-      });
-
-      it('should be cached', () => {
-        var widget = new Widget();
-        widget.addClass('box-sizing');
-        attachWidget(widget, document.body);
-        var sizing = widget.boxSizing;
-        expect(sizing.borderTop).to.be(10);
-        widget.removeClass('box-sizing');
-        var newSizing = widget.boxSizing;
-        expect(newSizing.borderTop).to.be(10);
-      });
-
-      it('should be ready only', () => {
-        var widget = new Widget();
-        expect(() => { widget.boxSizing = null; }).to.throwError();
-      });
-    });
-
-    describe('#sizeLimits', () => {
-
-      it('should be computed on the node', () => {
-        var widget = new Widget();
-        widget.addClass('size-limits');
-        attachWidget(widget, document.body);
-        var limits = widget.sizeLimits;
-        expect(limits.minWidth).to.be(90);
-        expect(limits.minHeight).to.be(95);
-        expect(limits.maxWidth).to.be(100);
-        expect(limits.maxHeight).to.be(105);
-      });
-
-      it('should be read only', () => {
-        var widget = new Widget();
-        expect(() => { widget.sizeLimits = null; }).to.throwError();
-      });
-    });
-
-    describe('#offsetRect', () => {
-
-      it('should be computed on the node', () => {
-        var widget = new Widget();
-        widget.addClass('offset-rect');
-        attachWidget(widget, document.body);
-        var offsets = widget.offsetRect;
-        expect(offsets.top).to.be(0);
-        expect(offsets.left).to.be(0);
-        expect(offsets.width).to.be(100);
-        expect(offsets.height).to.be(100);
-      });
-
-      it('should be read only', () => {
-        var widget = new Widget();
-        expect(() => { widget.offsetRect = null; }).to.throwError();
-      });
-
-      it('should not read from the node if setOffsetGeometry has been called', () => {
-        var widget = new Widget();
-        widget.setOffsetGeometry(10, 10, 110, 110);
-        widget.addClass('offset-rect');
-        attachWidget(widget, document.body);
-        var offsets = widget.offsetRect;
-        expect(offsets.top).to.be(10);
-        expect(offsets.left).to.be(10);
-        expect(offsets.width).to.be(110);
-        expect(offsets.height).to.be(110);
-      });
     });
 
     describe('#parent', () => {
@@ -797,7 +688,7 @@ describe('phosphor-widget', () => {
       it('should first detach the child if appropriate', () => {
         var child = new LogWidget();
         var parent = new Widget();
-        attachWidget(child, document.body);
+        Widget.attach(child, document.body);
         child.messages = [];
         parent.addChild(child);
         expect(child.messages[0]).to.be('before-detach');
@@ -853,7 +744,7 @@ describe('phosphor-widget', () => {
       it('should first detach the child if appropriate', () => {
         var child = new LogWidget();
         var parent = new Widget();
-        attachWidget(child, document.body);
+        Widget.attach(child, document.body);
         child.messages = [];
         parent.insertChild(0, child);
         expect(child.messages[0]).to.be('before-detach');
@@ -1032,125 +923,13 @@ describe('phosphor-widget', () => {
 
     });
 
-    describe('#clearBoxSizing()', () => {
-
-      it('should clear the boxSizing cache', () => {
-        var widget = new Widget();
-        widget.addClass('box-sizing');
-        attachWidget(widget, document.body);
-        var sizing = widget.boxSizing;
-        expect(sizing.borderTop).to.be(10);
-        widget.clearBoxSizing();
-        widget.removeClass('box-sizing');
-        var newSizing = widget.boxSizing;
-        expect(newSizing.borderTop).to.be(0);
-      });
-
-      it('should be a no-op if there is no stored cache', () => {
-        var widget = new Widget();
-        widget.clearBoxSizing();
-      });
-
-    });
-
-    describe('#setSizeLimits()', () => {
-
-      it('should set the size limits for the widget', () => {
-        var widget = new Widget();
-        widget.setSizeLimits(94, 84, 99, 104);
-        var limits = widget.sizeLimits;
-        expect(limits.minWidth).to.be(94);
-        expect(limits.minHeight).to.be(84);
-        expect(limits.maxWidth).to.be(99);
-        expect(limits.maxHeight).to.be(104);
-      });
-
-      it('should be cached', () => {
-        var widget = new Widget();
-        widget.setSizeLimits(94, 84, 99, 104);
-        var limits = widget.sizeLimits;
-        expect(limits.minWidth).to.be(94);
-        widget.addClass('size-limits');
-        var newLimits = widget.sizeLimits;
-        expect(newLimits.minWidth).to.be(94);
-      });
-
-    });
-
-    describe('#clearSizeLimits()', () => {
-
-      it('should clear the cached size limits for the widget', () => {
-        var widget = new Widget();
-        widget.setSizeLimits(94, 84, 99, 104);
-        var limits = widget.sizeLimits;
-        expect(limits.minWidth).to.be(94);
-        widget.addClass('size-limits');
-        widget.clearSizeLimits();
-        var newLimits = widget.sizeLimits;
-        expect(newLimits.minWidth).to.be(90);
-      });
-
-      it('should be a no-op if there is no stored cache', () => {
-        var widget = new Widget();
-        widget.clearSizeLimits();
-      });
-
-    });
-
-    describe('#setOffsetGeometry()', () => {
-
-      it('should set the offest geometry for the widget', () => {
-        var widget = new Widget();
-        widget.setOffsetGeometry(5, 5, 105, 105);
-        attachWidget(widget, document.body);
-        var offsets = widget.offsetRect;
-        expect(offsets.top).to.be(5);
-        expect(offsets.left).to.be(5);
-        expect(offsets.width).to.be(105);
-        expect(offsets.height).to.be(105);
-      });
-
-      it('should update the inline style of the node', () => {
-        var widget = new Widget();
-        widget.setOffsetGeometry(5, 5, 105, 105);
-        attachWidget(widget, document.body);
-        var offsets = widget.offsetRect;
-        expect(offsets.top).to.be(5);
-        widget.addClass('offset-rect');
-        var newOffset = widget.offsetRect;
-        expect(offsets.top).to.be(5);
-      });
-
-    });
-
-    describe('#clearOffsetGeometry()', () => {
-
-      it('should clear the inline geometry', () => {
-        var widget = new Widget();
-        widget.setOffsetGeometry(5, 5, 105, 105);
-        attachWidget(widget, document.body);
-        var offsets = widget.offsetRect;
-        expect(offsets.top).to.be(5);
-        widget.addClass('offset-rect');
-        widget.clearOffsetGeometry();
-        var newOffsets = widget.offsetRect;
-        expect(newOffsets.top).to.be(0);
-      });
-
-      it('should be a no-op if the geometry was not set', () => {
-        var widget = new Widget();
-        widget.clearOffsetGeometry();
-      });
-
-    });
-
     describe('#compressMessage()', () => {
 
       it('should compress `update-request` messages', (done) => {
         var widget = new LogWidget();
-        postMessage(widget, MSG_UPDATE_REQUEST);
-        postMessage(widget, MSG_UPDATE_REQUEST);
-        postMessage(widget, MSG_UPDATE_REQUEST);
+        postMessage(widget, Widget.MsgUpdateRequest);
+        postMessage(widget, Widget.MsgUpdateRequest);
+        postMessage(widget, Widget.MsgUpdateRequest);
         requestAnimationFrame(() => {
           expect(widget.messages).to.eql(['update-request']);
           done();
@@ -1159,9 +938,9 @@ describe('phosphor-widget', () => {
 
       it('should compress `layout-request` messages', (done) => {
         var widget = new LogWidget();
-        postMessage(widget, MSG_LAYOUT_REQUEST);
-        postMessage(widget, MSG_LAYOUT_REQUEST);
-        postMessage(widget, MSG_LAYOUT_REQUEST);
+        postMessage(widget, Widget.MsgLayoutRequest);
+        postMessage(widget, Widget.MsgLayoutRequest);
+        postMessage(widget, Widget.MsgLayoutRequest);
         requestAnimationFrame(() => {
           expect(widget.messages).to.eql(['layout-request']);
           done();
@@ -1170,9 +949,9 @@ describe('phosphor-widget', () => {
 
       it('should compress `close-request` messages', (done) => {
         var widget = new LogWidget();
-        postMessage(widget, MSG_CLOSE_REQUEST);
-        postMessage(widget, MSG_CLOSE_REQUEST);
-        postMessage(widget, MSG_CLOSE_REQUEST);
+        postMessage(widget, Widget.MsgCloseRequest);
+        postMessage(widget, Widget.MsgCloseRequest);
+        postMessage(widget, Widget.MsgCloseRequest);
         requestAnimationFrame(() => {
           expect(widget.messages).to.eql(['close-request']);
           done();
@@ -1256,7 +1035,7 @@ describe('phosphor-widget', () => {
         it('should send an `after-attach` message to the child', () => {
           var child = new LogWidget();
           var parent = new VerboseWidget();
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.addChild(child);
           expect(child.messages[0]).to.be('after-attach');
         });
@@ -1324,7 +1103,7 @@ describe('phosphor-widget', () => {
         it('should send a `before-detach` message to the child', () => {
           var child = new LogWidget();
           var parent = new VerboseWidget([child]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.removeChild(child);
           expect(child.messages[1]).to.be('before-detach');
         });
@@ -1399,7 +1178,7 @@ describe('phosphor-widget', () => {
           var child0 = new LogWidget();
           var child1 = new LogWidget();
           var parent = new VerboseWidget([child0, child1]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.moveChild(1, 0);
           expect(child1.messages.indexOf('before-detach')).to.not.be(-1);
         });
@@ -1408,7 +1187,7 @@ describe('phosphor-widget', () => {
           var child0 = new LogWidget();
           var child1 = new LogWidget();
           var parent = new VerboseWidget([child0, child1]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.moveChild(1, 0);
           expect(child1.messages.indexOf('after-attach')).to.not.be(-1);
         });
@@ -1421,7 +1200,7 @@ describe('phosphor-widget', () => {
 
       it('should be invoked when the widget is resized', () => {
         var widget = new VerboseWidget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         widget.methods = [];
         sendMessage(widget, ResizeMessage.UnknownSize);
         expect(widget.methods[0]).to.be('onResize');
@@ -1431,7 +1210,7 @@ describe('phosphor-widget', () => {
 
         it('should be a `ResizeMessage`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           widget.messages = [];
           sendMessage(widget, ResizeMessage.UnknownSize);
           expect(widget.messages[0] instanceof ResizeMessage).to.be(true);
@@ -1439,7 +1218,7 @@ describe('phosphor-widget', () => {
 
         it('should have a `type` of `resize`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           widget.messages = [];
           sendMessage(widget, ResizeMessage.UnknownSize);
           expect(widget.messages[0].type).to.be('resize');
@@ -1465,7 +1244,7 @@ describe('phosphor-widget', () => {
 
       it('should be invoked when an update is requested', () => {
         var widget = new VerboseWidget();
-        sendMessage(widget, MSG_UPDATE_REQUEST);
+        sendMessage(widget, Widget.MsgUpdateRequest);
         expect(widget.methods[0]).to.be('onUpdateRequest');
       });
 
@@ -1473,13 +1252,13 @@ describe('phosphor-widget', () => {
 
         it('should be a `Message`', () => {
           var widget = new VerboseWidget();
-          sendMessage(widget, MSG_UPDATE_REQUEST);
+          sendMessage(widget, Widget.MsgUpdateRequest);
           expect(widget.messages[0] instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `update-request`', () => {
           var widget = new VerboseWidget();
-          sendMessage(widget, MSG_UPDATE_REQUEST);
+          sendMessage(widget, Widget.MsgUpdateRequest);
           expect(widget.messages[0].type).to.be('update-request');
         });
 
@@ -1492,9 +1271,51 @@ describe('phosphor-widget', () => {
         parent.children = [child0, child1];
         child0.messages = [];
         child1.messages = [];
-        sendMessage(parent, MSG_UPDATE_REQUEST);
+        sendMessage(parent, Widget.MsgUpdateRequest);
         expect(child0.messages[0]).to.eql(ResizeMessage.UnknownSize);
         expect(child1.messages[0]).to.eql(ResizeMessage.UnknownSize);
+      });
+
+    });
+
+    describe('#onCloseRequest()', () => {
+
+      it('should be invoked on a `close-request`', () => {
+        var widget = new VerboseWidget();
+        sendMessage(widget, Widget.MsgCloseRequest);
+        expect(widget.methods[0]).to.be('onCloseRequest');
+      });
+
+      context('`msg` parameter', () => {
+
+        it('should be a `Message`', () => {
+          var widget = new VerboseWidget();
+          sendMessage(widget, Widget.MsgCloseRequest);
+          expect(widget.messages[0] instanceof Message).to.be(true);
+        });
+
+        it('should have a `type` of `close-request`', () => {
+          var widget = new VerboseWidget();
+          sendMessage(widget, Widget.MsgCloseRequest);
+          expect(widget.messages[0].type).to.be('close-request');
+        });
+
+      });
+
+      it('should unparent a child widget by default', () => {
+        var parent = new Widget();
+        var child = new Widget();
+        child.parent = parent;
+        sendMessage(child, Widget.MsgCloseRequest);
+        expect(child.parent).to.be(null);
+        expect(parent.children).to.eql([]);
+      });
+
+      it('should detach a root widget by default', () => {
+        var widget = new Widget();
+        Widget.attach(widget, document.body);
+        sendMessage(widget, Widget.MsgCloseRequest);
+        expect(widget.isAttached).to.be(false);
       });
 
     });
@@ -1503,7 +1324,7 @@ describe('phosphor-widget', () => {
 
       it('should be invoked when a layout is requested', () => {
         var widget = new VerboseWidget();
-        sendMessage(widget, MSG_LAYOUT_REQUEST);
+        sendMessage(widget, Widget.MsgLayoutRequest);
         expect(widget.methods[0]).to.be('onLayoutRequest');
       });
 
@@ -1511,13 +1332,13 @@ describe('phosphor-widget', () => {
 
         it('should be a `Message`', () => {
           var widget = new VerboseWidget();
-          sendMessage(widget, MSG_LAYOUT_REQUEST);
+          sendMessage(widget, Widget.MsgLayoutRequest);
           expect(widget.messages[0] instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `layout-request`', () => {
           var widget = new VerboseWidget();
-          sendMessage(widget, MSG_LAYOUT_REQUEST);
+          sendMessage(widget, Widget.MsgLayoutRequest);
           expect(widget.messages[0].type).to.be('layout-request');
         });
 
@@ -1529,7 +1350,7 @@ describe('phosphor-widget', () => {
 
       it('should be invoked just after the widget is made visible', () => {
         var widget = new VerboseWidget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         widget.hidden = true;
         widget.hidden = false;
         expect(widget.methods.indexOf('onAfterShow')).to.not.be(-1);
@@ -1539,7 +1360,7 @@ describe('phosphor-widget', () => {
 
         it('should be a `Message`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           widget.hidden = true;
           widget.hidden = false;
           var msg = widget.messages[widget.messages.length - 1];
@@ -1548,7 +1369,7 @@ describe('phosphor-widget', () => {
 
         it('should have a `type` of `after-show`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           widget.hidden = true;
           widget.hidden = false;
           var msg = widget.messages[widget.messages.length - 1];
@@ -1563,7 +1384,7 @@ describe('phosphor-widget', () => {
 
       it('should be invoked just before the widget is made not-visible', () => {
         var widget = new VerboseWidget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         widget.hidden = true;
         expect(widget.methods.indexOf('onBeforeHide')).to.not.be(-1);
       });
@@ -1572,7 +1393,7 @@ describe('phosphor-widget', () => {
 
         it('should be a `Message`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           widget.hidden = true;
           var msg = widget.messages[widget.messages.length - 1];
           expect(msg instanceof Message).to.be(true);
@@ -1580,7 +1401,7 @@ describe('phosphor-widget', () => {
 
         it('should have a `type` of `before-hide`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           widget.hidden = true;
           var msg = widget.messages[widget.messages.length - 1];
           expect(msg.type).to.be('before-hide');
@@ -1594,7 +1415,7 @@ describe('phosphor-widget', () => {
 
       it('should be invoked just after the widget is attached', () => {
         var widget = new VerboseWidget();
-        attachWidget(widget, document.body);
+        Widget.attach(widget, document.body);
         expect(widget.methods.indexOf('onAfterAttach')).to.not.be(-1);
       });
 
@@ -1602,14 +1423,14 @@ describe('phosphor-widget', () => {
 
         it('should be a `Message`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           var msg = widget.messages[widget.messages.length - 1];
           expect(msg instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `after-attach`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
+          Widget.attach(widget, document.body);
           var msg = widget.messages[widget.messages.length - 1];
           expect(msg.type).to.be('after-attach');
         });
@@ -1622,8 +1443,8 @@ describe('phosphor-widget', () => {
 
       it('should be invoked just before the widget is detached', () => {
         var widget = new VerboseWidget();
-        attachWidget(widget, document.body);
-        detachWidget(widget);
+        Widget.attach(widget, document.body);
+        Widget.detach(widget);
         expect(widget.methods.indexOf('onBeforeDetach')).to.not.be(-1);
       });
 
@@ -1631,16 +1452,16 @@ describe('phosphor-widget', () => {
 
         it('should be a `Message`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
-          detachWidget(widget);
+          Widget.attach(widget, document.body);
+          Widget.detach(widget);
           var msg = widget.messages[widget.messages.length - 1];
           expect(msg instanceof Message).to.be(true);
         });
 
         it('should have a `type` of `before-detach`', () => {
           var widget = new VerboseWidget();
-          attachWidget(widget, document.body);
-          detachWidget(widget);
+          Widget.attach(widget, document.body);
+          Widget.detach(widget);
           var msg = widget.messages[widget.messages.length - 1];
           expect(msg.type).to.be('before-detach');
         });
@@ -1654,7 +1475,7 @@ describe('phosphor-widget', () => {
       it('should be invoked when a child is unhidden', () => {
         var child = new Widget();
         var parent = new VerboseWidget([child]);
-        attachWidget(parent, document.body);
+        Widget.attach(parent, document.body);
         parent.hidden = true;
         child.hidden = true;
         parent.hidden = false;
@@ -1668,7 +1489,7 @@ describe('phosphor-widget', () => {
         it('should be a `ChildMessage`', () => {
           var child = new Widget();
           var parent = new VerboseWidget([child]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.hidden = true;
           child.hidden = true;
           parent.hidden = false;
@@ -1680,7 +1501,7 @@ describe('phosphor-widget', () => {
         it('should have a `type` of `child-shown`', () => {
           var child = new Widget();
           var parent = new VerboseWidget([child]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.hidden = true;
           child.hidden = true;
           parent.hidden = false;
@@ -1693,7 +1514,7 @@ describe('phosphor-widget', () => {
           var child0 = new Widget();
           var child1 = new Widget();
           var parent = new VerboseWidget([child0, child1]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.hidden = true;
           child1.hidden = true;
           parent.hidden = false;
@@ -1705,7 +1526,7 @@ describe('phosphor-widget', () => {
         it('should have a `currentIndex` of -1', () => {
           var child = new Widget();
           var parent = new VerboseWidget([child]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.hidden = true;
           child.hidden = true;
           parent.hidden = false;
@@ -1717,7 +1538,7 @@ describe('phosphor-widget', () => {
         it('should have a `previousIndex` of -1', () => {
           var child = new Widget();
           var parent = new VerboseWidget([child]);
-          attachWidget(parent, document.body);
+          Widget.attach(parent, document.body);
           parent.hidden = true;
           child.hidden = true;
           parent.hidden = false;
@@ -1787,81 +1608,6 @@ describe('phosphor-widget', () => {
 
     });
 
-    describe('#onCloseRequest()', () => {
-
-      it('should be invoked on a `close-request`', () => {
-        var widget = new VerboseWidget();
-        sendMessage(widget, MSG_CLOSE_REQUEST);
-        expect(widget.methods[0]).to.be('onCloseRequest');
-      });
-
-      context('`msg` parameter', () => {
-
-        it('should be a `Message`', () => {
-          var widget = new VerboseWidget();
-          sendMessage(widget, MSG_CLOSE_REQUEST);
-          expect(widget.messages[0] instanceof Message).to.be(true);
-        });
-
-        it('should have a `type` of `close-request`', () => {
-          var widget = new VerboseWidget();
-          sendMessage(widget, MSG_CLOSE_REQUEST);
-          expect(widget.messages[0].type).to.be('close-request');
-        });
-
-      });
-
-      it('should unparent a child widget by default', () => {
-        var parent = new Widget();
-        var child = new Widget();
-        child.parent = parent;
-        sendMessage(child, MSG_CLOSE_REQUEST);
-        expect(child.parent).to.be(null);
-        expect(parent.children).to.eql([]);
-      });
-
-      it('should detach a root widget by default', () => {
-        var widget = new Widget();
-        attachWidget(widget, document.body);
-        sendMessage(widget, MSG_CLOSE_REQUEST);
-        expect(widget.isAttached).to.be(false);
-      });
-
-    });
-
-    describe('#onChangeTitle', () => {
-
-      it('should be invoked on a `change-title`', () => {
-        var widget = new VerboseWidget();
-        sendMessage(widget, new ChangeTitleMessage('Foo'));
-        expect(widget.methods[0]).to.be('onChangeTitle');
-      });
-
-      context('`msg` parameter', () => {
-
-        it('should be a `ChangeTitleMessage`', () => {
-          var widget = new VerboseWidget();
-          sendMessage(widget, new ChangeTitleMessage('Foo'));
-          expect(widget.messages[0] instanceof ChangeTitleMessage).to.be(true);
-        });
-
-        it('should have a `type` of `change-title`', () => {
-          var widget = new VerboseWidget();
-          sendMessage(widget, new ChangeTitleMessage('Foo'));
-          expect(widget.messages[0].type).to.be('change-title');
-        });
-
-      });
-
-      it('should update the widget title by default', () => {
-        var widget = new Widget();
-        expect(widget.title).to.be('');
-        sendMessage(widget, new ChangeTitleMessage('Foo'));
-        expect(widget.title).to.be('Foo');
-      });
-
-    });
-
     context('message propagation', () => {
 
       it('should propagate `after-attach` to all descendants', () => {
@@ -1869,7 +1615,7 @@ describe('phosphor-widget', () => {
         var bottom1 = new LogWidget();
         var middle = new LogWidget([bottom0, bottom1]);
         var top = new LogWidget([middle]);
-        attachWidget(top, document.body);
+        Widget.attach(top, document.body);
         expect(bottom0.messages.indexOf('after-attach')).to.not.be(-1);
         expect(bottom1.messages.indexOf('after-attach')).to.not.be(-1);
         expect(middle.messages.indexOf('after-attach')).to.not.be(-1);
@@ -1881,8 +1627,8 @@ describe('phosphor-widget', () => {
         var bottom1 = new LogWidget();
         var middle = new LogWidget([bottom0, bottom1]);
         var top = new LogWidget([middle]);
-        attachWidget(top, document.body);
-        detachWidget(top);
+        Widget.attach(top, document.body);
+        Widget.detach(top);
         expect(bottom0.messages.indexOf('before-detach')).to.not.be(-1);
         expect(bottom1.messages.indexOf('before-detach')).to.not.be(-1);
         expect(middle.messages.indexOf('before-detach')).to.not.be(-1);
@@ -1896,7 +1642,7 @@ describe('phosphor-widget', () => {
         var top = new LogWidget([middle]);
         bottom0.hidden = true;
         top.hidden = true;
-        attachWidget(top, document.body);
+        Widget.attach(top, document.body);
         top.hidden = false;
         expect(bottom0.messages.indexOf('after-show')).to.be(-1);
         expect(bottom1.messages.indexOf('after-show')).to.not.be(-1);
@@ -1913,7 +1659,7 @@ describe('phosphor-widget', () => {
         var bottom1 = new LogWidget();
         var middle = new LogWidget([bottom0, bottom1]);
         var top = new LogWidget([middle]);
-        attachWidget(top, document.body);
+        Widget.attach(top, document.body);
         bottom0.messages = [];
         middle.hidden = true;
         expect(bottom0.messages.indexOf('before-hide')).to.be(-1);
@@ -1937,7 +1683,7 @@ describe('phosphor-widget', () => {
         expect(bottom0.isAttached).to.be(top.isAttached);
         expect(bottom1.isAttached).to.be(top.isAttached);
         expect(middle.isAttached).to.be(top.isAttached);
-        attachWidget(top, document.body);
+        Widget.attach(top, document.body);
         expect(top.isAttached).to.be(true);
         expect(bottom0.isAttached).to.be(top.isAttached);
         expect(bottom1.isAttached).to.be(top.isAttached);
@@ -1950,7 +1696,7 @@ describe('phosphor-widget', () => {
         var bottom1 = new LogWidget();
         var middle = new LogWidget([bottom0, bottom1]);
         var top = new LogWidget([middle]);
-        attachWidget(top, document.body);
+        Widget.attach(top, document.body);
         expect(top.isVisible).to.be(true);
         expect(bottom0.isVisible).to.be(false);
         expect(bottom1.isVisible).to.be(top.isVisible);
@@ -1962,78 +1708,6 @@ describe('phosphor-widget', () => {
         expect(middle.isVisible).to.be(top.isVisible);
       });
 
-    });
-
-  });
-
-  describe('attachWidget()', () => {
-
-    it('should attach a root widget to a host', () => {
-      var widget = new Widget();
-      expect(widget.isAttached).to.be(false);
-      attachWidget(widget, document.body);
-      expect(widget.isAttached).to.be(true);
-    });
-
-    it('should throw if the widget is not a root', () => {
-      var widget = new Widget();
-      var child = new Widget();
-      child.parent = widget;
-      expect(() => attachWidget(child, document.body)).to.throwError();
-    });
-
-    it('should throw if the widget is already attached', () => {
-      var widget = new Widget();
-      attachWidget(widget, document.body);
-      expect(() => attachWidget(widget, document.body)).to.throwError();
-    });
-
-    it('should throw if the host is not attached to the DOM', () => {
-      var widget = new Widget();
-      var host = document.createElement('div');
-      expect(() => attachWidget(widget, host)).to.throwError();
-    });
-
-    it('should dispatch an `after-attach` message', () => {
-      var widget = new LogWidget();
-      expect(widget.isAttached).to.be(false);
-      expect(widget.messages.indexOf('after-attach')).to.be(-1);
-      attachWidget(widget, document.body);
-      expect(widget.isAttached).to.be(true);
-      expect(widget.messages.indexOf('after-attach')).to.not.be(-1);
-    });
-
-  });
-
-  describe('detachWidget()', () => {
-
-    it('should detach a root widget from its host', () => {
-      var widget = new Widget();
-      attachWidget(widget, document.body);
-      expect(widget.isAttached).to.be(true);
-      detachWidget(widget);
-      expect(widget.isAttached).to.be(false);
-    });
-
-    it('should throw if the widget is not a root', () => {
-      var child = new Widget();
-      var parent = new Widget();
-      child.parent = parent;
-      attachWidget(parent, document.body);
-      expect(() => { detachWidget(child); }).to.throwError();
-    });
-
-    it('should throw if the widget is not attached', () => {
-      var widget = new Widget();
-      expect(() => { detachWidget(widget); }).to.throwError();
-    });
-
-    it('should dispatch a `before-detach` message', () => {
-      var widget = new LogWidget();
-      attachWidget(widget, document.body);
-      widget.messages = []
-      detachWidget(widget);
-      expect(widget.messages[0]).to.be('before-detach');
     });
 
   });
@@ -2185,32 +1859,155 @@ describe('phosphor-widget', () => {
 
   });
 
-  describe('ChangeTitleMessage', () => {
+  describe('Title', () => {
 
-    describe('#constructor()', () => {
+    describe('.textProperty', () => {
 
-      it('should accept a title', () => {
-        var msg = new ChangeTitleMessage('Foo');
-        expect(msg instanceof ChangeTitleMessage).to.be(true);
+      it('should be a property descriptor', () => {
+        expect(Title.textProperty instanceof Property).to.be(true);
       });
 
-      it('should have type `change-title`', () => {
-        var msg = new ChangeTitleMessage('Foo');
-        expect(msg.type).to.be('change-title');
+      it('should default to an empty string', () => {
+        var title = new Title();
+        expect(Title.textProperty.get(title)).to.be('');
       });
 
     });
 
-    describe('#title', () => {
+    describe('.iconProperty', () => {
 
-      it('should be the title passed to the constructor', () => {
-        var msg = new ChangeTitleMessage('Foo');
-        expect(msg.title).to.be('Foo');
+      it('should be a property descriptor', () => {
+        expect(Title.iconProperty instanceof Property).to.be(true);
       });
 
-      it('should be a read-only property', () => {
-        var msg = new ChangeTitleMessage('Foo');
-        expect(() => { msg.title = 'Bar'; }).to.throwError();
+      it('should default to an empty string', () => {
+        var title = new Title();
+        expect(Title.iconProperty.get(title)).to.be('');
+      });
+
+    });
+
+    describe('.editableProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Title.editableProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to `false`', () => {
+        var title = new Title();
+        expect(Title.editableProperty.get(title)).to.be(false);
+      });
+
+    });
+
+    describe('.editHandlerProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Title.editHandlerProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to `null`', () => {
+        var title = new Title();
+        expect(Title.editHandlerProperty.get(title)).to.be(null);
+      });
+
+    });
+
+    describe('.closableProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Title.closableProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to `false`', () => {
+        var title = new Title();
+        expect(Title.closableProperty.get(title)).to.be(false);
+      });
+
+    });
+
+    describe('.classNameProperty', () => {
+
+      it('should be a property descriptor', () => {
+        expect(Title.classNameProperty instanceof Property).to.be(true);
+      });
+
+      it('should default to an empty string', () => {
+        var title = new Title();
+        expect(Title.classNameProperty.get(title)).to.be('');
+      });
+
+    });
+
+    describe('#text', () => {
+
+      it('should be a pure delegate to the `textProperty`', () => {
+        var title = new Title();
+        title.text = 'Foo';
+        expect(Title.textProperty.get(title)).to.be('Foo');
+        Title.textProperty.set(title, 'Bar');
+        expect(title.text).to.be('Bar');
+      });
+
+    });
+
+    describe('#icon', () => {
+
+      it('should be a pure delegate to the `iconProperty`', () => {
+        var title = new Title();
+        title.icon = 'fa fa-close';
+        expect(Title.iconProperty.get(title)).to.be('fa fa-close');
+        Title.iconProperty.set(title, 'fa fa-open');
+        expect(title.icon).to.be('fa fa-open');
+      });
+
+    });
+
+    describe('#editable', () => {
+
+      it('should be a pure delegate to the `editableProperty`', () => {
+        var title = new Title();
+        title.editable = true;
+        expect(Title.editableProperty.get(title)).to.be(true);
+        Title.editableProperty.set(title, false);
+        expect(title.editable).to.be(false);
+      });
+
+    });
+
+    describe('#editHandler', () => {
+
+      it('should be a pure delegate to the `editHandlerProperty`', () => {
+        var title = new Title();
+        var handler = (text: string) => { };
+        title.editHandler = handler;
+        expect(Title.editHandlerProperty.get(title)).to.be(handler);
+        Title.editHandlerProperty.set(title, null);
+        expect(title.editHandler).to.be(null);
+      });
+
+    });
+
+    describe('#closable', () => {
+
+      it('should be a pure delegate to the `closableProperty`', () => {
+        var title = new Title();
+        title.closable = true;
+        expect(Title.closableProperty.get(title)).to.be(true);
+        Title.closableProperty.set(title, false);
+        expect(title.closable).to.be(false);
+      });
+
+    });
+
+    describe('#className', () => {
+
+      it('should be a pure delegate to the `classNameProperty`', () => {
+        var title = new Title();
+        title.className = 'flash-alert';
+        expect(Title.classNameProperty.get(title)).to.be('flash-alert');
+        Title.classNameProperty.set(title, '');
+        expect(title.className).to.be('');
       });
 
     });
