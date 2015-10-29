@@ -716,10 +716,10 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
     switch (msg.type) {
-      case 'update-request':
-      case 'layout-request':
-      case 'close-request':
-        return pending.some(other => other.type === msg.type);
+    case 'update-request':
+    case 'layout-request':
+    case 'close-request':
+      return pending.some(other => other.type === msg.type);
     }
     return false;
   }
