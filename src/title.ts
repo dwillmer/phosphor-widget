@@ -13,6 +13,15 @@ import {
 
 
 /**
+ * A type alias for a title edit handler function.
+ *
+ * **See also:** [[editHandlerProperty]]
+ */
+export
+type EditHandler = (text: string) => void;
+
+
+/**
  * An object which holds data related to a widget title.
  */
 export
@@ -56,6 +65,22 @@ class Title {
    */
   static editableProperty = new Property<Title, boolean>({
     value: false,
+  });
+
+  /**
+   * The property descriptor for the title edit handler.
+   *
+   * If the title is user editable, this handler will be invoked when
+   * the text is edited by the user. The handler should update its own
+   * internal state and then update the title text as appropriate. If
+   * this is not provided, the title text will be updated directly.
+   *
+   * The default value is `null`.
+   *
+   * **See also:** [[editHandler]]
+   */
+  static editHandlerProperty = new Property<Title, EditHandler>({
+    value: null,
   });
 
   /**
@@ -144,6 +169,26 @@ class Title {
    */
   set editable(value: boolean) {
     Title.editableProperty.set(this, value);
+  }
+
+  /**
+   * Get the edit handler for the title.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[editHandlerProperty]].
+   */
+  get editHandler(): EditHandler {
+    return Title.editHandlerProperty.get(this);
+  }
+
+  /**
+   * Set the edit handler for the title.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[editHandlerProperty]].
+   */
+  set editHandler(value: EditHandler) {
+    Title.editHandlerProperty.set(this, value);
   }
 
   /**
