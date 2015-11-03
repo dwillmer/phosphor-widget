@@ -1,0 +1,373 @@
+
+  /**
+   * Set the children of the widget.
+   *
+   * #### Notes
+   * This will clear the current child widgets and add the specified
+   * child widgets. Depending on the desired outcome, it can be more
+   * efficient to use one of the child manipulation methods.
+   *
+   * **See also:** [[addChild]], [[insertChild]], [[removeChild]]
+   */
+  set children(children: Widget[]) {
+    this.clearChildren();
+    children.forEach(child => { this.addChild(child); });
+  }
+
+  /**
+   * Get the number of children of the widget.
+   *
+   * #### Notes
+   * This is a read-only property.
+   *
+   * **See also:** [[children]], [[childAt]]
+   */
+  get childCount(): number {
+    return this._children.length;
+  }
+
+  /**
+   * Get the child widget at a specific index.
+   *
+   * @param index - The index of the child of interest.
+   *
+   * @returns The child widget at the specified index, or `undefined`
+   *  if the index is out of range.
+   *
+   * **See also:** [[childCount]], [[childIndex]]
+   */
+  childAt(index: number): Widget {
+    return this._children[index | 0];
+  }
+
+  /**
+   * Get the index of a specific child widget.
+   *
+   * @param child - The child widget of interest.
+   *
+   * @returns The index of the specified child widget, or `-1` if
+   *   the widget is not a child of this widget.
+   *
+   * **See also:** [[childCount]], [[childAt]]
+   */
+  childIndex(child: Widget): number {
+    return this._children.indexOf(child);
+  }
+
+  /**
+   * Add a child widget to the end of the widget's children.
+   *
+   * @param child - The child widget to add to this widget.
+   *
+   * @returns The new index of the child.
+   *
+   * @throws Will throw an error if a widget is added to itself.
+   *
+   * #### Notes
+   * The child will be automatically removed from its current parent
+   * before being added to this widget.
+   *
+   * **See also:** [[insertChild]], [[moveChild]]
+   */
+  addChild(child: Widget): number {
+    return this.insertChild(this._children.length, child);
+  }
+
+  /**
+   * Insert a child widget at a specific index.
+   *
+   * @param index - The target index for the widget. This will be
+   *   clamped to the bounds of the children.
+   *
+   * @param child - The child widget to insert into the widget.
+   *
+   * @returns The new index of the child.
+   *
+   * @throws Will throw an error if a widget is inserted into itself.
+   *
+   * #### Notes
+   * The child will be automatically removed from its current parent
+   * before being added to this widget.
+   *
+   * **See also:** [[addChild]], [[moveChild]]
+   */
+  insertChild(index: number, child: Widget): number {
+    if (child === this) {
+      throw new Error('invalid child widget');
+    }
+    if (child._parent) {
+      child._parent.removeChild(child);
+    } else if (child.isAttached) {
+      Widget.detach(child);
+    }
+    child._parent = this;
+    let i = arrays.insert(this._children, index, child);
+    sendMessage(this, new ChildMessage('child-added', child, -1, i));
+    return i;
+  }
+
+  /**
+   * Move a child widget from one index to another.
+   *
+   * @param fromIndex - The index of the child of interest.
+   *
+   * @param toIndex - The target index for the child.
+   *
+   * @returns 'true' if the child was moved, or `false` if either
+   *   of the given indices are out of range.
+   *
+   * #### Notes
+   * This method can be more efficient than re-inserting an existing
+   * child, as some widgets may be able to optimize child moves and
+   * avoid making unnecessary changes to the DOM.
+   *
+   * **See also:** [[addChild]], [[insertChild]]
+   */
+  moveChild(fromIndex: number, toIndex: number): boolean {
+    let i = fromIndex | 0;
+    let j = toIndex | 0;
+    if (!arrays.move(this._children, i, j)) {
+      return false;
+    }
+    if (i !== j) {
+      let child = this._children[j];
+      sendMessage(this, new ChildMessage('child-moved', child, i, j));
+    }
+    return true;
+  }
+
+  /**
+   * Remove the child widget at a specific index.
+   *
+   * @param index - The index of the child of interest.
+   *
+   * @returns The removed child widget, or `undefined` if the index
+   *   is out of range.
+   *
+   * **See also:** [[removeChild]], [[clearChildren]]
+   */
+  removeChildAt(index: number): Widget {
+    let i = index | 0;
+    let child = arrays.removeAt(this._children, i);
+    if (child) {
+      child._parent = null;
+      sendMessage(this, new ChildMessage('child-removed', child, i, -1));
+    }
+    return child;
+  }
+
+  /**
+   * Remove a specific child widget from this widget.
+   *
+   * @param child - The child widget of interest.
+   *
+   * @returns The index which the child occupied, or `-1` if the
+   *   child is not a child of this widget.
+   *
+   * **See also:** [[removeChildAt]], [[clearChildren]]
+   */
+  removeChild(child: Widget): number {
+    let i = this.childIndex(child);
+    if (i !== -1) this.removeChildAt(i);
+    return i;
+  }
+
+  /**
+   * Remove all child widgets from the widget.
+   *
+   * #### Notes
+   * This will continue to remove children until the `childCount`
+   * reaches zero. It is therefore possible to enter an infinite
+   * loop if a message handler causes a child widget to be added
+   * in response to one being removed.
+   *
+   * **See also:** [[removeChild]], [[removeChildAt]]
+   */
+  clearChildren(): void {
+    while (this.childCount > 0) {
+      this.removeChildAt(this.childCount - 1);
+    }
+  }
+
+
+
+/**
+ * A message class for child-related messages.
+ */
+export
+class ChildMessage extends Message {
+  /**
+   * Construct a new child message.
+   *
+   * @param type - The message type.
+   *
+   * @param child - The child widget for the message.
+   *
+   * @param previousIndex - The previous index of the child, if known.
+   *   The default index is `-1` and indicates an unknown index.
+   *
+   * @param currentIndex - The current index of the child, if known.
+   *   The default index is `-1` and indicates an unknown index.
+   */
+  constructor(type: string, child: Widget, previousIndex = -1, currentIndex = -1) {
+    super(type);
+    this._child = child;
+    this._currentIndex = currentIndex;
+    this._previousIndex = previousIndex;
+  }
+
+  /**
+   * The child widget for the message.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get child(): Widget {
+    return this._child;
+  }
+
+  /**
+   * The current index of the child.
+   *
+   * #### Notes
+   * This will be `-1` if the current index is unknown.
+   *
+   * This is a read-only property.
+   */
+  get currentIndex(): number {
+    return this._currentIndex;
+  }
+
+  /**
+   * The previous index of the child.
+   *
+   * #### Notes
+   * This will be `-1` if the previous index is unknown.
+   *
+   * This is a read-only property.
+   */
+  get previousIndex(): number {
+    return this._previousIndex;
+  }
+
+  private _child: Widget;
+  private _currentIndex: number;
+  private _previousIndex: number;
+}
+
+
+/**
+ * A message class for `'resize'` messages.
+ */
+export
+class ResizeMessage extends Message {
+  /**
+   * A singleton `'resize'` message with an unknown size.
+   */
+  static UnknownSize = new ResizeMessage(-1, -1);
+
+  /**
+   * Construct a new resize message.
+   *
+   * @param width - The **offset width** of the widget, or `-1` if
+   *   the width is not known.
+   *
+   * @param height - The **offset height** of the widget, or `-1` if
+   *   the height is not known.
+   */
+  constructor(width: number, height: number) {
+    super('resize');
+    this._width = width;
+    this._height = height;
+  }
+
+  /**
+   * The offset width of the widget.
+   *
+   * #### Notes
+   * This will be `-1` if the width is unknown.
+   *
+   * This is a read-only property.
+   */
+  get width(): number {
+    return this._width;
+  }
+
+  /**
+   * The offset height of the widget.
+   *
+   * #### Notes
+   * This will be `-1` if the height is unknown.
+   *
+   * This is a read-only property.
+   */
+  get height(): number {
+    return this._height;
+  }
+
+  private _width: number;
+  private _height: number;
+}
+    case 'child-added':
+      this.onChildAdded(<ChildMessage>msg);
+      break;
+    case 'child-removed':
+      this.onChildRemoved(<ChildMessage>msg);
+      break;
+    case 'child-moved':
+      this.onChildMoved(<ChildMessage>msg);
+      break;
+
+
+  /**
+   * A message handler invoked on a `'child-added'` message.
+   *
+   * #### Notes
+   * The default implementation adds the child node to the widget
+   * node at the proper location and dispatches an `'after-attach'`
+   * message if appropriate.
+   *
+   * Subclasses may reimplement this method to control how the child
+   * node is added, but they must dispatch an `'after-attach'` message
+   * if appropriate.
+   */
+  protected onChildAdded(msg: ChildMessage): void {
+    let next = this.childAt(msg.currentIndex + 1);
+    this.node.insertBefore(msg.child.node, next && next.node);
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgAfterAttach);
+  }
+
+  /**
+   * A message handler invoked on a `'child-removed'` message.
+   *
+   * #### Notes
+   * The default implementation removes the child node from the widget
+   * node and dispatches a `'before-detach'` message if appropriate.
+   *
+   * Subclasses may reimplement this method to control how the child
+   * node is removed, but they must  dispatch a `'before-detach'`
+   * message if appropriate.
+   */
+  protected onChildRemoved(msg: ChildMessage): void {
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgBeforeDetach);
+    this.node.removeChild(msg.child.node);
+  }
+
+  /**
+   * A message handler invoked on a `'child-moved'` message.
+   *
+   * #### Notes
+   * The default implementation moves the child node to the proper
+   * location in the widget node and dispatches a `'before-detach'`
+   * and `'after-attach'` message if appropriate.
+   *
+   * Subclasses may reimplement this method to control how the child
+   * node is moved, but they must dispatch a `'before-detach'` and
+   * `'after-attach'` message if appropriate.
+   */
+  protected onChildMoved(msg: ChildMessage): void {
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgBeforeDetach);
+    let next = this.childAt(msg.currentIndex + 1);
+    this.node.insertBefore(msg.child.node, next && next.node);
+    if (this.isAttached) sendMessage(msg.child, Widget.MsgAfterAttach);
+  }
