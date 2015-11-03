@@ -7,9 +7,6 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
-import * as arrays
-  from 'phosphor-arrays';
-
 import {
   IDisposable
 } from 'phosphor-disposable';
@@ -82,23 +79,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * **See also:** [[update]], [[onUpdateRequest]]
    */
   static MsgUpdateRequest = new Message('update-request');
-
-  /**
-   * A singleton `'layout-request'` message.
-   *
-   * #### Notes
-   * This message can be dispatched to supporting widgets in order to
-   * update their layout. Not all widgets will respond to messages of
-   * this type.
-   *
-   * This message is typically used to update the size contraints of
-   * a widget and to update the position and size of its children.
-   *
-   * Messages of this type are compressed by default.
-   *
-   * **See also:** [[onLayoutRequest]]
-   */
-  static MsgLayoutRequest = new Message('layout-request');
 
   /**
    * A singleton `'close-request'` message.
@@ -266,17 +246,11 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     this._flags |= WidgetFlag.IsDisposed;
     this.disposed.emit(void 0);
 
-    if (this._parent) {
-      this._parent._children.remove(this);
+    if (this.parent) {
+      this.parent = null;
     } else if (this.isAttached) {
       Widget.detach(this);
     }
-
-    // while (this._children.length > 0) {
-    //   let child = this._children.pop();
-    //   child._parent = null;
-    //   child.dispose();
-    // }
 
     clearSignalData(this);
     clearMessageData(this);
@@ -371,43 +345,30 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
-   * Get the parent of the widget.
+   * Get the parent panel of the widget.
    *
    * #### Notes
    * This will be `null` if the widget does not have a parent.
    */
-  get parent(): Widget {
+  get parent(): Panel {
     return this._parent;
   }
 
   /**
-   * Set the parent of the widget.
-   *
-   * @throws Will throw an error if the widget is the parent.
+   * Set the parent panel of the widget.
    *
    * #### Notes
-   * If the specified parent is the current parent, this is a no-op.
-   *
-   * If the specified parent is `null`, this will remove the widget
-   * from its current parent. Otherwise, it will add this widget to
-   * the end of the new parent's children.
+   * If the specified panel is the current parent, this is a no-op. If
+   * the specified panel is `null` or `undefined`, the widget will be
+   * removed from its current parent. Otherwise, the widget will be
+   * added as the last child of the panel.
    */
-  set parent(parent: Widget) {
-    if (parent && parent !== this._parent) {
-      parent._children.add(this);
-    } else if (!parent && this._parent) {
-      this._parent._children.remove(this);
+  set parent(value: Widget) {
+    if (value && value !== this._parent) {
+      value.children.add(this);
+    } else if (!value && this._parent) {
+      this._parent.children.remove(this);
     }
-  }
-
-  /**
-   * Get the list of child widgets for the widget.
-   *
-   * #### Notes
-   * This is a read-only property.
-   */
-  get children(): IObservableList<Widget> {
-    return this._children;
   }
 
   /**
@@ -458,37 +419,24 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     case 'update-request':
       this.onUpdateRequest(msg);
       break;
-    case 'layout-request':
-      this.onLayoutRequest(msg);
-      break;
     case 'after-show':
       this._flags |= WidgetFlag.IsVisible;
       this.onAfterShow(msg);
-      sendToShown(this._children, msg);
       break;
     case 'before-hide':
       this.onBeforeHide(msg);
-      sendToShown(this._children, msg);
       this._flags &= ~WidgetFlag.IsVisible;
       break;
     case 'after-attach':
-      let visible = !this.hidden && (!this._parent || this._parent.isVisible);
+      let visible = !this.hidden && (!this.parent || this.parent.isVisible);
       if (visible) this._flags |= WidgetFlag.IsVisible;
       this._flags |= WidgetFlag.IsAttached;
       this.onAfterAttach(msg);
-      sendToAll(this._children, msg);
       break;
     case 'before-detach':
       this.onBeforeDetach(msg);
-      sendToAll(this._children, msg);
       this._flags &= ~WidgetFlag.IsVisible;
       this._flags &= ~WidgetFlag.IsAttached;
-      break;
-    case 'child-shown':
-      this.onChildShown(msg as ChildMessage);
-      break;
-    case 'child-hidden':
-      this.onChildHidden(msg as ChildMessage);
       break;
     case 'close-request':
       this.onCloseRequest(msg);
@@ -514,45 +462,13 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * Subclasses may reimplement this method as needed.
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
-    switch (msg.type) {
-    case 'update-request':
-    case 'layout-request':
-    case 'close-request':
-      return pending.some(other => other.type === msg.type);
+    if (msg.type === 'update-request') {
+      return pending.some(other => other.type === 'update-request');
+    }
+    if (msg.type === 'close-request') {
+      return pending.some(other => other.type === 'close-request');
     }
     return false;
-  }
-
-  /**
-   * A message handler invoked on a `'resize'` message.
-   *
-   * #### Notes
-   * The default implementation of this handler sends an [[UnknownSize]]
-   * resize message to each child. This ensures that the resize messages
-   * propagate through all widgets in the hierarchy.
-   *
-   * Subclasses may reimplement this method as needed, but they must
-   * dispatch `'resize'` messages to their children as appropriate.
-   */
-  protected onResize(msg: ResizeMessage): void {
-    sendToAll(this._children, ResizeMessage.UnknownSize);
-  }
-
-  /**
-   * A message handler invoked on an `'update-request'` message.
-   *
-   * #### Notes
-   * The default implementation of this handler sends an [[UnknownSize]]
-   * resize message to each child. This ensures that the resize messages
-   * propagate through all widgets in the hierarchy.
-   *
-   * Subclass may reimplement this method as needed, but they should
-   * dispatch `'resize'` messages to their children as appropriate.
-   *
-   * **See also:** [[update]], [[MsgUpdateRequest]]
-   */
-  protected onUpdateRequest(msg: Message): void {
-    sendToAll(this._children, ResizeMessage.UnknownSize);
   }
 
   /**
@@ -566,21 +482,28 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * **See also:** [[close]], [[MsgCloseRequest]]
    */
   protected onCloseRequest(msg: Message): void {
-    if (this._parent) {
-      this._parent.removeChild(this);
+    if (this.parent) {
+      this.parent = null;
     } else if (this.isAttached) {
       Widget.detach(this);
     }
   }
 
   /**
-   * A message handler invoked on a `'layout-request'` message.
+   * A message handler invoked on a `'resize'` message.
+   *
+   * The default implementation of this handler is a no-op.
+   */
+  protected onResize(msg: ResizeMessage): void { }
+
+  /**
+   * A message handler invoked on an `'update-request'` message.
    *
    * The default implementation of this handler is a no-op.
    *
-   * **See also:** [[MsgLayoutRequest]]
+   * **See also:** [[update]], [[MsgUpdateRequest]]
    */
-  protected onLayoutRequest(msg: Message): void { }
+  protected onUpdateRequest(msg: Message): void { }
 
   /**
    * A message handler invoked on an `'after-show'` message.
@@ -618,23 +541,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   protected onBeforeDetach(msg: Message): void { }
 
-  /**
-   * A message handler invoked on a `'child-shown'` message.
-   *
-   * The default implementation of this handler is a no-op.
-   */
-  protected onChildShown(msg: ChildMessage): void { }
-
-  /**
-   * A message handler invoked on a `'child-hidden'` message.
-   *
-   * The default implementation of this handler is a no-op.
-   */
-  protected onChildHidden(msg: ChildMessage): void { }
-
   private _flags = 0;
-  private _parent: Widget = null;
-  private _children: ChildWidgetList = null;
+  private _parent: Panel = null;
 }
 
 
@@ -715,51 +623,3 @@ function sendToShown(widgets: Widget[], msg: Message): void {
 }
 
 
-/**
- *
- */
-class ChildWidgetList extends ObservableList<Widget> {
-  /**
-   *
-   */
-  constructor(parent: Widget) {
-    this._parent = parent;
-  }
-
-  /**
-   *
-   */
-  protected addItem(index: number, item: Widget): number {
-
-  }
-
-  /**
-   *
-   */
-  protected moveItem(fromIndex: number, toIndex: number): boolean {
-
-  }
-
-  /**
-   *
-   */
-  protected removeItem(index: number): Widget {
-
-  }
-
-  /**
-   *
-   */
-  protected replaceItems(index: number, count: number, items: Widget[]): Widget[] {
-
-  }
-
-  /**
-   *
-   */
-  protected setItem(index: number, item: Widget): Widget {
-
-  }
-
-  private _parent: Widget;
-}
