@@ -20,9 +20,6 @@ import {
 } from 'phosphor-nodewrapper';
 
 import {
-  IObservableList, ObservableList
-}
-import {
   Property, clearPropertyData
 } from 'phosphor-properties';
 
@@ -33,6 +30,14 @@ import {
 import {
   ISignal, Signal, clearSignalData
 } from 'phosphor-signaling';
+
+import {
+  ChildMessage, ResizeMessage
+} from './messages';
+
+import {
+  Panel
+} from './panel';
 
 import {
   Title
@@ -55,10 +60,10 @@ const HIDDEN_CLASS = 'p-mod-hidden';
  *
  * #### Notes
  * This class will typically be subclassed in order to create a useful
- * widget. However, it can be used by itself to host foreign content
- * such as a React or Bootstrap component. Simply instantiate an empty
- * widget and add the content directly to its `.node`. The widget and
- * its content can then be embedded within a Phosphor widget hierarchy.
+ * widget. However, it can be used by itself to host externally created
+ * content. Simply instantiate an empty widget and add the DOM content
+ * directly to the widget's `node`. The widget and its content can be
+ * inserted into any Phosphor widget hierarchy.
  */
 export
 class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
@@ -71,8 +76,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * this type.
    *
    * This message is typically used to update the position and size of
-   * a widget's children, or to update a widget's content to reflect the
-   * current state of the widget.
+   * a panel's children, or to update a widget's content to reflect the
+   * current widget state.
    *
    * Messages of this type are compressed by default.
    *
@@ -97,7 +102,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * A singleton `'after-show'` message.
    *
    * #### Notes
-   * This message is sent to a widget when it becomes visible.
+   * This message is sent to a widget after it becomes visible.
    *
    * This message is **not** sent when the widget is attached.
    *
@@ -109,7 +114,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * A singleton `'before-hide'` message.
    *
    * #### Notes
-   * This message is sent to a widget when it becomes not-visible.
+   * This message is sent to a widget before it becomes not-visible.
    *
    * This message is **not** sent when the widget is detached.
    *
@@ -202,16 +207,16 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * A property descriptor which controls the hidden state of a widget.
    *
    * #### Notes
-   * This property controls whether a widget is explicitly hidden.
+   * This controls whether a widget is explicitly hidden.
    *
    * Hiding a widget will cause the widget and all of its descendants
    * to become not-visible.
    *
-   * This property will toggle the presence of `'p-mod-hidden'` on a
-   * widget. It will also dispatch `'after-show'` and `'before-hide'`
-   * messages as appropriate.
+   * This will toggle the presence of `'p-mod-hidden'` on a widget. It
+   * will also dispatch `'after-show'` and `'before-hide'` messages as
+   * appropriate.
    *
-   * The default property value is `false`.
+   * The default value is `false`.
    *
    * **See also:** [[hidden]], [[isVisible]]
    */
@@ -229,29 +234,42 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
-   * Dispose of the widget and its descendant widgets.
+   * Dispose of the widget and its descendants.
    *
    * #### Notes
-   * It is generally unsafe to use the widget after it has been
-   * disposed.
+   * It is generally unsafe to use the widget after it is disposed.
    *
    * If this method is called more than once, all calls made after
    * the first will be a no-op.
    */
   dispose(): void {
+    // Do nothing if the widget is already disposed.
     if (this.isDisposed) {
       return;
     }
 
+    // Set the disposed flag and emit the disposed signal.
     this._flags |= WidgetFlag.IsDisposed;
     this.disposed.emit(void 0);
 
+    // Unparent or detach the widget if necessary.
     if (this.parent) {
-      this.parent = null;
+      this.parent.children.remove(this);
     } else if (this.isAttached) {
       Widget.detach(this);
     }
 
+    // Dispose of the children if the widget is a panel. The `any` cast
+    // is required to work around the lack of `friend class` modifiers.
+    //
+    // Note that children are diposed here, instead of in a Panel class
+    // dispose method so that children are disposed *after* the signal
+    // is emitted, and *after* their ancestor is detached from the DOM.
+    if (this instanceof Panel) {
+      (this as any).children.dispose();
+    }
+
+    // Clear the extra data associated with the widget.
     clearSignalData(this);
     clearMessageData(this);
     clearPropertyData(this);
@@ -349,58 +367,35 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * #### Notes
    * This will be `null` if the widget does not have a parent.
+   *
+   * This is a read-only property.
    */
   get parent(): Panel {
     return this._parent;
   }
 
   /**
-   * Set the parent panel of the widget.
+   * Post an `'update-request'` message to the widget.
    *
    * #### Notes
-   * If the specified panel is the current parent, this is a no-op. If
-   * the specified panel is `null` or `undefined`, the widget will be
-   * removed from its current parent. Otherwise, the widget will be
-   * added as the last child of the panel.
-   */
-  set parent(value: Widget) {
-    if (value && value !== this._parent) {
-      value.children.add(this);
-    } else if (!value && this._parent) {
-      this._parent.children.remove(this);
-    }
-  }
-
-  /**
-   * Dispatch an `'update-request'` message to the widget.
-   *
-   * @param immediate - Whether to dispatch the message immediately
-   *   (`true`) or in the future (`false`). The default is `false`.
+   * This is a simple convenience method for posting the message.
    *
    * **See also:** [[MsgUpdateRequest]], [[onUpdateRequest]]
    */
-  update(immediate = false): void {
-    if (immediate) {
-      sendMessage(this, Widget.MsgUpdateRequest);
-    } else {
-      postMessage(this, Widget.MsgUpdateRequest);
-    }
+  update(): void {
+    postMessage(this, Widget.MsgUpdateRequest);
   }
 
   /**
-   * Dispatch a `'close-request'` message to the widget.
+   * Post a `'close-request'` message to the widget.
    *
-   * @param immediate - Whether to dispatch the message immediately
-   *   (`true`) or in the future (`false`). The default is `false`.
+   * #### Notes
+   * This is a simple convenience method for posting the message.
    *
    * **See also:** [[MsgCloseRequest]], [[onCloseRequest]]
    */
-  close(immediate = false): void {
-    if (immediate) {
-      sendMessage(this, Widget.MsgCloseRequest);
-    } else {
-      postMessage(this, Widget.MsgCloseRequest);
-    }
+  close(): void {
+    postMessage(this, Widget.MsgCloseRequest);
   }
 
   /**
@@ -456,17 +451,14 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *   delivery as normal.
    *
    * #### Notes
-   * The default implementation compresses the following messages:
-   * `'update-request'`, `'layout-request'`, and `'close-request'`.
+   * The default implementation compresses `'update-request'` and
+   * `'close-request'` messages.
    *
    * Subclasses may reimplement this method as needed.
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
-    if (msg.type === 'update-request') {
-      return pending.some(other => other.type === 'update-request');
-    }
-    if (msg.type === 'close-request') {
-      return pending.some(other => other.type === 'close-request');
+    if (msg.type === 'update-request' || msg.type === 'close-request') {
+      return pending.some(other => other.type === msg.type);
     }
     return false;
   }
@@ -476,14 +468,15 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * #### Notes
    * The default implementation of this handler will unparent or detach
-   * the widget as appropriate. Subclasses may reimplement this handler
-   * for custom close behavior.
+   * the widget as appropriate.
+   *
+   * Subclasses may reimplement this handler for custom close behavior.
    *
    * **See also:** [[close]], [[MsgCloseRequest]]
    */
   protected onCloseRequest(msg: Message): void {
     if (this.parent) {
-      this.parent = null;
+      this.parent.children.remove(this);
     } else if (this.isAttached) {
       Widget.detach(this);
     }
@@ -541,6 +534,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   protected onBeforeDetach(msg: Message): void { }
 
+  // friend class Panel
+  // friend class ChildWidgetList
   private _flags = 0;
   private _parent: Panel = null;
 }
@@ -549,7 +544,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
 /**
  * An enum of widget bit flags.
  */
-enum WidgetFlag {
+const enum WidgetFlag {
   /**
    * The widget is attached to the DOM.
    */
@@ -605,21 +600,3 @@ function onHiddenChanged(owner: Widget, old: boolean, hidden: boolean): void {
     }
   }
 }
-
-
-/**
- * Send a message to all widgets in an array.
- */
-function sendToAll(widgets: Widget[], msg: Message): void {
-  widgets.forEach(w => { sendMessage(w, msg); });
-}
-
-
-/**
- * Send a message to all non-hidden widgets in an array.
- */
-function sendToShown(widgets: Widget[], msg: Message): void {
-  widgets.forEach(w => { if (!w.hidden) sendMessage(w, msg); });
-}
-
-
