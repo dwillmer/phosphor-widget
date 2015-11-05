@@ -11,6 +11,10 @@ import * as arrays
   from 'phosphor-arrays';
 
 import {
+  IDisposable
+} from 'phosphor-disposable';
+
+import {
   Message, sendMessage
 } from 'phosphor-messaging';
 
@@ -35,6 +39,17 @@ import {
  * The class name added to Panel instances.
  */
 const PANEL_CLASS = 'p-Panel';
+
+
+/**
+ * An observable list which manages the child widgets for a panel.
+ *
+ * #### Notes
+ * A child widget list is disposed automatically when its owner panel
+ * is disposed. It should not be disposed directly by user code.
+ */
+export
+interface IChildWidgetList extends IObservableList<Widget>, IDisposable { }
 
 
 /**
@@ -79,7 +94,7 @@ class Panel extends Widget {
    * #### Notes
    * This is a read-only property.
    */
-  get children(): IObservableList<Widget> {
+  get children(): IChildWidgetList {
     return this._children;
   }
 
@@ -329,8 +344,6 @@ class Panel extends Widget {
    */
   protected onChildHidden(msg: ChildMessage): void { }
 
-  // friend class Widget
-  // friend class ChildWidgetList
   private _children: ChildWidgetList;
 }
 
@@ -344,7 +357,7 @@ class Panel extends Widget {
  * and `Remove` primitive operations. The list will **never** emit the
  * changed signal with a change type of `Replace` or `Set`.
  */
-class ChildWidgetList extends ObservableList<Widget> {
+class ChildWidgetList extends ObservableList<Widget> implements IChildWidgetList {
   /**
    * Construct a new child widget list.
    *
@@ -353,6 +366,39 @@ class ChildWidgetList extends ObservableList<Widget> {
   constructor(parent: Panel) {
     super();
     this._parent = parent;
+  }
+
+  /**
+   * Dispose of the child widgets in the list.
+   *
+   * #### Notes
+   * This will unparent, remove, and dispose of all child widgets.
+   *
+   * This will not emit change notifications or send messages to
+   * the parent panel.
+   */
+  dispose(): void {
+    // Set the parent to `null` to indicate the list is destroyed.
+    this._parent = null;
+
+    // Remove all children, set their internal parent references to
+    // `null`, and dispose them. The `any` cast is required to work
+    // around the lack of `friend class` modifiers.
+    while (this.internal.length > 0) {
+      let child = this.internal.pop();
+      (child as any as IFriendWidget)._parent = null;
+      child.dispose();
+    }
+  }
+
+  /**
+   * Test whether the widget list is disposed.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get isDisposed(): boolean {
+    return this._parent === null;
   }
 
   /**
@@ -397,7 +443,7 @@ class ChildWidgetList extends ObservableList<Widget> {
 
     // Update the internal parent reference of the item. The `any` cast
     // is required to work around the lack of `friend class` modifiers.
-    (item as any)._parent = parent;
+    (item as any as IFriendWidget)._parent = this._parent;
 
     // Insert the item into the internal array.
     let i = arrays.insert(this.internal, index, item);
@@ -481,7 +527,7 @@ class ChildWidgetList extends ObservableList<Widget> {
 
     // Update the internal parent reference of the item. The `any` cast
     // is required to work around the lack of `friend class` modifiers.
-    (item as any)._parent = null;
+    (item as any as IFriendWidget)._parent = null;
 
     // Dispatch a `'child-removed'` message to the parent.
     let msg = new ChildMessage('child-removed', item, index, -1);
@@ -582,7 +628,13 @@ class ChildWidgetList extends ObservableList<Widget> {
     return old;
   }
 
-  // friend class Panel
-  // friend class Widget
   private _parent: Panel;
+}
+
+
+/**
+ * A dummy interface to help safely cast widget private state.
+ */
+interface IFriendWidget {
+  _parent: Panel;
 }

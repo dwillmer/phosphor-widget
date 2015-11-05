@@ -259,14 +259,16 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
       Widget.detach(this);
     }
 
-    // Dispose of the children if the widget is a panel. The `any` cast
-    // is required to work around the lack of `friend class` modifiers.
+    // Dispose of the children if the widget is a panel.
     //
-    // Note that children are diposed here, instead of in a Panel class
-    // dispose method so that children are disposed *after* the signal
-    // is emitted, and *after* their ancestor is detached from the DOM.
-    if (this instanceof Panel) {
-      (this as any).children.dispose();
+    // The children are disposed here, instead of in a `dispose` method
+    // on the Panel, so that children are disposed after the `disposed`
+    // signal is emitted, and after their ancestor is detached.
+    //
+    // Workaround: https://github.com/Microsoft/TypeScript/issues/5534
+    let that = this;
+    if (that instanceof Panel) {
+      that.children.dispose();
     }
 
     // Clear the extra data associated with the widget.
@@ -534,7 +536,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   protected onBeforeDetach(msg: Message): void { }
 
-  // friend class Panel
   // friend class ChildWidgetList
   private _flags = 0;
   private _parent: Panel = null;
