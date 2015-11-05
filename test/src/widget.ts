@@ -74,6 +74,17 @@ class LogWidget extends Widget {
 }
 
 
+class LogPanel extends Panel {
+
+  messages: string[] = [];
+
+  processMessage(msg: Message): void {
+    super.processMessage(msg);
+    this.messages.push(msg.type);
+  }
+}
+
+
 describe('phosphor-widget', () => {
 
   describe('Widget', () => {
@@ -267,6 +278,25 @@ describe('phosphor-widget', () => {
         Widget.detach(widget);
       });
 
+      it('should dispatch an `child-shown` message to the parent', () => {
+        let panel = new LogPanel();
+        let child = new Widget();
+        child.parent = panel;
+        Widget.hiddenProperty.set(child, true);
+        panel.messages = [];
+        Widget.hiddenProperty.set(child, false);
+        expect(panel.messages[0]).to.be('child-shown');
+      });
+
+      it('should dispatch a `child-hidden` message to the parent', () => {
+        let panel = new LogPanel();
+        let child = new Widget();
+        child.parent = panel;
+        panel.messages = [];
+        Widget.hiddenProperty.set(child, true);
+        expect(panel.messages[0]).to.be('child-hidden');
+      });
+
     });
 
     describe('#constructor()', () => {
@@ -307,6 +337,7 @@ describe('phosphor-widget', () => {
         child.parent = panel;
         panel.dispose();
         expect(child.isDisposed).to.be(true);
+        expect(panel.children.length).to.be(0);
       });
 
       it('should remove the widget from its parent', () => {
