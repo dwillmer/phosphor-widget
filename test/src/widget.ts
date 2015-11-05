@@ -348,7 +348,7 @@ describe('phosphor-widget', () => {
         expect(panel.isDisposed).to.be(false);
         expect(child.isDisposed).to.be(true);
         expect(child.parent).to.be(null);
-        expect(panel.children.length).to.eql(0);
+        expect(panel.children.length).to.be(0);
       });
 
       it('should automatically detach the widget', () => {
@@ -471,7 +471,7 @@ describe('phosphor-widget', () => {
         let child = new Widget();
         child.parent = panel;
         expect(child.parent).to.be(panel);
-        expect(panel.children.get(0)).to.eql(child);
+        expect(panel.children.get(0)).to.be(child);
       });
 
       it('should be `null` if the widget has no parent', () => {
@@ -485,7 +485,7 @@ describe('phosphor-widget', () => {
         child.parent = panel;
         child.parent = null;
         expect(child.parent).to.be(null);
-        expect(panel.children.length).to.eql(0);
+        expect(panel.children.length).to.be(0);
       });
 
       it('should unparent the widget when set to `undefined`', () => {
@@ -494,7 +494,7 @@ describe('phosphor-widget', () => {
         child.parent = panel;
         child.parent = void 0;
         expect(child.parent).to.be(null);
-        expect(panel.children.length).to.eql(0);
+        expect(panel.children.length).to.be(0);
       });
 
       it('should reparent the widget when set to not `null`', () => {
@@ -504,8 +504,8 @@ describe('phosphor-widget', () => {
         child.parent = panel1;
         child.parent = panel2;
         expect(child.parent).to.be(panel2);
-        expect(panel1.children.length).to.eql(0);
-        expect(panel2.children.get(0)).to.eql(child);
+        expect(panel1.children.length).to.be(0);
+        expect(panel2.children.get(0)).to.be(child);
       });
 
       it('should be a no-op if the parent does not change', () => {
@@ -514,7 +514,7 @@ describe('phosphor-widget', () => {
         child.parent = panel;
         child.parent = panel;
         expect(child.parent).to.be(panel);
-        expect(panel.children.get(0)).to.eql(child);
+        expect(panel.children.get(0)).to.be(child);
       });
 
       it('should throw an error if the widget is used as its parent', () => {
