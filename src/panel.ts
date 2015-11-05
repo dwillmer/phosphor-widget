@@ -45,6 +45,11 @@ const PANEL_CLASS = 'p-Panel';
  * An observable list which manages the child widgets for a panel.
  *
  * #### Notes
+ * A child widget list must ensure that the child widgets are unique,
+ * and must therefore decompose list modifications into `Add`, `Move`,
+ * and `Remove` primitive operations. The list will **never** emit its
+ * changed signal with a change type of `Replace` or `Set`.
+ *
  * A child widget list is disposed automatically when its owner panel
  * is disposed. It should not be disposed directly by user code.
  */
@@ -92,11 +97,6 @@ class Panel extends Widget {
    * Get the observable list of child widgets for the panel.
    *
    * #### Notes
-   * This list implementation ensures that the child widgets are unique,
-   * and must therefore decompose list modifications into `Add`, `Move`,
-   * and `Remove` primitive operations. The list will **never** emit the
-   * changed signal with a change type of `Replace` or `Set`.
-   *
    * This is a read-only property.
    */
   get children(): IChildWidgetList {
@@ -354,13 +354,7 @@ class Panel extends Widget {
 
 
 /**
- * An observable list which manages the children of a panel.
- *
- * #### Notes
- * This list implementation ensures that the child widgets are unique,
- * and must therefore decompose list modifications into `Add`, `Move`,
- * and `Remove` primitive operations. The list will **never** emit the
- * changed signal with a change type of `Replace` or `Set`.
+ * A concrete implementation of IChildWidgetList.
  */
 class ChildWidgetList extends ObservableList<Widget> implements IChildWidgetList {
   /**
