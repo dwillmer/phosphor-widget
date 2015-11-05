@@ -92,6 +92,11 @@ class Panel extends Widget {
    * Get the observable list of child widgets for the panel.
    *
    * #### Notes
+   * This list implementation ensures that the child widgets are unique,
+   * and must therefore decompose list modifications into `Add`, `Move`,
+   * and `Remove` primitive operations. The list will **never** emit the
+   * changed signal with a change type of `Replace` or `Set`.
+   *
    * This is a read-only property.
    */
   get children(): IChildWidgetList {
