@@ -54,7 +54,15 @@ const PANEL_CLASS = 'p-Panel';
  * is disposed. It should not be disposed directly by user code.
  */
 export
-interface IChildWidgetList extends IObservableList<Widget>, IDisposable { }
+interface IChildWidgetList extends IObservableList<Widget>, IDisposable {
+  /**
+   * The parent panel which owns the list.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  parent: Panel;
+}
 
 
 /**
@@ -398,6 +406,16 @@ class ChildWidgetList extends ObservableList<Widget> implements IChildWidgetList
    */
   get isDisposed(): boolean {
     return this._parent === null;
+  }
+
+  /**
+   * The parent panel which owns the list.
+   *
+   * #### Notes
+   * This is a read-only property.
+   */
+  get parent(): Panel {
+    return this._parent;
   }
 
   /**
