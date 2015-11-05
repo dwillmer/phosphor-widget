@@ -370,11 +370,27 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * #### Notes
    * This will be `null` if the widget does not have a parent.
-   *
-   * This is a read-only property.
    */
   get parent(): Panel {
     return this._parent;
+  }
+
+  /**
+   * Set the parent panel of the widget.
+   *
+   * #### Notes
+   * If the panel is the current parent, this is no-op. Otherwise, the
+   * widget will be removed from its current parent and added as the
+   * last child of the given panel.
+   *
+   * Setting this to `null` or `undefined` will unparent the widget.
+   */
+  set parent(value: Panel) {
+    if (value && value !== this._parent) {
+      value.children.add(this);
+    } else if (!value && this._parent) {
+      this._parent.children.remove(this);
+    }
   }
 
   /**
