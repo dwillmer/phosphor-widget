@@ -430,7 +430,7 @@ class ChildWidgetList extends ObservableList<Widget> implements IChildWidgetList
       let i = this.internal.indexOf(item);
       let j = i < index ? index - 1 : index;
       this.moveItem(i, j);
-      return i;
+      return j;
     }
 
     // Remove or detach the item if necessary.
