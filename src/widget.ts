@@ -221,6 +221,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * **See also:** [[hidden]], [[isVisible]]
    */
   static hiddenProperty = new Property<Widget, boolean>({
+    name: 'hidden',
     value: false,
     changed: onHiddenChanged,
   });
@@ -567,6 +568,7 @@ const enum WidgetFlag {
  * A private attached property for the title data for a widget.
  */
 const titleProperty = new Property<Widget, Title>({
+  name: 'title',
   create: () => new Title(),
 });
 
