@@ -70,7 +70,7 @@ interface IChildWidgetList extends IObservableList<Widget>, IDisposable {
  *
  * #### Notes
  * This class typically serves as a base class for more concrete layout
- * panels, but can be used directly in combination with CSS to acheive
+ * panels, but can be used directly in combination with CSS to achieve
  * any desired layout for a collection of widgets.
  */
 export
@@ -83,7 +83,7 @@ class Panel extends Widget {
    * update their layout. Not all panels will respond to messages of
    * this type.
    *
-   * This message is typically used to update the size contraints of
+   * This message is typically used to update the size constraints of
    * a panel and to update the position and size of its children.
    *
    * Messages of this type are compressed by default.
