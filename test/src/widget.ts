@@ -247,6 +247,10 @@ describe('phosphor-widget', () => {
         expect(Widget.hiddenProperty instanceof Property).to.be(true);
       });
 
+      it('should have the name `hidden`', () => {
+        expect(Widget.hiddenProperty.name).to.be('hidden');
+      });
+
       it('should default to `false`', () => {
         let widget = new Widget();
         expect(Widget.hiddenProperty.get(widget)).to.be(false);

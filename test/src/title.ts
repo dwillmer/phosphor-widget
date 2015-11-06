@@ -40,6 +40,14 @@ describe('phosphor-widget', () => {
         expect(Title.textProperty instanceof Property).to.be(true);
       });
 
+      it('should be have the name `text`', () => {
+        expect(Title.textProperty.name).to.be('text');
+      });
+
+      it('should use the changed signal for notify', () => {
+        expect(Title.textProperty.notify).to.be(Title.changedSignal);
+      });
+
       it('should default to an empty string', () => {
         let title = new Title();
         expect(Title.textProperty.get(title)).to.be('');
@@ -51,6 +59,14 @@ describe('phosphor-widget', () => {
 
       it('should be a property descriptor', () => {
         expect(Title.iconProperty instanceof Property).to.be(true);
+      });
+
+      it('should be have the name `icon`', () => {
+        expect(Title.iconProperty.name).to.be('icon');
+      });
+
+      it('should use the changed signal for notify', () => {
+        expect(Title.iconProperty.notify).to.be(Title.changedSignal);
       });
 
       it('should default to an empty string', () => {
@@ -66,6 +82,14 @@ describe('phosphor-widget', () => {
         expect(Title.editableProperty instanceof Property).to.be(true);
       });
 
+      it('should be have the name `editable`', () => {
+        expect(Title.editableProperty.name).to.be('editable');
+      });
+
+      it('should use the changed signal for notify', () => {
+        expect(Title.editableProperty.notify).to.be(Title.changedSignal);
+      });
+
       it('should default to `false`', () => {
         let title = new Title();
         expect(Title.editableProperty.get(title)).to.be(false);
@@ -77,6 +101,14 @@ describe('phosphor-widget', () => {
 
       it('should be a property descriptor', () => {
         expect(Title.editHandlerProperty instanceof Property).to.be(true);
+      });
+
+      it('should be have the name `editHandler`', () => {
+        expect(Title.editHandlerProperty.name).to.be('editHandler');
+      });
+
+      it('should use the changed signal for notify', () => {
+        expect(Title.editHandlerProperty.notify).to.be(Title.changedSignal);
       });
 
       it('should default to `null`', () => {
@@ -92,6 +124,14 @@ describe('phosphor-widget', () => {
         expect(Title.closableProperty instanceof Property).to.be(true);
       });
 
+      it('should be have the name `closable`', () => {
+        expect(Title.closableProperty.name).to.be('closable');
+      });
+
+      it('should use the changed signal for notify', () => {
+        expect(Title.closableProperty.notify).to.be(Title.changedSignal);
+      });
+
       it('should default to `false`', () => {
         let title = new Title();
         expect(Title.closableProperty.get(title)).to.be(false);
@@ -103,6 +143,14 @@ describe('phosphor-widget', () => {
 
       it('should be a property descriptor', () => {
         expect(Title.classNameProperty instanceof Property).to.be(true);
+      });
+
+      it('should be have the name `className`', () => {
+        expect(Title.classNameProperty.name).to.be('className');
+      });
+
+      it('should use the changed signal for notify', () => {
+        expect(Title.classNameProperty.notify).to.be(Title.changedSignal);
       });
 
       it('should default to an empty string', () => {
