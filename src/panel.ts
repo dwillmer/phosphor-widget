@@ -27,6 +27,10 @@ import {
 } from 'phosphor-queue';
 
 import {
+  clearSignalData
+} from 'phosphor-signaling';
+
+import {
   ChildMessage, ResizeMessage
 } from './messages';
 
@@ -385,6 +389,9 @@ class ChildWidgetList extends ObservableList<Widget> implements IChildWidgetList
    * the parent panel.
    */
   dispose(): void {
+    // Clear the signal data so prevent any further notifications.
+    clearSignalData(this);
+
     // Set the parent to `null` to indicate the list is destroyed.
     this._parent = null;
 
