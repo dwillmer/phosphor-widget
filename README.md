@@ -96,3 +96,55 @@ Usage Examples
 
 **Note:** This module is fully compatible with Node/Babel/ES6/ES5. Simply
 omit the type declarations when using a language other than TypeScript.
+
+A `Widget` is the base class of the phosphor widget hierarchy. A `Panel` is a Widget which acts as a layout container for child widgets.
+
+A simple example of putting `Widget`s on a `Panel` is:
+
+```typescript
+let panel = new Panel();
+let child_one = new Widget();
+let child_two = new Widget();
+panel.children.assign([child_one, child_two]);
+```
+
+a more realistic scenario would involve different custom `Widget`s:
+
+```typescript
+class LogWidget extends Widget {
+  ...
+}
+
+class ControlsWidget extends Widget {
+  ...
+}
+
+let logPanel = new Panel();
+let log = new LogWidget();
+let controls = new ControlsWidget();
+logPanel.children.assign([log, controls]);
+```
+
+The `children` attribute is an [ObservableList](https://github.com/phosphorjs/phosphor-observablelist), which allows you to hook up to the `changed` signal:
+
+```typescript
+let panel = new Panel();
+panel.children.changed.connect(() => {
+  console.log('Child added');
+});
+```
+
+`Widget`s have a `node` property, which is a DOM node. For simple UI's without other toolkits, you can append children directly to this `node`:
+
+```typescript
+let widget = new Widget();
+let div = document.createElement('div');
+widget.node.appendChild(div);
+```
+
+To insert your custom widget at a certain location in the DOM, use the static `attach` method:
+
+```typescript
+let widget = new Widget();
+Widget.attach(widget, document.body);
+```
