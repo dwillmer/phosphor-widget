@@ -7,6 +7,8 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
+export * from './messages';
+export * from './panel';
 export * from './title';
 export * from './widget';
 

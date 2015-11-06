@@ -8,8 +8,12 @@
 'use strict';
 
 import {
-  Property
+  IChangedArgs, Property
 } from 'phosphor-properties';
+
+import {
+  ISignal, Signal
+} from 'phosphor-signaling';
 
 
 /**
@@ -27,6 +31,13 @@ type EditHandler = (text: string) => void;
 export
 class Title {
   /**
+   * A signal emitted when the title state changes.
+   *
+   * **See also:** [[changed]]
+   */
+  static changedSignal = new Signal<Title, IChangedArgs<any>>();
+
+  /**
    * The property descriptor for the title text.
    *
    * This will be used as the display text in title contexts.
@@ -36,7 +47,9 @@ class Title {
    * **See also:** [[text]]
    */
   static textProperty = new Property<Title, string>({
+    name: 'text',
     value: '',
+    notify: Title.changedSignal,
   });
 
   /**
@@ -51,7 +64,9 @@ class Title {
    * **See also:** [[icon]]
    */
   static iconProperty = new Property<Title, string>({
+    name: 'icon',
     value: '',
+    notify: Title.changedSignal,
   });
 
   /**
@@ -64,7 +79,9 @@ class Title {
    * **See also:** [[editable]]
    */
   static editableProperty = new Property<Title, boolean>({
+    name: 'editable',
     value: false,
+    notify: Title.changedSignal,
   });
 
   /**
@@ -80,7 +97,9 @@ class Title {
    * **See also:** [[editHandler]]
    */
   static editHandlerProperty = new Property<Title, EditHandler>({
+    name: 'editHandler',
     value: null,
+    notify: Title.changedSignal,
   });
 
   /**
@@ -93,7 +112,9 @@ class Title {
    * **See also:** [[closable]]
    */
   static closableProperty = new Property<Title, boolean>({
+    name: 'closable',
     value: false,
+    notify: Title.changedSignal,
   });
 
   /**
@@ -108,8 +129,20 @@ class Title {
    * **See also:** [[className]]
    */
   static classNameProperty = new Property<Title, string>({
+    name: 'className',
     value: '',
+    notify: Title.changedSignal,
   });
+
+  /**
+   * A signal emitted when the title state changes.
+   *
+   * #### Notes
+   * This is a pure delegate to the [[changedSignal]].
+   */
+  get changed(): ISignal<Title, IChangedArgs<any>> {
+    return Title.changedSignal.bind(this);
+  }
 
   /**
    * Get the text for the title.
