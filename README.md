@@ -125,7 +125,7 @@ let controls = new ControlsWidget();
 logPanel.children.assign([log, controls]);
 ```
 
-The `children` attribute is an [ObservableList](https://github.com/phosphorjs/phosphor-observablelist), which allows you to hook up to the `changed` signal:
+The `children` attribute is an [ObservableList](https://github.com/phosphorjs/phosphor-observablelist), which allows callables to be hooked up to the `changed` signal:
 
 ```typescript
 let panel = new Panel();
@@ -134,7 +134,7 @@ panel.children.changed.connect(() => {
 });
 ```
 
-`Widget`s have a `node` property, which is a DOM node. For simple UI's without other toolkits, you can append children directly to this `node`:
+`Widget`s have a `node` property, which is a DOM node. For simple UI's without other toolkits, append children directly to this `node`:
 
 ```typescript
 let widget = new Widget();
@@ -142,7 +142,7 @@ let div = document.createElement('div');
 widget.node.appendChild(div);
 ```
 
-To insert your custom widget at a certain location in the DOM, use the static `attach` method:
+To insert a custom widget at a certain location in the DOM, use the static `attach` method:
 
 ```typescript
 let widget = new Widget();
