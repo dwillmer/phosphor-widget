@@ -544,14 +544,11 @@ describe('phosphor-widget', () => {
 
     describe('#close()', () => {
 
-      it('should post a `close-request` message', (done) => {
+      it('should send a `close-request` message', () => {
         let widget = new LogWidget();
-        widget.close();
         expect(widget.messages).to.eql([]);
-        requestAnimationFrame(() => {
-          expect(widget.messages).to.eql(['close-request']);
-          done();
-        });
+        widget.close();
+        expect(widget.messages).to.eql(['close-request']);
       });
 
     });
@@ -565,17 +562,6 @@ describe('phosphor-widget', () => {
         postMessage(widget, Widget.MsgUpdateRequest);
         requestAnimationFrame(() => {
           expect(widget.messages).to.eql(['update-request']);
-          done();
-        });
-      });
-
-      it('should compress `close-request` messages', (done) => {
-        let widget = new LogWidget();
-        postMessage(widget, Widget.MsgCloseRequest);
-        postMessage(widget, Widget.MsgCloseRequest);
-        postMessage(widget, Widget.MsgCloseRequest);
-        requestAnimationFrame(() => {
-          expect(widget.messages).to.eql(['close-request']);
           done();
         });
       });

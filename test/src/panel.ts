@@ -1414,17 +1414,6 @@ describe('phosphor-widget', () => {
         });
       });
 
-      it('should compress `close-request` messages', (done) => {
-        let panel = new LogPanel();
-        postMessage(panel, Widget.MsgCloseRequest);
-        postMessage(panel, Widget.MsgCloseRequest);
-        postMessage(panel, Widget.MsgCloseRequest);
-        requestAnimationFrame(() => {
-          expect(panel.messages).to.eql(['close-request']);
-          done();
-        });
-      });
-
       it('should not compress other messages', (done) => {
         let panel = new LogPanel();
         let msg = new Message('foo');

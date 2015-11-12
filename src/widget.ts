@@ -406,15 +406,15 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
-   * Post a `'close-request'` message to the widget.
+   * Send a `'close-request'` message to the widget.
    *
    * #### Notes
-   * This is a simple convenience method for posting the message.
+   * This is a simple convenience method for sending the message.
    *
    * **See also:** [[MsgCloseRequest]], [[onCloseRequest]]
    */
   close(): void {
-    postMessage(this, Widget.MsgCloseRequest);
+    sendMessage(this, Widget.MsgCloseRequest);
   }
 
   /**
@@ -470,14 +470,13 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *   delivery as normal.
    *
    * #### Notes
-   * The default implementation compresses `'update-request'` and
-   * `'close-request'` messages.
+   * The default implementation compresses `'update-request'`.
    *
    * Subclasses may reimplement this method as needed.
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
-    if (msg.type === 'update-request' || msg.type === 'close-request') {
-      return pending.some(other => other.type === msg.type);
+    if (msg.type === 'update-request') {
+      return pending.some(other => other.type === 'update-request');
     }
     return false;
   }

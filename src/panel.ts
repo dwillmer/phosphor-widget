@@ -167,7 +167,7 @@ class Panel extends Widget {
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
     if (msg.type === 'layout-request') {
-      return pending.some(other => other.type === msg.type);
+      return pending.some(other => other.type === 'layout-request');
     }
     return super.compressMessage(msg, pending);
   }
