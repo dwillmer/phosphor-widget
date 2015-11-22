@@ -8,6 +8,14 @@ The core Phosphor widget class.
 
 [API Docs](http://phosphorjs.github.io/phosphor-widget/api/)
 
+Phosphor widgets provide several useful behaviours:
+
+  - **Hierarchical widgets**. This allows the addition/removal/resize of widgets without causing unnecessary reflows.
+
+  - **Unopinionated design**. *Any* content can be attached to a Phosphor Widget's `node`; [examples exist](https://phosphorjs.github.io/examples.html) for React and Flexbox, however the `node` attribute is a standard DOM node, so the Phosphor library does *not* limit functionality to certain frameworks or architectures.
+
+  - **Events:** show/hide, attach/detach, re-size, close, to name just a few. Desktop GUI toolkits have had these for years, but they are missing from the DOM.
+
 
 Package Install
 ---------------
