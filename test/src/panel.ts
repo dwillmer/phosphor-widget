@@ -131,19 +131,6 @@ class LogPanel extends Panel {
 }
 
 
-function expectEqlItems<T>(a: T[], b: T[]): void {
-  expect(a.length).to.be(b.length);
-  expect(a.every((v, i) => v === b[i])).to.be(true);
-}
-
-
-function expectEqlNodes(panel: Panel, widgets: Widget[]): void {
-  let cNodes = Array.prototype.slice.call(panel.node.childNodes);
-  let wNodes = widgets.map(widget => widget.node);
-  expectEqlItems(cNodes, wNodes);
-}
-
-
 describe('phosphor-widget', () => {
 
   describe('AbstractPanel', () => {
