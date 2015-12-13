@@ -355,13 +355,13 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   attach(host: HTMLElement): void {
     if (this.parent) {
-      throw new Error('only a root widget can be attached to the DOM');
+      throw new Error('Only a root widget can be attached to the DOM.');
     }
     if (this.isAttached || document.body.contains(this.node)) {
-      throw new Error('widget is already attached to the DOM');
+      throw new Error('Widget is already attached to the DOM.');
     }
     if (!document.body.contains(host)) {
-      throw new Error('host is not attached to the DOM');
+      throw new Error('Host is not attached to the DOM.');
     }
     host.appendChild(this.node);
     sendMessage(this, Widget.MsgAfterAttach);
@@ -380,10 +380,10 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   detach(): void {
     if (this.parent) {
-      throw new Error('only a root widget can be detached from the DOM');
+      throw new Error('Only a root widget can be detached from the DOM.');
     }
     if (!this.isAttached || !document.body.contains(this.node)) {
-      throw new Error('widget is not attached to the DOM');
+      throw new Error('Widget is not attached to the DOM.');
     }
     sendMessage(this, Widget.MsgBeforeDetach);
     this.node.parentNode.removeChild(this.node);
