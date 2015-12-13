@@ -52,17 +52,9 @@
     "url": "https://github.com/phosphorjs/phosphor-widget.git"
   },
   "files": [
-    "lib/index.css",
-    "lib/index.d.ts",
-    "lib/index.js",
-    "lib/messages.d.ts",
-    "lib/messages.js",
-    "lib/panel.d.ts",
-    "lib/panel.js",
-    "lib/title.d.ts",
-    "lib/title.js",
-    "lib/widget.d.ts",
-    "lib/widget.js"
+    "lib/*.css",
+    "lib/*.d.ts",
+    "lib/*.js"
   ],
   "browserify": {
     "transform": [
