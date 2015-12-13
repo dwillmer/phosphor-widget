@@ -81,16 +81,6 @@ class LogWidget extends Widget {
     this.methods.push('onBeforeDetach');
   }
 
-  protected onChildShown(msg: ChildMessage): void {
-    super.onChildShown(msg);
-    this.methods.push('onChildShown');
-  }
-
-  protected onChildHidden(msg: ChildMessage): void {
-    super.onChildHidden(msg);
-    this.methods.push('onChildHidden');
-  }
-
   protected removeChild(child: Widget): void {
     this.methods.push('removeChild');
   }
@@ -105,9 +95,24 @@ class LogPanel extends Panel {
 
   messages: string[] = [];
 
+  methods: string[] = [];
+
+  raw: Message[] = [];
+
   processMessage(msg: Message): void {
     super.processMessage(msg);
     this.messages.push(msg.type);
+    this.raw.push(msg);
+  }
+
+  protected onChildShown(msg: ChildMessage): void {
+    super.onChildShown(msg);
+    this.methods.push('onChildShown');
+  }
+
+  protected onChildHidden(msg: ChildMessage): void {
+    super.onChildHidden(msg);
+    this.methods.push('onChildHidden');
   }
 }
 
@@ -908,6 +913,114 @@ describe('phosphor-widget', () => {
           widget.messages = [];
           widget.detach();
           expect(widget.messages[0]).to.be('before-detach');
+        });
+
+      });
+
+    });
+
+    describe('#onChildShown()', () => {
+
+      it('should be invoked when a child is unhidden', () => {
+        let child = new Widget();
+        let panel = new LogPanel();
+        panel.addChild(child);
+        panel.attach(document.body);
+        panel.hidden = true;
+        child.hidden = true;
+        panel.hidden = false;
+        panel.methods = [];
+        child.hidden = false;
+        expect(panel.methods[0]).to.be('onChildShown');
+        panel.dispose();
+      });
+
+      context('`msg` parameter', () => {
+
+        it('should be a `ChildMessage`', () => {
+          let child = new Widget();
+          let panel = new LogPanel();
+          panel.addChild(child);
+          panel.attach(document.body);
+          panel.hidden = true;
+          child.hidden = true;
+          panel.hidden = false;
+          panel.raw = [];
+          child.hidden = false;
+          expect(panel.raw[0] instanceof ChildMessage).to.be(true);
+          panel.dispose();
+        });
+
+        it('should have a `type` of `child-shown`', () => {
+          let child = new Widget();
+          let panel = new LogPanel();
+          panel.addChild(child);
+          panel.attach(document.body);
+          panel.hidden = true;
+          child.hidden = true;
+          panel.hidden = false;
+          panel.raw = [];
+          child.hidden = false;
+          expect(panel.raw[0].type).to.be('child-shown');
+          panel.dispose();
+        });
+
+        it('should have the correct `child`', () => {
+          let child = new Widget();
+          let panel = new LogPanel();
+          panel.addChild(child);
+          panel.attach(document.body);
+          panel.hidden = true;
+          child.hidden = true;
+          panel.hidden = false;
+          panel.raw = [];
+          child.hidden = false;
+          expect((panel.raw[0] as ChildMessage).child).to.be(child);
+          panel.dispose();
+        });
+
+      });
+
+    });
+
+    describe('#onChildHidden()', () => {
+
+      it('should be invoked when a child is hidden', () => {
+        let child = new Widget();
+        let panel = new LogPanel();
+        panel.addChild(child);
+        panel.methods = [];
+        child.hidden = true;
+        expect(panel.methods[0]).to.be('onChildHidden');
+      });
+
+      context('`msg` parameter', () => {
+
+        it('should be a `ChildMessage`', () => {
+          let child = new Widget();
+          let panel = new LogPanel();
+          panel.addChild(child);
+          panel.raw = [];
+          child.hidden = true;
+          expect(panel.raw[0] instanceof ChildMessage).to.be(true);
+        });
+
+        it('should have a `type` of `child-hidden`', () => {
+          let child = new Widget();
+          let panel = new LogPanel();
+          panel.addChild(child);
+          panel.raw = [];
+          child.hidden = true;
+          expect((panel.raw[0] as ChildMessage).type).to.be('child-hidden');
+        });
+
+        it('should have the correct `child`', () => {
+          let child = new Widget();
+          let panel = new LogPanel();
+          panel.addChild(child);
+          panel.raw = [];
+          child.hidden = true;
+          expect((panel.raw[0] as ChildMessage).child).to.be(child);
         });
 
       });
