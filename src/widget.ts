@@ -316,6 +316,24 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
+   * Test whether a widget is a descendant of this widget.
+   *
+   * @param widget - The widget of interest.
+   *
+   * @returns `true` if this widget is an ancestor of the given widget,
+   *   or `false` otherwise.
+   */
+  contains(widget: Widget): boolean {
+    while (widget) {
+      if (widget === this) {
+        return true;
+      }
+      widget = widget._parent;
+    }
+    return false;
+  }
+
+  /**
    * Post an `'update-request'` message to the widget.
    *
    * #### Notes
@@ -478,7 +496,12 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * removing the child from its current parent.
    */
   protected adoptChild(child: Widget): void {
-    if (child._parent && child._parent !== this) child.remove();
+    if (child.contains(this)) {
+      throw new Error('Invalid child widget.');
+    }
+    if (child._parent && child._parent !== this) {
+      child.remove();
+    }
     child._parent = this;
   }
 
