@@ -143,6 +143,10 @@ abstract class Layout implements IDisposable {
 
   /**
    * Dispose of the resources held by the layout.
+   *
+   * #### Notes
+   * This method should be reimplemented by subclasses to dispose their
+   * widgets. All reimplementations should call the superclass method.
    */
   dispose(): void {
     this._disposed = true;
