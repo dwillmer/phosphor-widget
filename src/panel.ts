@@ -15,9 +15,19 @@ import {
 } from 'phosphor-messaging';
 
 import {
-  ChildMessage, ResizeMessage, Widget
+  Layout
+} from './layout';
+
+import {
+  ChildMessage, ResizeMessage
+} from './messages';
+
+import {
+  Widget
 } from './widget';
 
+
+// TODO - need better solution for storing these class names
 
 /**
  * The class name added to Panel instances.
@@ -26,23 +36,109 @@ const PANEL_CLASS = 'p-Panel';
 
 
 /**
- * An abstract base class for creating widgets which support children.
+ * A simple and convenient panel widget class.
+ *
+ * #### Notes
+ * This class is suitable as a base class for implementing a variety of
+ * convenience panels, but can also be used directly in combination with
+ * CSS to arrange a collection of widgets.
+ *
+ * This class provides a convenience wrapper around a [[PanelLayout]].
+ */
+export
+class Panel extends Widget {
+  /**
+   * Create a panel layout to use with a panel.
+   *
+   * @returns A new panel layout to use with a panel.
+   *
+   * #### Notes
+   * This may be reimplemented by a subclass to create custom layouts.
+   */
+  static createLayout(): PanelLayout {
+    return new PanelLayout();
+  }
+
+  /**
+   * Construct a new panel.
+   */
+  constructor() {
+    super();
+    this.addClass(PANEL_CLASS);
+    this.layout = (this.constructor as typeof Panel).createLayout();
+  }
+
+  /**
+   * Get the number of child widgets in the panel.
+   *
+   * @returns The number of child widgets in the panel.
+   */
+  childCount(): number {
+    return (this.layout as PanelLayout).childCount();
+  }
+
+  /**
+   * Get the child widget at the specified index.
+   *
+   * @param index - The index of the child widget of interest.
+   *
+   * @returns The child at the specified index, or `undefined`.
+   */
+  childAt(index: number): Widget {
+    return (this.layout as PanelLayout).childAt(index);
+  }
+
+  /**
+   * Get the index of the specified child widget.
+   *
+   * @param child - The child widget of interest.
+   *
+   * @returns The index of the specified child, or `-1`.
+   */
+  childIndex(child: Widget): number {
+    return (this.layout as PanelLayout).childIndex(child);
+  }
+
+  /**
+   * Add a child widget to the end of the panel.
+   *
+   * @param child - The child widget to add to the panel.
+   */
+  addChild(child: Widget): void {
+    (this.layout as PanelLayout).addChild(child);
+  }
+
+  /**
+   * Insert a child widget at the specified index.
+   *
+   * @param index - The index at which to insert the child.
+   *
+   * @param child - The child widget to insert into to the panel.
+   */
+  insertChild(index: number, child: Widget): void {
+    (this.layout as PanelLayout).insertChild(index, child);
+  }
+}
+
+
+/**
+ * An abstract base class for creating index-based layouts.
  *
  * #### Notes
  * This class implements core functionality which is required by nearly
- * all widgets which support children. It is a good starting point for
- * creating custom panel widgets.
+ * all layouts which can be expressed using index-based storage. It is
+ * a good starting point for creating advanced custom layouts.
  *
- * For custom panels which cannot express child access with an index
- * based API, the `Widget` class may still be used as the base class,
- * but such a panel is responsible for **all** child messaging.
+ * This class must be subclassed to make a fully functioning layout.
+ *
+ * **See also:** [[PanelLayout]], [[Panel]]
  */
 export
-abstract class AbstractPanel extends Widget {
+abstract class AbstractPanelLayout extends Layout {
   /**
-   * Get the number of children in the panel.
+   * Get the number of child widgets in the layout.
    *
-   * @returns The number of child widgets in the panel.
+   * @returns The number of child widgets in the layout.
    *
    * #### Notes
    * This abstract method must be implemented by a subclass.
@@ -52,6 +148,8 @@ abstract class AbstractPanel extends Widget {
   /**
    * Get the child widget at the specified index.
    *
+   * @param index - The index of the child widget of interest.
+   *
    * @returns The child at the specified index, or `undefined`.
    *
    * #### Notes
@@ -60,143 +158,149 @@ abstract class AbstractPanel extends Widget {
   abstract childAt(index: number): Widget;
 
   /**
-   * Remove the specified child from the panel.
+   * Get the index of the specified child widget.
    *
-   * @param child - The child widget to remove.
+   * @param child - The child widget of interest.
    *
-   * #### Notes
-   * This abstract method must be implemented by a subclass.
-   *
-   * This method is called automatically as needed. It should not be
-   * invoked directly by user code.
+   * @returns The index of the specified child, or `-1`.
    */
-  protected abstract removeChild(child: Widget): void;
+  childIndex(child: Widget): number {
+    for (let i = 0, n = this.childCount(); i < n; ++i) {
+      if (this.childAt(i) === child) return i;
+    }
+    return -1;
+  }
 
   /**
-   * Dispose and clear all children of the panel.
+   * Send a message to all children in the layout.
    *
-   * #### Notes
-   * This abstract method must be implemented by a subclass.
-   *
-   * This method is called automatically as needed. It should not be
-   * invoked directly by user code.
+   * @param msg - The message to send to the children.
    */
-  protected abstract disposeChildren(): void;
+  protected sendToAllChildren(msg: Message): void {
+    for (let i = 0; i < this.childCount(); ++i) {
+      sendMessage(this.childAt(i), msg);
+    }
+  }
+
+  /**
+   * Send a message to some children in the layout.
+   *
+   * @param msg - The message to send to the children.
+   *
+   * @param pred - A predicate filter function. The message will only
+   *   be send to the children which pass the filter.
+   */
+  protected sendToSomeChildren(msg: Message, pred: (child: Widget) => boolean): void {
+    for (let i = 0; i < this.childCount(); ++i) {
+      let child = this.childAt(i);
+      if (pred(child)) sendMessage(child, msg);
+    }
+  }
 
   /**
    * A message handler invoked on a `'resize'` message.
    *
    * #### Notes
-   * The default implementation of this handler sends an [[UnknownSize]]
-   * resize message to each child. This ensures that the resize messages
-   * propagate through all widgets in the hierarchy.
+   * The default implementation of this method sends an `UnknownSize`
+   * resize message to all children.
    *
-   * Subclasses may reimplement this method as needed, but they must
-   * dispatch `'resize'` messages to their children as appropriate.
+   * This may be reimplemented by subclasses as needed.
    */
   protected onResize(msg: ResizeMessage): void {
-    sendToChildren(this, ResizeMessage.UnknownSize);
+    this.sendToAllChildren(ResizeMessage.UnknownSize);
   }
 
   /**
    * A message handler invoked on an `'update-request'` message.
    *
    * #### Notes
-   * The default implementation of this handler sends an [[UnknownSize]]
-   * resize message to each child. This ensures that the all widgets in
-   * the hierarchy remain correctly sized on updates.
+   * The default implementation of this method sends an `UnknownSize`
+   * resize message to all children.
    *
-   * Subclasses may reimplement this method as needed, but they should
-   * dispatch `'resize'` messages to their children if appropriate.
+   * This may be reimplemented by subclasses as needed.
    */
   protected onUpdateRequest(msg: Message): void {
-    sendToChildren(this, ResizeMessage.UnknownSize);
-  }
-
-  /**
-   * A message handler invoked on an `'after-show'` message.
-   *
-   * #### Notes
-   * The default implementation of this handler forwards the message
-   * to all of its non-hidden children.
-   *
-   * Subclasses may reimplement this method as needed, but they should
-   * either call the superclass implementation or forward the message
-   * to their non-hidden children as appropriate.
-   */
-  protected onAfterShow(msg: Message): void {
-    sendToNonHiddenChildren(this, msg);
-  }
-
-  /**
-   * A message handler invoked on a `'before-hide'` message.
-   *
-   * #### Notes
-   * The default implementation of this handler forwards the message
-   * to all of its non-hidden children.
-   *
-   * Subclasses may reimplement this method as needed, but they should
-   * either call the superclass implementation or forward the message
-   * to their children as appropriate.
-   */
-  protected onBeforeHide(msg: Message): void {
-    sendToNonHiddenChildren(this, msg);
+    this.sendToAllChildren(ResizeMessage.UnknownSize);
   }
 
   /**
    * A message handler invoked on an `'after-attach'` message.
    *
    * #### Notes
-   * The default implementation of this handler forwards the message
-   * to all of its children.
+   * The default implementation of this method forwards the message
+   * to all children.
    *
-   * Subclasses may reimplement this method as needed, but they should
-   * either call the superclass implementation or forward the message
-   * to their children as appropriate.
+   * This may be reimplemented by subclasses as needed.
    */
   protected onAfterAttach(msg: Message): void {
-    sendToChildren(this, msg);
+    this.sendToAllChildren(msg);
   }
 
   /**
    * A message handler invoked on a `'before-detach'` message.
    *
    * #### Notes
-   * The default implementation of this handler forwards the message
-   * to all of its children.
+   * The default implementation of this method forwards the message
+   * to all children.
    *
-   * Subclasses may reimplement this method as needed, but they should
-   * either call the superclass implementation or forward the message
-   * to their children as appropriate.
+   * This may be reimplemented by subclasses as needed.
    */
   protected onBeforeDetach(msg: Message): void {
-    sendToChildren(this, msg);
+    this.sendToAllChildren(msg);
+  }
+
+  /**
+   * A message handler invoked on an `'after-show'` message.
+   *
+   * #### Notes
+   * The default implementation of this method forwards the message
+   * to all non-hidden children.
+   *
+   * This may be reimplemented by subclasses as needed.
+   */
+  protected onAfterShow(msg: Message): void {
+    this.sendToSomeChildren(msg, child => !child.isHidden);
+  }
+
+  /**
+   * A message handler invoked on a `'before-hide'` message.
+   *
+   * #### Notes
+   * The default implementation of this method forwards the message
+   * to all non-hidden children.
+   *
+   * This may be reimplemented by subclasses as needed.
+   */
+  protected onBeforeHide(msg: Message): void {
+    this.sendToSomeChildren(msg, child => !child.isHidden);
   }
 }
 
 
 /**
- * A simple and convenient concrete panel widget class.
+ * A concrete layout implementation suitable for many use cases.
  *
  * #### Notes
  * This class is suitable as a base class for implementing a variety of
- * layout panels, but can also be used directly in combination with CSS
- * in order to layout a collection of widgets.
+ * layouts, but can also be used directly in combination with CSS in to
+ * layout a collection of widgets.
  */
 export
-class Panel extends AbstractPanel {
+class PanelLayout extends AbstractPanelLayout {
   /**
-   * Construct a new panel.
+   * Dispose of the resources held by the layout.
    */
-  constructor() {
-    super();
-    this.addClass(PANEL_CLASS);
+  dispose(): void {
+    while (this._children.length > 0) {
+      this._children.pop().dispose();
+    }
+    super.dispose();
   }
 
   /**
-   * Get the number of children in the panel.
+   * Get the number of child widgets in the layout.
    *
-   * @returns The number of child widgets in the panel.
+   * @returns The number of child widgets in the layout.
    */
   childCount(): number {
     return this._children.length;
@@ -205,6 +309,8 @@ class Panel extends AbstractPanel {
   /**
    * Get the child widget at the specified index.
    *
+   * @param index - The index of the child widget of interest.
+   *
    * @returns The child at the specified index, or `undefined`.
    */
   childAt(index: number): Widget {
@@ -212,216 +318,158 @@ class Panel extends AbstractPanel {
   }
 
   /**
-   * Add a child widget to the end of the panel.
+   * Add a child widget to the end of the layout.
    *
-   * @param child - The child widget to add to the panel.
+   * @param child - The child widget to add to the layout.
    */
   addChild(child: Widget): void {
-    this.insertChild(this._children.length, child);
+    this.insertChild(this.childCount(), child);
   }
 
   /**
-   * Insert a child widget at the specified index.
+   * Insert a child widget into the layout at the specified index.
    *
-   * @param index - The index at which to insert the child.
+   * @param index - The index at which to insert the child widget.
    *
-   * @param child - The child widget to add to the panel.
+   * @param child - The child widget to insert into the layout.
    */
   insertChild(index: number, child: Widget): void {
-    index = Math.max(0, Math.min(index | 0, this._children.length));
-    if (child.parent === this) {
-      let i = this._children.indexOf(child);
-      let j = i < index ? index - 1 : index;
+    child.parent = this.parent;
+    let i = this.childIndex(child);
+    let j = Math.max(0, Math.min(index | 0, this.childCount()));
+    if (i !== -1) {
+      if (i < j) j--;
       if (i === j) return;
       arrays.move(this._children, i, j);
-      sendMessage(this, new ChildIndexMessage('child-moved', child, i, j));
+      if (this.parent) this.moveChild(i, j, child);
     } else {
-      this.adoptChild(child);
-      arrays.insert(this._children, index, child);
-      sendMessage(this, new ChildIndexMessage('child-added', child, -1, index));
+      arrays.insert(this._children, j, child);
+      if (this.parent) this.attachChild(j, child);
     }
   }
 
   /**
-   * Process a message sent to the panel.
-   *
-   * @param msg - The message sent to the panel.
+   * Initialize the children of the layout.
    *
    * #### Notes
-   * Subclasses may reimplement this method as needed.
+   * This method is called automatically when the layout is installed
+   * on its parent widget. It will reparent all child widgets to the
+   * layout parent and add invoke the [[attachChild]] method.
+   *
+   * This may be reimplemented by subclasses as needed.
    */
-  processMessage(msg: Message): void {
-    switch (msg.type) {
-    case 'child-added':
-      this.onChildAdded(msg as ChildIndexMessage);
-      break;
-    case 'child-moved':
-      this.onChildMoved(msg as ChildIndexMessage);
-      break;
-    case 'child-removed':
-      this.onChildRemoved(msg as ChildIndexMessage);
-      break;
-    default:
-      super.processMessage(msg);
+  protected initialize(): void {
+    for (let i = 0; i < this.childCount(); ++i) {
+      let child = this.childAt(i);
+      child.parent = this.parent;
+      this.attachChild(i, child);
     }
   }
 
   /**
-   * Remove the specified child from the panel.
+   * Attach a child widget to the parent's DOM node.
    *
-   * @param child - The child widget to remove.
+   * @param index - The index of the child in the layout.
+   *
+   * @param child - The child widget to attach to the parent.
    *
    * #### Notes
-   * This method is called automatically as needed. It should not be
-   * invoked directly by user code.
+   * This method is called automatically by the panel layout at the
+   * appropriate time. It should not be called directly by user code.
+   *
+   * The default implementation adds the child's node to the parent's
+   * node at the proper location, and sends an `'after-attach'` message
+   * to the child if the parent is attached to the DOM.
+   *
+   * Subclasses may reimplement this method to control how the child's
+   * node is added to the parent's node, but the reimplementation must
+   * send an `'after-attach'` message to the child if the parent is
+   * attached to the DOM.
    */
-  protected removeChild(child: Widget): void {
-    let i = arrays.remove(this._children, child);
-    sendMessage(this, new ChildIndexMessage('child-removed', child, i, -1));
+  protected attachChild(index: number, child: Widget): void {
+    let parent = this.parent;
+    let ref = this.childAt(index + 1);
+    parent.node.insertBefore(child.node, ref && ref.node);
+    if (parent.isAttached) sendMessage(child, Widget.MsgAfterAttach);
   }
 
   /**
-   * Dispose and clear all children of the panel.
+   * Move a child widget in the parent's DOM node.
+   *
+   * @param index - The index of the child in the layout.
+   *
+   * @param child - The child widget to detach from the parent.
    *
    * #### Notes
-   * This method is called automatically as needed. It should not be
-   * invoked directly by user code.
+   * This method is called automatically by the panel layout at the
+   * appropriate time. It should not be called directly by user code.
+   *
+   * The default implementation moves the child's node to the proper
+   * location in the parent's node and sends both a `'before-detach'`
+   * and an `'after-attach'` message to the child if the parent is
+   * attached to the DOM.
+   *
+   * Subclasses may reimplement this method to control how the child's
+   * node is moved in the parent's node, but the reimplementation must
+   * send both a `'before-detach'` and an `'after-attach'` message to
+   * the child if the parent is attached to the DOM.
    */
-  protected disposeChildren(): void {
-    while (this._children.length > 0) {
-      this._children.pop().dispose();
-    }
+  protected moveChild(fromIndex: number, toIndex: number, child: Widget): void {
+    let parent = this.parent;
+    let ref = this.childAt(toIndex + 1);
+    if (parent.isAttached) sendMessage(child, Widget.MsgBeforeDetach);
+    parent.node.insertBefore(child.node, ref && ref.node);
+    if (parent.isAttached) sendMessage(child, Widget.MsgAfterAttach);
   }
 
   /**
-   * A message handler invoked on a `'child-added'` message.
+   * Detach a child widget from the parent's DOM node.
+   *
+   * @param index - The index of the child in the layout.
+   *
+   * @param child - The child widget to detach from the parent.
    *
    * #### Notes
-   * The default implementation adds the child node to the panel node
-   * at the proper location and sends an `'after-attach'` message to
-   * the child if the panel is attached to the DOM.
+   * This method is called automatically by the panel layout at the
+   * appropriate time. It should not be called directly by user code.
    *
-   * Subclasses may reimplement this method to control how the child
-   * node is added to the panel node, but a reimplementation must send
-   * an `'after-attach'` message to the child if the panel is attached
-   * to the DOM.
+   * The default implementation removes the child's node from the
+   * parent's node, and sends a `'before-detach'` message to the child
+   * if the parent is attached to the DOM.
+   *
+   * Subclasses may reimplement this method to control how the child's
+   * node is removed from the parent's node, but the reimplementation
+   * must send a `'before-detach'` message to the child if the parent
+   * is attached to the DOM.
    */
-  protected onChildAdded(msg: ChildIndexMessage): void {
-    let ref = this._children[msg.currentIndex + 1];
-    this.node.insertBefore(msg.child.node, ref && ref.node);
-    if (this.isAttached) sendMessage(msg.child, Widget.MsgAfterAttach);
-  }
-
-  /**
-   * A message handler invoked on a `'child-moved'` message.
-   *
-   * #### Notes
-   * The default implementation moves the child node to the proper
-   * location in the panel node and sends both `'before-detach'` and
-   * `'after-attach'` message to the child if the panel is attached
-   * to the DOM.
-   *
-   * Subclasses may reimplement this method to control how the child
-   * node is moved in the panel node, but a reimplementation must send
-   * both `'before-detach'` and `'after-attach'` message to the child
-   * if the panel is attached to the DOM.
-   */
-  protected onChildMoved(msg: ChildIndexMessage): void {
-    if (this.isAttached) sendMessage(msg.child, Widget.MsgBeforeDetach);
-    let ref = this._children[msg.currentIndex + 1];
-    this.node.insertBefore(msg.child.node, ref && ref.node);
-    if (this.isAttached) sendMessage(msg.child, Widget.MsgAfterAttach);
+  protected detachChild(index: number, child: Widget): void {
+    let parent = this.parent;
+    if (parent.isAttached) sendMessage(child, Widget.MsgBeforeDetach);
+    parent.node.removeChild(child.node);
   }
 
   /**
    * A message handler invoked on a `'child-removed'` message.
    *
    * #### Notes
-   * The default implementation removes the child node from the panel
-   * node and sends a `'before-detach'` message to the child if the
-   * panel is attached to the DOM.
+   * This will remove the child from the layout.
    *
-   * Subclasses may reimplement this method to control how the child
-   * node is removed from the panel node, but a reimplementation must
-   * send a `'before-detach'` message to the child if the panel is
-   * attached to the DOM.
+   * Subclasses should **not** typically reimplement this method.
    */
-  protected onChildRemoved(msg: ChildIndexMessage): void {
-    if (this.isAttached) sendMessage(msg.child, Widget.MsgBeforeDetach);
-    this.node.removeChild(msg.child.node);
+  protected onChildRemoved(msg: ChildMessage): void {
+    let i = arrays.remove(this._children, msg.child);
+    if (i !== -1) this.detachChild(i, msg.child);
   }
+
+  /**
+   * A message handler invoked on a `'layout-request'` message.
+   *
+   * #### Notes
+   * The default implementation of this method is a no-op.
+   *
+   * Subclasses may reimplement this method as needed.
+   */
+  protected onLayoutRequest(msg: Message): void { }
 
   private _children: Widget[] = [];
-}
-
-
-/**
- * A message class for child messages with index information.
- */
-export
-class ChildIndexMessage extends ChildMessage {
-  /**
-   * Construct a new child message.
-   *
-   * @param type - The message type.
-   *
-   * @param child - The child widget for the message.
-   *
-   * @param previousIndex - The previous index of the child, or `-1`.
-   *
-   * @param currentIndex - The current index of the child, or `-1`.
-   */
-  constructor(type: string, child: Widget, previousIndex: number, currentIndex: number) {
-    super(type, child);
-    this._currentIndex = currentIndex;
-    this._previousIndex = previousIndex;
-  }
-
-  /**
-   * The current index of the child.
-   *
-   * #### Notes
-   * This will be `-1` if the current index is unknown.
-   *
-   * This is a read-only property.
-   */
-  get currentIndex(): number {
-    return this._currentIndex;
-  }
-
-  /**
-   * The previous index of the child.
-   *
-   * #### Notes
-   * This will be `-1` if the previous index is unknown.
-   *
-   * This is a read-only property.
-   */
-  get previousIndex(): number {
-    return this._previousIndex;
-  }
-
-  private _currentIndex: number;
-  private _previousIndex: number;
-}
-
-
-/**
- * Send a message to all children of a panel.
- */
-function sendToChildren(panel: AbstractPanel, msg: Message): void {
-  for (let i = 0; i < panel.childCount(); ++i) {
-    sendMessage(panel.childAt(i), msg);
-  }
-}
-
-
-/**
- * Send a message to all non-hidden children of a panel.
- */
-function sendToNonHiddenChildren(panel: AbstractPanel, msg: Message): void {
-  for (let i = 0; i < panel.childCount(); ++i) {
-    let child = panel.childAt(i);
-    if (!child.hidden) sendMessage(child, msg);
-  }
 }
