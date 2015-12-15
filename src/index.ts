@@ -7,7 +7,10 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
+export * from './layout';
 export * from './panel';
+export * from './messages';
+export * from './title';
 export * from './widget';
 
 import './index.css';
