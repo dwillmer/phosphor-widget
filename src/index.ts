@@ -8,8 +8,8 @@
 'use strict';
 
 export * from './layout';
-export * from './panel';
 export * from './messages';
+export * from './panel';
 export * from './title';
 export * from './widget';
 
