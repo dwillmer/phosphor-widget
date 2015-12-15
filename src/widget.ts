@@ -207,21 +207,16 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    */
   set parent(value: Widget) {
     value = value || null;
-    let old = this._parent;
-    if (old === value) {
+    if (this._parent === value) {
       return;
     }
     if (value && this.contains(value)) {
       throw new Error('Invalid parent widget.');
     }
-    if (old) {
-      this._parent = null;
-      sendMessage(old, new ChildMessage('child-removed', this));
+    if (this._parent && !this._parent.isDisposed) {
+      sendMessage(this._parent, new ChildMessage('child-removed', this));
     }
-    if (value) {
-      this._parent = value;
-      sendMessage(value, new ChildMessage('child-added', this));
-    }
+    this._parent = value;
   }
 
   /**
