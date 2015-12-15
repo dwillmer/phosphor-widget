@@ -12,7 +12,7 @@ Phosphor widgets provide several useful behaviours:
 
 - **Widget Hierarchy** - A widget is a JS object which wraps a DOM node and
   establishes a live parent-child relationship. While this may seem trivial,
-  it allows for the implementation of advanced message passing and notifcation
+  it allows for the implementation of advanced message passing and notification
   behaviors, and provides a sane pattern for component reuse.
 
 - **Messages** - Standard messages include show/hide, attach/detach, resize,
