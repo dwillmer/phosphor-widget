@@ -211,7 +211,7 @@ abstract class AbstractPanelLayout extends Layout {
   }
 
   /**
-   * A message handler invoked on an `'update-request'` message.
+   * A message handler invoked on a `'fit-request'` message.
    *
    * #### Notes
    * The default implementation of this method sends an `UnknownSize`
@@ -219,7 +219,7 @@ abstract class AbstractPanelLayout extends Layout {
    *
    * This may be reimplemented by subclasses as needed.
    */
-  protected onUpdateRequest(msg: Message): void {
+  protected onFitRequest(msg: Message): void {
     this.sendToAllChildren(ResizeMessage.UnknownSize);
   }
 
@@ -462,16 +462,6 @@ class PanelLayout extends AbstractPanelLayout {
     let i = arrays.remove(this._children, msg.child);
     if (i !== -1) this.detachChild(i, msg.child);
   }
-
-  /**
-   * A message handler invoked on a `'layout-request'` message.
-   *
-   * #### Notes
-   * The default implementation of this method is a no-op.
-   *
-   * Subclasses may reimplement this method as needed.
-   */
-  protected onLayoutRequest(msg: Message): void { }
 
   private _children: Widget[] = [];
 }

@@ -282,6 +282,15 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
+   * Post a `'fit-request'` message to the widget.
+   *
+   * **See also:** [[MsgFitRequest]]
+   */
+  fit(): void {
+    postMessage(this, Widget.MsgFitRequest);
+  }
+
+  /**
    * Send a `'close-request'` message to the widget.
    *
    * **See also:** [[MsgCloseRequest]], [[onCloseRequest]]
@@ -411,14 +420,16 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *   delivery as normal.
    *
    * #### Notes
-   * The default implementation compresses `'update-request'` and
-   * `'layout-request'` messages.
+   * `'update-request'` and `'fit-request'` are compressed by default.
    *
    * Subclasses may reimplement this method as needed.
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
-    if (msg.type === 'update-request' || msg.type === 'layout-request') {
-      return pending.some(other => other.type === msg.type);
+    if (msg.type === 'update-request') {
+      return pending.some(other => other.type === 'update-request');
+    }
+    if (msg.type === 'fit-request') {
+      return pending.some(other => other.type === 'fit-request');
     }
     return false;
   }
@@ -588,22 +599,19 @@ namespace Widget {
   const MsgUpdateRequest = new Message('update-request');
 
   /**
-   * A singleton `'layout-request'` message.
+   * A singleton `'fit-request'` message.
    *
    * #### Notes
-   * This message can be dispatched to supporting widgets in order to
-   * update their layout. Not all widgets will respond to messages of
-   * this type.
+   * This message can be dispatched to a widget to inform the widget's
+   * layout to fit its children to the available layout space.
    *
-   * This message is typically used to update the size constraints of
-   * a widget and to update the position and size of its children.
+   * This message is typically dispatched to a root widget in response
+   * to a window resize event.
    *
-   * Messages of this type are compressed by default.
-   *
-   * **See also:** [[onLayoutRequest]]
+   * **See also:** [[fit]]
    */
   export
-  const MsgLayoutRequest = new Message('layout-request');
+  const MsgFitRequest = new Message('fit-request');
 
   /**
    * A singleton `'close-request'` message.
