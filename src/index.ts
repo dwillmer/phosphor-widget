@@ -7,11 +7,8 @@
 |----------------------------------------------------------------------------*/
 'use strict';
 
-export * from './abstractlayout';
 export * from './layout';
-export * from './messages';
 export * from './panel';
-export * from './panellayout';
 export * from './title';
 export * from './widget';
 
