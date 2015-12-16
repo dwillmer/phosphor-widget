@@ -184,7 +184,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * on-demand the first time it is accessed.
    */
   get title(): Title {
-    return WidgetExtra.titleProperty.get(this);
+    return WidgetPrivate.titleProperty.get(this);
   }
 
   /**
@@ -705,9 +705,9 @@ enum WidgetFlag {
 
 
 /**
- * The namespace for the widget extras.
+ * The namespace for the widget private data.
  */
-namespace WidgetExtra {
+namespace WidgetPrivate {
   /**
    * A property for the title data for a widget.
    */
