@@ -20,6 +20,10 @@ import {
 } from 'phosphor-properties';
 
 import {
+  Queue
+} from 'phosphor-queue';
+
+import {
   clearSignalData
 } from 'phosphor-signaling';
 
@@ -184,12 +188,31 @@ abstract class Layout implements IDisposable {
   }
 
   /**
+   * Compress a message posted to the parent widget.
+   *
+   * @param msg - The message posted to the widget.
+   *
+   * @param pending - The queue of pending messages for the widget.
+   *
+   * @returns `true` if the message should be ignored, or `false` if
+   *   the message should be enqueued for delivery as normal.
+   *
+   * #### Notes
+   * This method is called by the parent to compress a message.
+   *
+   * Subclasses may reimplement this method as needed.
+   */
+  compressParentMessage(msg: Message, pending: Queue<Message>): boolean {
+    return false;
+  }
+
+  /**
    * Process a message sent to the parent widget.
    *
    * @param msg - The message sent to the parent widget.
    *
    * #### Notes
-   * This is method is called by the parent to process a message.
+   * This method is called by the parent to process a message.
    *
    * Subclasses may reimplement this method as needed.
    */

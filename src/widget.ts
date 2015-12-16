@@ -415,13 +415,10 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    *
    * @param pending - The queue of pending messages for the widget.
    *
-   * @returns `true` if the message was compressed and should be
-   *   dropped, or `false` if the message should be enqueued for
-   *   delivery as normal.
+   * @returns `true` if the message should be ignored, or `false` if
+   *   the message should be enqueued for delivery as normal.
    *
    * #### Notes
-   * `'update-request'` and `'fit-request'` are compressed by default.
-   *
    * Subclasses may reimplement this method as needed.
    */
   compressMessage(msg: Message, pending: Queue<Message>): boolean {
@@ -430,6 +427,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     }
     if (msg.type === 'fit-request') {
       return pending.some(other => other.type === 'fit-request');
+    }
+    if (this._layout) {
+      return this._layout.compressParentMessage(msg, pending);
     }
     return false;
   }
