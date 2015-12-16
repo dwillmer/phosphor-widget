@@ -37,7 +37,7 @@ import {
 
 
 /**
- * The abstract base class of Phosphor layouts.
+ * The abstract base class of all Phosphor layouts.
  *
  * #### Notes
  * A layout is used to add child widgets to a parent and to arrange
@@ -63,8 +63,9 @@ abstract class Layout implements IDisposable {
    * A message handler invoked on a `'resize'` message.
    *
    * #### Notes
-   * The subclass should either handle the resize message, or dispatch
-   * a `ResizeMessage.UnknownSize` message to the relevant children.
+   * The subclass should ensure that its children are resized to fit
+   * the specified layout space, and that they are sent a `'resize'`
+   * message if appropriate.
    *
    * This abstract method must be implemented by a subclass.
    */
@@ -76,7 +77,7 @@ abstract class Layout implements IDisposable {
    * #### Notes
    * The subclass should ensure that its children are resized to fit
    * the available layout space, and that they are sent a `'resize'`
-   * if appropriate.
+   * message if appropriate.
    *
    * This abstract method must be implemented by a subclass.
    */
@@ -137,7 +138,7 @@ abstract class Layout implements IDisposable {
    *
    * #### Notes
    * This method should be reimplemented by subclasses to dispose their
-   * widgets. All reimplementations should call the superclass method.
+   * children. All reimplementations should call the superclass method.
    */
   dispose(): void {
     this._disposed = true;
