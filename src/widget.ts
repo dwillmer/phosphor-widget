@@ -119,7 +119,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * **See also:** [[dispose]], [[disposed]]
    */
   get disposed(): ISignal<Widget, void> {
-    return Widget.disposedSignal.bind(this);
+    return WidgetPrivate.disposedSignal.bind(this);
   }
 
   /**
@@ -661,14 +661,6 @@ namespace Widget {
    */
   export
   const MsgBeforeDetach = new Message('before-detach');
-
-  /**
-   * A signal emitted when the widget is disposed.
-   *
-   * **See also:** [[disposed]], [[isDisposed]]
-   */
-  export
-  const disposedSignal = new Signal<Widget, void>();
 }
 
 
@@ -703,6 +695,12 @@ enum WidgetFlag {
  * The namespace for the widget private data.
  */
 namespace WidgetPrivate {
+  /**
+   * A signal emitted when the widget is disposed.
+   */
+  export
+  const disposedSignal = new Signal<Widget, void>();
+
   /**
    * A property for the title data for a widget.
    */
