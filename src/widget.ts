@@ -424,8 +424,8 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     if (msg.type === 'fit-request') {
       return pending.some(other => other.type === 'fit-request');
     }
-    if (this._layout) {
-      return this._layout.compressParentMessage(msg, pending);
+    if (this.layout) {
+      return this.layout.compressParentMessage(msg, pending);
     }
     return false;
   }
@@ -439,23 +439,22 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * Subclasses may reimplement this method as needed.
    */
   processMessage(msg: Message): void {
-    let layout = this._layout;
     switch (msg.type) {
     case 'resize':
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       this.onResize(msg as ResizeMessage);
       break;
     case 'update-request':
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       this.onUpdateRequest(msg);
       break;
     case 'after-show':
       this.setFlag(WidgetFlag.IsVisible);
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       this.onAfterShow(msg);
       break;
     case 'before-hide':
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       this.onBeforeHide(msg);
       this.clearFlag(WidgetFlag.IsVisible);
       break;
@@ -463,21 +462,21 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
       let visible = !this.isHidden && (!this.parent || this.parent.isVisible);
       if (visible) this.setFlag(WidgetFlag.IsVisible);
       this.setFlag(WidgetFlag.IsAttached);
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       this.onAfterAttach(msg);
       break;
     case 'before-detach':
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       this.onBeforeDetach(msg);
       this.clearFlag(WidgetFlag.IsVisible);
       this.clearFlag(WidgetFlag.IsAttached);
       break;
     case 'close-request':
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       this.onCloseRequest(msg);
       break;
     default:
-      if (layout) layout.processParentMessage(msg);
+      if (this.layout) this.layout.processParentMessage(msg);
       break;
     }
   }
