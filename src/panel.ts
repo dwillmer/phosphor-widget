@@ -369,7 +369,7 @@ class PanelLayout extends AbstractPanelLayout {
   /**
    * Attach a child widget to the parent's DOM node.
    *
-   * @param index - The index of the child in the layout.
+   * @param index - The current index of the child in the layout.
    *
    * @param child - The child widget to attach to the parent.
    *
@@ -396,9 +396,11 @@ class PanelLayout extends AbstractPanelLayout {
   /**
    * Move a child widget in the parent's DOM node.
    *
-   * @param index - The index of the child in the layout.
+   * @param fromIndex - The previous index of the child in the layout.
    *
-   * @param child - The child widget to detach from the parent.
+   * @param toIndex - The current index of the child in the layout.
+   *
+   * @param child - The child widget to move in the parent.
    *
    * #### Notes
    * This method is called automatically by the panel layout at the
@@ -425,7 +427,7 @@ class PanelLayout extends AbstractPanelLayout {
   /**
    * Detach a child widget from the parent's DOM node.
    *
-   * @param index - The index of the child in the layout.
+   * @param index - The previous index of the child in the layout.
    *
    * @param child - The child widget to detach from the parent.
    *
