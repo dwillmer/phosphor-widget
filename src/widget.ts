@@ -271,7 +271,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   /**
    * Post an `'update-request'` message to the widget.
    *
-   * **See also:** [[MsgUpdateRequest]], [[onUpdateRequest]]
+   * **See also:** [[MsgUpdateRequest]]
    */
   update(): void {
     postMessage(this, Widget.MsgUpdateRequest);
@@ -289,7 +289,7 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   /**
    * Send a `'close-request'` message to the widget.
    *
-   * **See also:** [[MsgCloseRequest]], [[onCloseRequest]]
+   * **See also:** [[MsgCloseRequest]]
    */
   close(): void {
     sendMessage(this, Widget.MsgCloseRequest);
@@ -586,6 +586,8 @@ namespace Widget {
    *
    * This message is typically dispatched to a root widget in response
    * to a window resize event.
+   *
+   * Messages of this type are compressed by default.
    *
    * **See also:** [[fit]]
    */
