@@ -297,36 +297,10 @@ abstract class AbstractLayout extends Layout {
    * @returns The index of the specified child, or `-1`.
    */
   childIndex(child: Widget): number {
-    for (let i = 0, n = this.childCount(); i < n; ++i) {
+    for (let i = 0; i < this.childCount(); ++i) {
       if (this.childAt(i) === child) return i;
     }
     return -1;
-  }
-
-  /**
-   * Send a message to all children in the layout.
-   *
-   * @param msg - The message to send to the children.
-   */
-  protected sendToAllChildren(msg: Message): void {
-    for (let i = 0; i < this.childCount(); ++i) {
-      sendMessage(this.childAt(i), msg);
-    }
-  }
-
-  /**
-   * Send a message to some children in the layout.
-   *
-   * @param msg - The message to send to the children.
-   *
-   * @param pred - A predicate filter function. The message will only
-   *   be send to the children which pass the filter.
-   */
-  protected sendToSomeChildren(msg: Message, pred: (child: Widget) => boolean): void {
-    for (let i = 0; i < this.childCount(); ++i) {
-      let child = this.childAt(i);
-      if (pred(child)) sendMessage(child, msg);
-    }
   }
 
   /**
@@ -339,7 +313,9 @@ abstract class AbstractLayout extends Layout {
    * This may be reimplemented by subclasses as needed.
    */
   protected onResize(msg: ResizeMessage): void {
-    this.sendToAllChildren(ResizeMessage.UnknownSize);
+    for (let i = 0; i < this.childCount(); ++i) {
+      sendMessage(this.childAt(i), ResizeMessage.UnknownSize);
+    }
   }
 
   /**
@@ -352,7 +328,9 @@ abstract class AbstractLayout extends Layout {
    * This may be reimplemented by subclasses as needed.
    */
   protected onUpdateRequest(msg: Message): void {
-    this.sendToAllChildren(ResizeMessage.UnknownSize);
+    for (let i = 0; i < this.childCount(); ++i) {
+      sendMessage(this.childAt(i), ResizeMessage.UnknownSize);
+    }
   }
 
   /**
@@ -365,7 +343,9 @@ abstract class AbstractLayout extends Layout {
    * This may be reimplemented by subclasses as needed.
    */
   protected onAfterAttach(msg: Message): void {
-    this.sendToAllChildren(msg);
+    for (let i = 0; i < this.childCount(); ++i) {
+      sendMessage(this.childAt(i), msg);
+    }
   }
 
   /**
@@ -378,7 +358,9 @@ abstract class AbstractLayout extends Layout {
    * This may be reimplemented by subclasses as needed.
    */
   protected onBeforeDetach(msg: Message): void {
-    this.sendToAllChildren(msg);
+    for (let i = 0; i < this.childCount(); ++i) {
+      sendMessage(this.childAt(i), msg);
+    }
   }
 
   /**
@@ -391,7 +373,10 @@ abstract class AbstractLayout extends Layout {
    * This may be reimplemented by subclasses as needed.
    */
   protected onAfterShow(msg: Message): void {
-    this.sendToSomeChildren(msg, child => !child.isHidden);
+    for (let i = 0; i < this.childCount(); ++i) {
+      let child = this.childAt(i);
+      if (!child.isHidden) sendMessage(child, msg);
+    }
   }
 
   /**
@@ -404,6 +389,9 @@ abstract class AbstractLayout extends Layout {
    * This may be reimplemented by subclasses as needed.
    */
   protected onBeforeHide(msg: Message): void {
-    this.sendToSomeChildren(msg, child => !child.isHidden);
+    for (let i = 0; i < this.childCount(); ++i) {
+      let child = this.childAt(i);
+      if (!child.isHidden) sendMessage(child, msg);
+    }
   }
 }
