@@ -576,11 +576,11 @@ namespace Widget {
    *
    * #### Notes
    * This message can be dispatched to supporting widgets in order to
-   * update their content. Not all widgets will respond to messages of
-   * this type.
+   * update their content based on the current widget state. Not all
+   * widgets will respond to messages of this type.
    *
-   * This message is typically used to update the widget's content to
-   * reflect the current widget state.
+   * For widgets with a layout, this message will inform the layout to
+   * update the position and size of its child widgets.
    *
    * Messages of this type are compressed by default.
    *
@@ -593,11 +593,10 @@ namespace Widget {
    * A singleton `'fit-request'` message.
    *
    * #### Notes
-   * This message can be dispatched to a widget to inform the widget's
-   * layout to fit its children to the available layout space.
-   *
-   * This message is typically dispatched to a root widget in response
-   * to a window resize event.
+   * For widgets with a layout, this message will inform the layout to
+   * recalculate its size constraints to fit the space requirements of
+   * its child widgets, and to update their position and size. Not all
+   * layouts will respond to messages of this type.
    *
    * Messages of this type are compressed by default.
    *
