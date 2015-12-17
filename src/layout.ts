@@ -59,8 +59,8 @@ abstract class Layout implements IDisposable {
    * A message handler invoked on a `'resize'` message.
    *
    * #### Notes
-   * The subclass should ensure that its children are resized to fit
-   * the specified layout space, and that they are sent a `'resize'`
+   * The subclass should ensure that its children are resized according
+   * to the specified layout space, and that they are sent a `'resize'`
    * message if appropriate.
    *
    * This abstract method must be implemented by a subclass.
@@ -71,8 +71,8 @@ abstract class Layout implements IDisposable {
    * A message handler invoked on a `'fit-request'` message.
    *
    * #### Notes
-   * The subclass should ensure that its children are resized to fit
-   * the available layout space, and that they are sent a `'resize'`
+   * The subclass should ensure that its children are resized according
+   * to the available layout space, and that they are sent a `'resize'`
    * message if appropriate.
    *
    * This abstract method must be implemented by a subclass.
