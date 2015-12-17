@@ -202,8 +202,8 @@ abstract class Layout implements IDisposable {
     case 'update-request':
       this.onUpdateRequest(msg);
       break;
-    case 'child-removed':
-      this.onChildRemoved(msg as ChildMessage);
+    case 'fit-request':
+      this.onFitRequest(msg);
       break;
     case 'after-attach':
       this.onAfterAttach(msg);
@@ -217,8 +217,38 @@ abstract class Layout implements IDisposable {
     case 'before-hide':
       this.onBeforeHide(msg);
       break;
+    case 'child-removed':
+      this.onChildRemoved(msg as ChildMessage);
+      break;
+    case 'child-shown':
+      this.onChildShown(msg as ChildMessage);
+      break;
+    case 'child-hidden':
+      this.onChildHidden(msg as ChildMessage);
+      break;
     }
   }
+
+  /**
+   * A message handler invoked on a `'fit-request'` message.
+   *
+   * The default implementation of this handler is a no-op.
+   */
+  protected onFitRequest(msg: Message): void { }
+
+  /**
+   * A message handler invoked on a `'child-shown'` message.
+   *
+   * The default implementation of this handler is a no-op.
+   */
+  protected onChildShown(msg: ChildMessage): void { }
+
+  /**
+   * A message handler invoked on a `'child-hidden'` message.
+   *
+   * The default implementation of this handler is a no-op.
+   */
+  protected onChildHidden(msg: ChildMessage): void { }
 
   private _disposed = false;
   private _parent: Widget = null;
