@@ -424,9 +424,6 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     if (msg.type === 'fit-request') {
       return pending.some(other => other.type === 'fit-request');
     }
-    if (this.layout) {
-      return this.layout.compressParentMessage(msg, pending);
-    }
     return false;
   }
 
