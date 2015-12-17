@@ -20,10 +20,6 @@ import {
 } from 'phosphor-properties';
 
 import {
-  Queue
-} from 'phosphor-queue';
-
-import {
   clearSignalData
 } from 'phosphor-signaling';
 
