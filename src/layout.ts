@@ -68,7 +68,7 @@ abstract class Layout implements IDisposable {
   protected abstract onResize(msg: ResizeMessage): void;
 
   /**
-   * A message handler invoked on a `'fit-request'` message.
+   * A message handler invoked on an `'update-request'` message.
    *
    * #### Notes
    * The subclass should ensure that its children are resized according
@@ -77,7 +77,7 @@ abstract class Layout implements IDisposable {
    *
    * This abstract method must be implemented by a subclass.
    */
-  protected abstract onFitRequest(msg: Message): void;
+  protected abstract onUpdateRequest(msg: Message): void;
 
   /**
    * A message handler invoked on a `'child-removed'` message.
@@ -199,8 +199,8 @@ abstract class Layout implements IDisposable {
     case 'resize':
       this.onResize(msg as ResizeMessage);
       break;
-    case 'fit-request':
-      this.onFitRequest(msg);
+    case 'update-request':
+      this.onUpdateRequest(msg);
       break;
     case 'child-removed':
       this.onChildRemoved(msg as ChildMessage);
@@ -313,7 +313,7 @@ abstract class AbstractLayout extends Layout {
   }
 
   /**
-   * A message handler invoked on a `'fit-request'` message.
+   * A message handler invoked on an `'update-request'` message.
    *
    * #### Notes
    * The default implementation of this method sends an `UnknownSize`
@@ -321,7 +321,7 @@ abstract class AbstractLayout extends Layout {
    *
    * This may be reimplemented by subclasses as needed.
    */
-  protected onFitRequest(msg: Message): void {
+  protected onUpdateRequest(msg: Message): void {
     this.sendToAllChildren(ResizeMessage.UnknownSize);
   }
 
