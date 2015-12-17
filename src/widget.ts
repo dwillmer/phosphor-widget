@@ -438,20 +438,20 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   processMessage(msg: Message): void {
     switch (msg.type) {
     case 'resize':
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       this.onResize(msg as ResizeMessage);
       break;
     case 'update-request':
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       this.onUpdateRequest(msg);
       break;
     case 'after-show':
       this.setFlag(WidgetFlag.IsVisible);
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       this.onAfterShow(msg);
       break;
     case 'before-hide':
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       this.onBeforeHide(msg);
       this.clearFlag(WidgetFlag.IsVisible);
       break;
@@ -459,23 +459,35 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
       let visible = !this.isHidden && (!this.parent || this.parent.isVisible);
       if (visible) this.setFlag(WidgetFlag.IsVisible);
       this.setFlag(WidgetFlag.IsAttached);
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       this.onAfterAttach(msg);
       break;
     case 'before-detach':
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       this.onBeforeDetach(msg);
       this.clearFlag(WidgetFlag.IsVisible);
       this.clearFlag(WidgetFlag.IsAttached);
       break;
     case 'close-request':
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       this.onCloseRequest(msg);
       break;
     default:
-      if (this.layout) this.layout.processParentMessage(msg);
+      this.notifyLayout(msg);
       break;
     }
+  }
+
+  /**
+   * Invoke the message processing routine of the widget's layout.
+   *
+   * @param msg - The message to dispatch to the layout.
+   *
+   * #### Notes
+   * This is a no-op if the widget does not have a layout.
+   */
+  protected notifyLayout(msg: Message): void {
+    if (this.layout) this.layout.processParentMessage(msg);
   }
 
   /**
