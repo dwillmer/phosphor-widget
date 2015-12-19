@@ -336,6 +336,23 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   }
 
   /**
+   * Set whether the widget is hidden.
+   *
+   * @param hidden - `true` to hide the widget, or `false` to show it.
+   *
+   * #### Notes
+   * `widget.setHidden(true)` is equivalent to `widget.hide()`, and
+   * `widget.setHidden(false)` is equivalent to `widget.show()`.
+   */
+  setHidden(hidden: boolean): void {
+    if (hidden) {
+      this.hide();
+    } else {
+      this.show();
+    }
+  }
+
+  /**
    * Attach the widget to a host DOM node.
    *
    * @param host - The DOM node to use as the widget's host.
