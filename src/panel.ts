@@ -190,10 +190,11 @@ class PanelLayout extends AbstractLayout {
    */
   insertChild(index: number, child: Widget): void {
     child.parent = this.parent;
+    let n = this.childCount();
     let i = this.childIndex(child);
-    let j = Math.max(0, Math.min(index | 0, this.childCount()));
+    let j = Math.max(0, Math.min(index | 0, n));
     if (i !== -1) {
-      if (i < j) j--;
+      if (j === n) j--;
       if (i === j) return;
       arrays.move(this._children, i, j);
       if (this.parent) this.moveChild(i, j, child);
