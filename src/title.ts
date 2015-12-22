@@ -17,6 +17,33 @@ import {
 
 
 /**
+ * An options object for initializing a title.
+ */
+export
+interface ITitleOptions {
+  /**
+   * The text for the title.
+   */
+  text?: string;
+
+  /**
+   * The icon class for the title.
+   */
+  icon?: string;
+
+  /**
+   * The closable state for the title.
+   */
+  closable?: boolean;
+
+  /**
+   * The extra class name for the title.
+   */
+  className?: string;
+}
+
+
+/**
  * An object which holds data related to a widget title.
  *
  * #### Notes
@@ -26,6 +53,15 @@ import {
  */
 export
 class Title {
+  /**
+   * Construct a new title.
+   *
+   * @param options - The options for initializing a title.
+   */
+  constructor(options?: ITitleOptions) {
+    if (options) TitlePrivate.initFrom(this, options);
+  }
+
   /**
    * A signal emitted when the title state changes.
    */
@@ -152,4 +188,23 @@ namespace TitlePrivate {
     value: '',
     notify: changedSignal,
   });
+
+  /**
+   * Initialize a title from an options object.
+   */
+  export
+  function initFrom(title: Title, options: ITitleOptions): void {
+    if (options.text !== void 0) {
+      title.text = options.text;
+    }
+    if (options.icon !== void 0) {
+      title.icon = options.icon;
+    }
+    if (options.closable !== void 0) {
+      title.closable = options.closable;
+    }
+    if (options.className !== void 0) {
+      title.className = options.className;
+    }
+  }
 }
