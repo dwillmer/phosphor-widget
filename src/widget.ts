@@ -213,6 +213,9 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
       sendMessage(this._parent, new ChildMessage('child-removed', this));
     }
     this._parent = value;
+    if (this._parent && !this._parent.isDisposed) {
+      sendMessage(this._parent, new ChildMessage('child-added', this));
+    }
   }
 
   /**
@@ -489,6 +492,12 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
       this.notifyLayout(msg);
       this.onCloseRequest(msg);
       break;
+    case 'child-added':
+      this.notifyLayout(msg);
+      this.onChildAdded(msg as ChildMessage);
+    case 'child-removed':
+      this.notifyLayout(msg);
+      this.onChildRemoved(msg as ChildMessage);
     default:
       this.notifyLayout(msg);
       break;
@@ -576,6 +585,24 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
    * **See also:** [[MsgBeforeDetach]]
    */
   protected onBeforeDetach(msg: Message): void { }
+
+  /**
+   * A message handler invoked on a `'child-added'` message.
+   *
+   * The default implementation of this handler is a no-op.
+   *
+   * **See also:** [[ChildMessage]]
+   */
+  protected onChildAdded(msg: ChildMessage): void { }
+
+  /**
+   * A message handler invoked on a `'child-removed'` message.
+   *
+   * The default implementation of this handler is a no-op.
+   *
+   * **See also:** [[ChildMessage]]
+   */
+  protected onChildRemoved(msg: ChildMessage): void { }
 
   private _flags = 0;
   private _layout: Layout = null;
