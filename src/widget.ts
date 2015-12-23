@@ -495,9 +495,11 @@ class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
     case 'child-added':
       this.notifyLayout(msg);
       this.onChildAdded(msg as ChildMessage);
+      break;
     case 'child-removed':
       this.notifyLayout(msg);
       this.onChildRemoved(msg as ChildMessage);
+      break;
     default:
       this.notifyLayout(msg);
       break;
