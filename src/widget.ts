@@ -40,8 +40,6 @@ import {
 } from './title';
 
 
-// TODO - need better solution for storing these class names
-
 /**
  * The class name added to Widget instances.
  */
