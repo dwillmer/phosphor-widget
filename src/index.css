@@ -7,13 +7,13 @@
 |----------------------------------------------------------------------------*/
 .p-Widget {
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  position: relative;
   user-select: none;
-  overflow: hidden;
-  cursor: default;
 }
 
 
