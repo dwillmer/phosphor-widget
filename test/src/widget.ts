@@ -14,14 +14,6 @@ import {
 } from 'phosphor-messaging';
 
 import {
-  Property
-} from 'phosphor-properties';
-
-import {
-  Signal
-} from 'phosphor-signaling';
-
-import {
   AbstractLayout, ChildMessage, ResizeMessage, Title, Widget, WidgetFlag
 } from '../../lib/index';
 
@@ -90,7 +82,6 @@ class LogWidget extends Widget {
     this.methods.push('onChildRemoved');
     this.raw.push(msg);
   }
-
 }
 
 
@@ -133,7 +124,7 @@ describe('phosphor-widget', () => {
         expect(widget instanceof Widget).to.be(true);
       });
 
-     it('should add the `p-Widget` class', () => {
+      it('should add the `p-Widget` class', () => {
         let widget = new Widget();
         expect(widget.hasClass('p-Widget')).to.be(true);
       });
@@ -152,7 +143,7 @@ describe('phosphor-widget', () => {
         let called = false;
         let widget = new Widget();
         widget.dispose();
-        widget.disposed.connect(() => called = true);
+        widget.disposed.connect(() => { called = true; });
         widget.dispose();
         expect(called).to.be(false);
         expect(widget.isDisposed).to.be(true);
@@ -274,7 +265,7 @@ describe('phosphor-widget', () => {
       it('should be read-only', () => {
         let widget = new Widget();
         let title = new Title();
-        expect(() => widget.title = title).to.throwError();
+        expect(() => { widget.title = title; }).to.throwError();
       });
 
     });
@@ -659,7 +650,7 @@ describe('phosphor-widget', () => {
 
       it('should clear the given widget flag', () => {
         let widget = new Widget();
-        widget.hide();
+        widget.setFlag(WidgetFlag.IsHidden);
         widget.clearFlag(WidgetFlag.IsHidden);
         expect(widget.testFlag(WidgetFlag.IsHidden)).to.be(false);
       });
@@ -731,7 +722,7 @@ describe('phosphor-widget', () => {
         it('should have a `type` of `close-request`', () => {
           let widget = new LogWidget();
           sendMessage(widget, Widget.MsgCloseRequest);
-          expect(widget.methods.indexOf('onCloseRequest')).to.not.be(-1);
+          expect(widget.messages.indexOf('close-request')).to.not.be(-1);
         });
 
       });
@@ -752,9 +743,9 @@ describe('phosphor-widget', () => {
       });
 
       it('should notify the layout', () => {
-          let widget = new LogWidget();
-          sendMessage(widget, Widget.MsgCloseRequest);
-          expect(widget.methods.indexOf('notifyLayout')).to.not.be(-1);
+        let widget = new LogWidget();
+        sendMessage(widget, Widget.MsgCloseRequest);
+        expect(widget.methods.indexOf('notifyLayout')).to.not.be(-1);
       });
 
     });
@@ -782,11 +773,11 @@ describe('phosphor-widget', () => {
       });
 
       it('should notify the layout', () => {
-          let widget = new LogWidget();
-          widget.attach(document.body);
-          sendMessage(widget, ResizeMessage.UnknownSize);
-          expect(widget.methods.indexOf('notifyLayout')).to.not.be(-1);
-          widget.dispose();
+        let widget = new LogWidget();
+        widget.attach(document.body);
+        sendMessage(widget, ResizeMessage.UnknownSize);
+        expect(widget.methods.indexOf('notifyLayout')).to.not.be(-1);
+        widget.dispose();
       });
 
     });
@@ -810,9 +801,9 @@ describe('phosphor-widget', () => {
       });
 
       it('should notify the layout', () => {
-          let widget = new LogWidget();
-          sendMessage(widget, Widget.MsgUpdateRequest);
-          expect(widget.methods.indexOf('notifyLayout')).to.not.be(-1);
+        let widget = new LogWidget();
+        sendMessage(widget, Widget.MsgUpdateRequest);
+        expect(widget.methods.indexOf('notifyLayout')).to.not.be(-1);
       });
 
     });
