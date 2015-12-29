@@ -9,8 +9,6 @@
 
 import expect = require('expect.js');
 
-import * as arrays from 'phosphor-arrays';
-
 import {
   Message, postMessage, sendMessage
 } from 'phosphor-messaging';
@@ -116,7 +114,8 @@ class LogLayout extends AbstractLayout {
   }
 
   protected onChildRemoved(msg: ChildMessage): void {
-    arrays.remove(this._children, msg.child);
+    let i = this._children.indexOf(msg.child);
+    if (i !== -1) this._children.splice(i, 1);
   }
 
   private _children: Widget[] = [];
@@ -643,7 +642,7 @@ describe('phosphor-widget', () => {
         let widget = new Widget();
         expect(widget.testFlag(WidgetFlag.IsHidden)).to.be(false);
       });
-    
+
     });
 
     describe('#setFlag()', () => {
@@ -653,7 +652,7 @@ describe('phosphor-widget', () => {
         widget.setFlag(WidgetFlag.IsHidden);
         expect(widget.testFlag(WidgetFlag.IsHidden)).to.be(true);
       });
-    
+
     });
 
     describe('#clearFlag()', () => {
@@ -664,7 +663,7 @@ describe('phosphor-widget', () => {
         widget.clearFlag(WidgetFlag.IsHidden);
         expect(widget.testFlag(WidgetFlag.IsHidden)).to.be(false);
       });
-    
+
     });
 
     describe('#compressMessage()', () => {

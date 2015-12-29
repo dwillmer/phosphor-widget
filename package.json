@@ -27,7 +27,6 @@
     "karma-mocha": "^0.2.0",
     "karma-mocha-reporter": "^1.1.1",
     "mocha": "^2.2.5",
-    "phosphor-arrays": "^1.0.6",
     "rimraf": "^2.4.2",
     "typedoc": "^0.3.11",
     "typescript": "^1.6.2"

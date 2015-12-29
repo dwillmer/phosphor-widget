@@ -9,8 +9,6 @@
 
 import expect = require('expect.js');
 
-import * as arrays from 'phosphor-arrays';
-
 import {
   Message, sendMessage
 } from 'phosphor-messaging';
@@ -60,9 +58,10 @@ class LogLayout extends AbstractLayout {
   }
 
   protected onChildRemoved(msg: ChildMessage): void {
-    arrays.remove(this._children, msg.child);
+    let i = this._children.indexOf(msg.child);
+    if (i !== -1) this._children.splice(i, 1);
     this.methods.push('onChildRemoved');
-  } 
+  }
 
   protected onAfterShow(msg: Message): void {
     super.onAfterShow(msg);
