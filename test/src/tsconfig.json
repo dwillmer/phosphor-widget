@@ -10,7 +10,6 @@
   "files": [
     "../../typings/expect.js/expect.js.d.ts",
     "../../typings/mocha/mocha.d.ts",
-    "panel.ts",
     "layout.ts",
     "title.ts",
     "widget.ts"
