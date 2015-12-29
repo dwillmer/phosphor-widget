@@ -44,7 +44,6 @@ class LogLayout extends AbstractLayout {
   processParentMessage(msg: Message): void {
     super.processParentMessage(msg);
     this.messages.push(msg.type);
-    console.log('***', msg.type);
   }
 
   protected onResize(msg: ResizeMessage): void {
