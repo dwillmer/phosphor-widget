@@ -82,14 +82,17 @@ class LogWidget extends Widget {
   }
 
   protected onChildAdded(msg: ChildMessage): void {
+    super.onChildAdded(msg);
     this.methods.push('onChildAdded');
     this.raw.push(msg);
   }
 
   protected onChildRemoved(msg: ChildMessage): void {
+    super.onChildRemoved(msg);
     this.methods.push('onChildRemoved');
     this.raw.push(msg);
   }
+
 }
 
 
@@ -116,7 +119,7 @@ class LogLayout extends AbstractLayout {
     arrays.remove(this._children, msg.child);
   }
 
-  private _children: Widget[];
+  private _children: Widget[] = [];
 }
 
 
@@ -300,6 +303,13 @@ describe('phosphor-widget', () => {
         child.parent = parent1;
         expect(parent0.messages.indexOf('child-removed')).to.not.be(-1);
         expect(parent1.messages.indexOf('child-added')).to.not.be(-1);
+      });
+
+      it('should throw an error if the widget contains the parent', () => {
+        let widget0 = new Widget();
+        let widget1 = new Widget();
+        widget0.parent = widget1;
+        expect(() => { widget1.parent = widget0; }).to.throwError();
       });
 
       it('should be a no-op if there is no parent change', () => {
