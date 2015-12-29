@@ -355,6 +355,22 @@ describe('phosphor-widget', () => {
         expect(layout.isDisposed).to.be(true);
       });
 
+      it('should be a no-op if the layout is the same', () => {
+        let widget = new Widget();
+        let layout = new LogLayout();
+        widget.layout = layout;
+        widget.layout = layout;
+        expect(widget.layout).to.be(layout);
+      });
+
+      it('should throw an error if the layout already has a parent', () => {
+        let widget0 = new Widget();
+        let widget1 = new Widget();
+        let layout = new LogLayout();
+        widget0.layout = layout;
+        expect(() => { widget1.layout = layout; }).to.throwError();
+      });
+
     });
 
     describe('#contains()', () => {
