@@ -10,11 +10,11 @@
 import expect = require('expect.js');
 
 import {
-   Title
- } from '../../lib/index';
+  Title
+} from '../../lib/index';
 
 
-let defaultOptions = {
+const defaultOptions = {
   text: 'foo',
   icon: 'bar',
   closable: true,
@@ -71,6 +71,20 @@ describe('phosphor-widget', () => {
         expect(title.text).to.be('foo');
       });
 
+      it('should emit the changed signal', () => {
+        let called = false;
+        let title = new Title(defaultOptions);
+        title.changed.connect((sender, args) => {
+          expect(sender).to.be(title);
+          expect(args.name).to.be('text');
+          expect(args.oldValue).to.be('foo');
+          expect(args.newValue).to.be('baz');
+          called = true;
+        })
+        title.text = 'baz';
+        expect(called).to.be(true);
+      });
+
     });
 
     describe('#icon', () => {
@@ -92,6 +106,20 @@ describe('phosphor-widget', () => {
         expect(title.icon).to.be('foo bar');
       });
 
+      it('should emit the changed signal', () => {
+        let called = false;
+        let title = new Title(defaultOptions);
+        title.changed.connect((sender, args) => {
+          expect(sender).to.be(title);
+          expect(args.name).to.be('icon');
+          expect(args.oldValue).to.be('bar');
+          expect(args.newValue).to.be('baz');
+          called = true;
+        })
+        title.icon = 'baz';
+        expect(called).to.be(true);
+      });
+
     });
 
     describe('#closable', () => {
@@ -105,6 +133,20 @@ describe('phosphor-widget', () => {
         let title = new Title();
         title.closable = true;
         expect(title.closable).to.be(true);
+      });
+
+      it('should emit the changed signal', () => {
+        let called = false;
+        let title = new Title(defaultOptions);
+        title.changed.connect((sender, args) => {
+          expect(sender).to.be(title);
+          expect(args.name).to.be('closable');
+          expect(args.oldValue).to.be(true);
+          expect(args.newValue).to.be(false);
+          called = true;
+        })
+        title.closable = false;
+        expect(called).to.be(true);
       });
 
     });
@@ -126,6 +168,20 @@ describe('phosphor-widget', () => {
         let title = new Title();
         title.className = 'foo bar';
         expect(title.className).to.be('foo bar');
+      });
+
+      it('should emit the changed signal', () => {
+        let called = false;
+        let title = new Title(defaultOptions);
+        title.changed.connect((sender, args) => {
+          expect(sender).to.be(title);
+          expect(args.name).to.be('className');
+          expect(args.oldValue).to.be('baz');
+          expect(args.newValue).to.be('ham');
+          called = true;
+        })
+        title.className = 'ham';
+        expect(called).to.be(true);
       });
 
     });
