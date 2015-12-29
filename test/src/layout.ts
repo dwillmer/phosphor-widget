@@ -31,7 +31,7 @@ class LogLayout extends AbstractLayout {
 
   initialize(): void {
     this.methods.push('initialize');
-  };
+  }
 
   childCount(): number {
     return this._children.length;
@@ -109,7 +109,6 @@ class LogWidget extends Widget {
     super.processMessage(msg);
     this.messages.push(msg.type);
   }
-
 }
 
 
@@ -334,6 +333,7 @@ describe('phosphor-widget', () => {
         expect(layout.messages.indexOf('child-hidden')).to.not.be(-1);
         expect(layout.methods.indexOf('onChildHidden')).to.not.be(-1);
       });
+
     });
 
   });
@@ -412,7 +412,7 @@ describe('phosphor-widget', () => {
 
     });
 
-     describe('#onAfterAttach()', () => {
+    describe('#onAfterAttach()', () => {
 
       it('should send the message to all children', () => {
         let parent = new Widget();
