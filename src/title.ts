@@ -88,6 +88,9 @@ class Title {
 
   /**
    * Get the icon class name for the title.
+   *
+   * #### Notes
+   * The default value is an empty string.
    */
   get icon(): string {
     return TitlePrivate.iconProperty.get(this);
@@ -105,6 +108,9 @@ class Title {
 
   /**
    * Get the closable state for the title.
+   *
+   * #### Notes
+   * The default value is `false`.
    */
   get closable(): boolean {
     return TitlePrivate.closableProperty.get(this);
@@ -122,6 +128,9 @@ class Title {
 
   /**
    * Get the extra class name for the title.
+   *
+   * #### Notes
+   * The default value is an empty string.
    */
   get className(): string {
     return TitlePrivate.classNameProperty.get(this);
