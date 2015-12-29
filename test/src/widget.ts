@@ -9,119 +9,588 @@
 
 import expect = require('expect.js');
 
-// import {
-//   Message, postMessage, sendMessage
-// } from 'phosphor-messaging';
+import * as arrays from 'phosphor-arrays';
 
-// import {
-//   Property
-// } from 'phosphor-properties';
+import {
+  Message, postMessage, sendMessage
+} from 'phosphor-messaging';
 
-// import {
-//   Signal
-// } from 'phosphor-signaling';
+import {
+  Property
+} from 'phosphor-properties';
 
-// import {
-//   ChildMessage, Panel, ResizeMessage, Widget
-// } from '../../lib/index';
+import {
+  Signal
+} from 'phosphor-signaling';
 
-
-// class LogWidget extends Widget {
-
-//   messages: string[] = [];
-
-//   methods: string[] = [];
-
-//   adopt(child: Widget): void {
-//     this.adoptChild(child);
-//   }
-
-//   processMessage(msg: Message): void {
-//     super.processMessage(msg);
-//     this.messages.push(msg.type);
-//   }
-
-//   protected onCloseRequest(msg: Message): void {
-//     super.onCloseRequest(msg);
-//     this.methods.push('onCloseRequest');
-//   }
-
-//   protected onResize(msg: ResizeMessage): void {
-//     super.onResize(msg);
-//     this.methods.push('onResize');
-//   }
-
-//   protected onUpdateRequest(msg: Message): void {
-//     super.onUpdateRequest(msg);
-//     this.methods.push('onUpdateRequest');
-//   }
-
-//   protected onLayoutRequest(msg: Message): void {
-//     super.onLayoutRequest(msg);
-//     this.methods.push('onLayoutRequest');
-//   }
-
-//   protected onAfterShow(msg: Message): void {
-//     super.onAfterShow(msg);
-//     this.methods.push('onAfterShow');
-//   }
-
-//   protected onBeforeHide(msg: Message): void {
-//     super.onBeforeHide(msg);
-//     this.methods.push('onBeforeHide');
-//   }
-
-//   protected onAfterAttach(msg: Message): void {
-//     super.onAfterAttach(msg);
-//     this.methods.push('onAfterAttach');
-//   }
-
-//   protected onBeforeDetach(msg: Message): void {
-//     super.onBeforeDetach(msg);
-//     this.methods.push('onBeforeDetach');
-//   }
-
-//   protected removeChild(child: Widget): void {
-//     this.methods.push('removeChild');
-//   }
-
-//   protected disposeChildren(): void {
-//     this.methods.push('disposeChildren');
-//   }
-// }
+import {
+  AbstractLayout, ChildMessage, ResizeMessage, Title, Widget
+} from '../../lib/index';
 
 
-// class LogPanel extends Panel {
+class LogWidget extends Widget {
 
-//   messages: string[] = [];
+  messages: string[] = [];
 
-//   methods: string[] = [];
+  methods: string[] = [];
 
-//   raw: Message[] = [];
+  processMessage(msg: Message): void {
+    super.processMessage(msg);
+    this.messages.push(msg.type);
+  }
 
-//   processMessage(msg: Message): void {
-//     super.processMessage(msg);
-//     this.messages.push(msg.type);
-//     this.raw.push(msg);
-//   }
+  protected onCloseRequest(msg: Message): void {
+    super.onCloseRequest(msg);
+    this.methods.push('onCloseRequest');
+  }
 
-//   protected onChildShown(msg: ChildMessage): void {
-//     super.onChildShown(msg);
-//     this.methods.push('onChildShown');
-//   }
+  protected onResize(msg: ResizeMessage): void {
+    super.onResize(msg);
+    this.methods.push('onResize');
+  }
 
-//   protected onChildHidden(msg: ChildMessage): void {
-//     super.onChildHidden(msg);
-//     this.methods.push('onChildHidden');
-//   }
-// }
+  protected onUpdateRequest(msg: Message): void {
+    super.onUpdateRequest(msg);
+    this.methods.push('onUpdateRequest');
+  }
+
+  protected onAfterShow(msg: Message): void {
+    super.onAfterShow(msg);
+    this.methods.push('onAfterShow');
+  }
+
+  protected onBeforeHide(msg: Message): void {
+    super.onBeforeHide(msg);
+    this.methods.push('onBeforeHide');
+  }
+
+  protected onAfterAttach(msg: Message): void {
+    super.onAfterAttach(msg);
+    this.methods.push('onAfterAttach');
+  }
+
+  protected onBeforeDetach(msg: Message): void {
+    super.onBeforeDetach(msg);
+    this.methods.push('onBeforeDetach');
+  }
+
+  protected removeChild(child: Widget): void {
+    this.methods.push('removeChild');
+  }
+
+  protected disposeChildren(): void {
+    this.methods.push('disposeChildren');
+  }
+}
+
+
+class SimpleLayout extends AbstractLayout {
+
+  initialize(): void { };
+
+  childCount(): number {
+    return this._children.length;
+  }
+
+  childAt(index: number) {
+    return this._children[index];
+  }
+  protected onChildRemoved(msg: ChildMessage): void {
+    arrays.remove(this._children, msg.child);
+  }
+
+  private _children: Widget[];
+}
 
 
 describe('phosphor-widget', () => {
 
-  describe('stub', () => {
+  describe('Widget', () => {
 
-    it('should pass', () => {
+    describe('#constructor()', () => {
+
+      it('should accept no arguments', () => {
+        let widget = new Widget();
+        expect(widget instanceof Widget).to.be(true);
+      });
+
+     it('should add the `p-Widget` class', () => {
+        let widget = new Widget();
+        expect(widget.hasClass('p-Widget')).to.be(true);
+      });
+
+    });
+
+    describe('#dispose()', () => {
+
+      it('should dispose of the widget', () => {
+        let widget = new Widget();
+        widget.dispose();
+        expect(widget.isDisposed).to.be(true);
+      });
+
+      it('should be a no-op if the widget already disposed', () => {
+        let called = false;
+        let widget = new Widget();
+        widget.dispose();
+        widget.disposed.connect(() => called = true);
+        widget.dispose();
+        expect(called).to.be(false);
+        expect(widget.isDisposed).to.be(true);
+      });
+
+      it('should remove the widget from its parent', () => {
+        let parent = new Widget();
+        let child = new Widget();
+        child.parent = parent;
+        child.dispose();
+        expect(parent.isDisposed).to.be(false);
+        expect(child.isDisposed).to.be(true);
+        expect(child.parent).to.be(null);
+      });
+
+      it('should automatically detach the widget', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        expect(widget.isAttached).to.be(true);
+        widget.dispose();
+        expect(widget.isAttached).to.be(false);
+      });
+
+    });
+
+    describe('#disposed', () => {
+
+      it('should be emitted when the widget is disposed', () => {
+        let called = false;
+        let widget = new Widget();
+        widget.disposed.connect(() => { called = true; });
+        widget.dispose();
+        expect(called).to.be(true);
+      });
+
+    });
+
+    describe('#isDisposed', () => {
+
+      it('should be `true` if the widget is disposed', () => {
+        let widget = new Widget();
+        widget.dispose();
+        expect(widget.isDisposed).to.be(true);
+      });
+
+      it('should be `false` if the widget is not disposed', () => {
+        let widget = new Widget();
+        expect(widget.isDisposed).to.be(false);
+      });
+
+    });
+
+    describe('#isAttached', () => {
+
+      it('should be `true` if the widget is attached', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        expect(widget.isAttached).to.be(true);
+        widget.dispose();
+      });
+
+      it('should be `false` if the widget is not attached', () => {
+        let widget = new Widget();
+        expect(widget.isAttached).to.be(false);
+      });
+
+    });
+
+    describe('#isHidden', () => {
+
+      it('should be `true` if the widget is hidden', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        widget.hide();
+        expect(widget.isHidden).to.be(true);
+        widget.dispose();
+      });
+
+      it('should be `false` if the widget is not hidden', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        expect(widget.isHidden).to.be(false);
+        widget.dispose();
+      });
+
+    });
+
+    describe('#isVisible', () => {
+
+      it('should be `true` if the widget is visible', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        expect(widget.isVisible).to.be(true);
+        widget.dispose();
+      });
+
+      it('should be `false` if the widget is not visible', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        widget.hide();
+        expect(widget.isVisible).to.be(false);
+        widget.dispose();
+      });
+
+      it('should be `false` if the widget is not attached', () => {
+        let widget = new Widget();
+        expect(widget.isVisible).to.be(false);
+      });
+
+    });
+
+    describe('#title', () => {
+
+      it('should get the title data object for the widget', () => {
+        let widget = new Widget();
+        expect(widget.title instanceof Title).to.be(true);
+      });
+
+      it('should be read-only', () => {
+        let widget = new Widget();
+        let title = new Title();
+        expect(() => widget.title = title).to.throwError();
+      });
+
+    });
+
+    describe('#parent', () => {
+
+      it('should default to `null`', () => {
+        let widget = new Widget();
+        expect(widget.parent).to.be(null);
+      });
+
+      it('should set the parent and send a `child-added` messagee', () => {
+        let child = new Widget();
+        let parent = new LogWidget();
+        child.parent = parent;
+        expect(child.parent).to.be(parent);
+        expect(parent.messages.indexOf('child-added')).to.not.be(-1);
+      });
+
+      it('should remove itself from the current parent', () => {
+        let parent0 = new LogWidget();
+        let parent1 = new LogWidget();
+        let child = new Widget();
+        child.parent = parent0;
+        child.parent = parent1;
+        expect(parent0.messages.indexOf('child-removed')).to.not.be(-1);
+        expect(parent1.messages.indexOf('child-added')).to.not.be(-1);
+      });
+
+      it('should be a no-op if there is no parent change', () => {
+        let parent = new LogWidget();
+        let child = new Widget();
+        child.parent = parent;
+        child.parent = parent;
+        expect(parent.messages.indexOf('child-removed')).to.be(-1);
+      });
+
+    });
+
+    describe('#layout', () => {
+
+      it('should default to `null`', () => {
+        let widget = new Widget();
+        expect(widget.layout).to.be(null);
+      });
+
+      it('should set the layout for the widget', () => {
+        let widget = new Widget();
+        let layout = new SimpleLayout();
+        widget.layout = layout;
+        expect(widget.layout).to.be(layout);
+      });
+
+      it('should throw error if set to `null`', () => {
+        let widget = new Widget();
+        expect(() => { widget.layout = null; }).to.throwError();
+      });
+
+      it('should be single-use only', () => {
+        let widget = new Widget();
+        widget.layout = new SimpleLayout();
+        expect(() => { widget.layout = new SimpleLayout(); }).to.throwError();
+      });
+
+      it('should be disposed when the widget is disposed', () => {
+        let widget = new Widget();
+        let layout = new SimpleLayout();
+        widget.layout = layout;
+        widget.dispose();
+        expect(layout.isDisposed).to.be(true);
+      });
+
+    });
+
+    describe('#contains()', () => {
+
+      it('should return `true` if the widget is a descendant', () => {
+        let p1 = new Widget();
+        let p2 = new Widget();
+        let p3 = new Widget();
+        let w1 = new Widget();
+        let w2 = new Widget();
+        p2.parent = p1;
+        p3.parent = p2;
+        w1.parent = p2;
+        w2.parent = p3;
+        expect(p1.contains(p1)).to.be(true);
+        expect(p1.contains(p2)).to.be(true);
+        expect(p1.contains(p3)).to.be(true);
+        expect(p1.contains(w1)).to.be(true);
+        expect(p1.contains(w2)).to.be(true);
+        expect(p2.contains(p2)).to.be(true);
+        expect(p2.contains(p3)).to.be(true);
+        expect(p2.contains(w1)).to.be(true);
+        expect(p2.contains(w2)).to.be(true);
+        expect(p3.contains(p3)).to.be(true);
+        expect(p3.contains(w2)).to.be(true);
+      });
+
+      it('should return `false` if the widget is not a descendant', () => {
+        let p1 = new Widget();
+        let p2 = new Widget();
+        let p3 = new Widget();
+        let w1 = new Widget();
+        let w2 = new Widget();
+        p2.parent = p1;
+        p3.parent = p2;
+        w1.parent = p2;
+        w2.parent = p3;
+        expect(p2.contains(p1)).to.be(false);
+        expect(p3.contains(p1)).to.be(false);
+        expect(p3.contains(p2)).to.be(false);
+        expect(p3.contains(w1)).to.be(false);
+        expect(w1.contains(p1)).to.be(false);
+        expect(w1.contains(p2)).to.be(false);
+        expect(w1.contains(p3)).to.be(false);
+        expect(w1.contains(w2)).to.be(false);
+        expect(w2.contains(p1)).to.be(false);
+        expect(w2.contains(p2)).to.be(false);
+        expect(w2.contains(p3)).to.be(false);
+        expect(w2.contains(w1)).to.be(false);
+      });
+
+    });
+
+    describe('#update()', () => {
+
+      it('should post an `update-request` message', (done) => {
+        let widget = new LogWidget();
+        widget.update();
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['update-request']);
+          done();
+        });
+      });
+
+    });
+
+    describe('#fit()', () => {
+
+      it('should post a `fit-request` message to the widget', (done) => {
+        let widget = new LogWidget();
+        widget.fit();
+        expect(widget.messages).to.eql([]);
+        requestAnimationFrame(() => {
+          expect(widget.messages).to.eql(['fit-request']);
+          done();
+        });
+      });
+
+    });
+
+    describe('#close()', () => {
+
+      it('should send a `close-request` message', () => {
+        let widget = new LogWidget();
+        expect(widget.messages).to.eql([]);
+        widget.close();
+        expect(widget.messages).to.eql(['close-request']);
+      });
+
+    });
+
+    describe('#show()', () => {
+
+      it('should set `isHidden` to `false`', () => {
+        let widget = new Widget();
+        widget.hide();
+        expect(widget.isHidden).to.be(true);
+        widget.show();
+        expect(widget.isHidden).to.be(false);
+      });
+
+      it('should send an `after-show` message if applicable', () => {
+        let widget = new LogWidget();
+        widget.hide();
+        widget.attach(document.body);
+        widget.show();
+        expect(widget.messages.indexOf('after-show')).to.not.be(-1);
+        widget.dispose();
+      });
+
+      it('should send a `child-shown` message to the parent', () => {
+        let parent = new LogWidget();
+        let child = new Widget();
+        child.parent = parent;
+        child.hide();
+        child.show();
+        expect(parent.messages.indexOf('child-shown')).to.not.be(-1);
+      });
+
+      it('should be a no-op if not hidden', () => {
+        let widget = new LogWidget();
+        widget.attach(document.body);
+        widget.show();
+        expect(widget.messages.indexOf('after-show')).to.be(-1);
+        widget.dispose();
+      });
+
+    });
+
+    describe('#hide()', () => {
+
+      it('should hide the widget', () => {
+        let widget = new Widget();
+        widget.hide();
+        expect(widget.isHidden).to.be(true);
+      });
+
+      it('should send a `before-hide` message if applicable', () => {
+        let widget = new LogWidget();
+        widget.attach(document.body);
+        widget.hide();
+        expect(widget.messages.indexOf('before-hide')).to.not.be(-1);
+        widget.dispose();
+      });
+
+      it('should send a `child-hidden` message to the parent', () => {
+        let parent = new LogWidget();
+        let child = new Widget();
+        child.parent = parent;
+        child.hide();
+        expect(parent.messages.indexOf('child-hidden')).to.not.be(-1);
+      });
+
+      it('should be a no-op if already hidden', () => {
+        let widget = new LogWidget();
+        widget.hide();
+        widget.attach(document.body);
+        widget.hide();
+        expect(widget.messages.indexOf('before-hide')).to.be(-1);
+        widget.dispose();
+      });
+
+    });
+
+    describe('#setHidden()', () => {
+
+      it('should call hide if `hidden = True`', () => {
+        let widget = new LogWidget();
+        widget.attach(document.body);
+        widget.setHidden(true);
+        expect(widget.isHidden).to.be(true);
+        expect(widget.messages.indexOf('before-hide')).to.not.be(-1);
+        widget.dispose();
+      });
+
+      it('should call show if `hidden = False`', () => {
+        let widget = new LogWidget();
+        widget.hide();
+        widget.attach(document.body);
+        widget.setHidden(false);
+        expect(widget.isHidden).to.be(false);
+        expect(widget.messages.indexOf('after-show')).to.not.be(-1);
+        widget.dispose();
+      });
+
+    });
+
+    describe('#attach()', () => {
+
+      it('should attach a root widget to a host', () => {
+        let widget = new Widget();
+        expect(widget.isAttached).to.be(false);
+        widget.attach(document.body);
+        expect(widget.isAttached).to.be(true);
+        widget.dispose();
+      });
+
+      it('should throw if the widget is not a root', () => {
+        let parent = new Widget();
+        let child = new Widget();
+        child.parent = parent;
+        expect(() => { child.attach(document.body); }).to.throwError();
+      });
+
+      it('should throw if the widget is already attached', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        expect(() => { widget.attach(document.body); }).to.throwError();
+        widget.dispose();
+      });
+
+      it('should throw if the host is not attached to the DOM', () => {
+        let widget = new Widget();
+        let host = document.createElement('div');
+        expect(() => { widget.attach(host); }).to.throwError();
+      });
+
+      it('should dispatch an `after-attach` message', () => {
+        let widget = new LogWidget();
+        expect(widget.isAttached).to.be(false);
+        expect(widget.messages.indexOf('after-attach')).to.be(-1);
+        widget.attach(document.body);
+        expect(widget.isAttached).to.be(true);
+        expect(widget.messages.indexOf('after-attach')).to.not.be(-1);
+        widget.dispose();
+      });
+
+    });
+
+    describe('#detach()', () => {
+
+      it('should detach a root widget from its host', () => {
+        let widget = new Widget();
+        widget.attach(document.body);
+        expect(widget.isAttached).to.be(true);
+        widget.detach();
+        expect(widget.isAttached).to.be(false);
+        widget.dispose();
+      });
+
+      it('should throw if the widget is not a root', () => {
+        let parent = new Widget();
+        let child = new Widget();
+        child.parent = parent;
+        parent.attach(document.body);
+        expect(() => { child.detach(); }).to.throwError();
+        parent.dispose();
+      });
+
+      it('should throw if the widget is not attached', () => {
+        let widget = new Widget();
+        expect(() => { widget.detach(); }).to.throwError();
+      });
+
+      it('should dispatch a `before-detach` message', () => {
+        let widget = new LogWidget();
+        widget.attach(document.body);
+        widget.messages = []
+        widget.detach();
+        expect(widget.messages[0]).to.be('before-detach');
+        widget.dispose();
+      });
 
     });
 
