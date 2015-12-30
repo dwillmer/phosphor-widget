@@ -152,7 +152,7 @@ widget.attach(document.body);
 ```
 
 Likewise, a widget can be detached from the DOM with the `detach` method,
-though it is more common to simply `dipose` of the widget.
+though it is more common to simply `dispose` of the widget.
 
 ```typescript
 let widget = new Widget();
@@ -187,7 +187,7 @@ let parent = new Widget();
 parent.layout = layout;
 ```
 
-The `Layout` class is a low-level abstract base class which must be sublcassed
+The `Layout` class is a low-level abstract base class which must be subclassed
 to be useful. While it provides the greatest level of control and flexibility,
 it requires a decent amount of code and a solid understanding of the framework
 to use successfully. The `AbstractLayout` class is provided to ease the burden
