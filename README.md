@@ -152,7 +152,7 @@ widget.attach(document.body);
 ```
 
 Likewise, a widget can be detached from the DOM with the `detach` method,
-though it is more common to simply `dipose` of the widget.
+though it is more common to simply `dispose` of the widget.
 
 ```typescript
 let widget = new Widget();
