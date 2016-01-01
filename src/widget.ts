@@ -751,6 +751,11 @@ enum WidgetFlag {
 export
 class ChildMessage extends Message {
   /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof ChildMessage;
+
+  /**
    * Construct a new child message.
    *
    * @param type - The message type.
@@ -781,6 +786,11 @@ class ChildMessage extends Message {
  */
 export
 class ResizeMessage extends Message {
+  /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof ResizeMessage;
+
   /**
    * Construct a new resize message.
    *

@@ -54,6 +54,11 @@ interface ITitleOptions {
 export
 class Title {
   /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof Title;
+
+  /**
    * Construct a new title.
    *
    * @param options - The options for initializing a title.

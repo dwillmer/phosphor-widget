@@ -40,6 +40,11 @@ import {
 export
 abstract class Layout implements IDisposable {
   /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof Layout;
+
+  /**
    * Initialize the children of the layout.
    *
    * #### Notes
@@ -263,6 +268,11 @@ abstract class Layout implements IDisposable {
  */
 export
 abstract class AbstractLayout extends Layout {
+  /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof AbstractLayout;
+
   /**
    * Get the number of child widgets in the layout.
    *
