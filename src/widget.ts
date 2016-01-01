@@ -63,6 +63,11 @@ const HIDDEN_CLASS = 'p-mod-hidden';
 export
 class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   /**
+   * The static type of the constructor.
+   */
+  "constructor": typeof Widget;
+
+  /**
    * Construct a new widget.
    */
   constructor() {
