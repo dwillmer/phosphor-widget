@@ -63,11 +63,6 @@ const HIDDEN_CLASS = 'p-mod-hidden';
 export
 class Widget extends NodeWrapper implements IDisposable, IMessageHandler {
   /**
-   * The static type of the constructor.
-   */
-  "constructor": typeof Widget;
-
-  /**
    * Construct a new widget.
    */
   constructor() {
@@ -751,11 +746,6 @@ enum WidgetFlag {
 export
 class ChildMessage extends Message {
   /**
-   * The static type of the constructor.
-   */
-  "constructor": typeof ChildMessage;
-
-  /**
    * Construct a new child message.
    *
    * @param type - The message type.
@@ -786,11 +776,6 @@ class ChildMessage extends Message {
  */
 export
 class ResizeMessage extends Message {
-  /**
-   * The static type of the constructor.
-   */
-  "constructor": typeof ResizeMessage;
-
   /**
    * Construct a new resize message.
    *
