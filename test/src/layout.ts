@@ -113,15 +113,23 @@ class LogWidget extends Widget {
 
 
 describe('phosphor-widget', () => {
+  let layout: LogLayout = null;
+
+  beforeEach(() => {
+    layout = new LogLayout();
+  })
 
   describe('Layout', () => {
+    let widget: Widget = null;
+
+    beforeEach(() => {
+      widget = new Widget();
+      widget.layout = layout;
+    });
 
     describe('#initialize()', () => {
 
       it('should be called when the layout is installed on a widget', () => {
-        let layout = new LogLayout();
-        let widget = new Widget();
-        widget.layout = layout;
         expect(layout.methods.indexOf('initialize')).to.not.be(-1);
       });
 
@@ -130,9 +138,6 @@ describe('phosphor-widget', () => {
     describe('#onResize()', () => {
 
       it('should be invoked when the parent widget is resized', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         widget.attach(document.body);
         sendMessage(widget, ResizeMessage.UnknownSize);
         expect(layout.methods.indexOf('onResize')).to.not.be(-1);
@@ -144,9 +149,6 @@ describe('phosphor-widget', () => {
     describe('#onUpdateRequest()', () => {
 
       it('should be invoked when an update is requested on the parent widget', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         sendMessage(widget, Widget.MsgUpdateRequest);
         expect(layout.methods.indexOf('onUpdateRequest')).to.not.be(-1);
       });
@@ -170,9 +172,6 @@ describe('phosphor-widget', () => {
     describe('#onAfterAttach()', () => {
 
       it('should be invoked just after the parent widget is attached', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         widget.attach(document.body);
         expect(layout.methods.indexOf('onAfterAttach')).to.not.be(-1);
         widget.dispose();
@@ -183,9 +182,6 @@ describe('phosphor-widget', () => {
     describe('#onBeforeDetach()', () => {
 
       it('should be invoked just before the parent widget is detached', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         widget.attach(document.body);
         widget.detach();
         expect(layout.methods.indexOf('onBeforeDetach')).to.not.be(-1);
@@ -196,9 +192,6 @@ describe('phosphor-widget', () => {
     describe('#onAfterShow()', () => {
 
       it('should be invoked just after the parent widget is made visible', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         widget.attach(document.body);
         widget.hide();
         widget.show();
@@ -211,9 +204,6 @@ describe('phosphor-widget', () => {
     describe('#onBeforeHide()', () => {
 
       it('should be invoked just before the parent widget is made not-visible', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         widget.attach(document.body);
         widget.hide();
         expect(layout.methods.indexOf('onBeforeHide')).to.not.be(-1);
@@ -225,9 +215,6 @@ describe('phosphor-widget', () => {
     describe('#dispose()', () => {
 
       it('should dispose of the resources held by the layout', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         layout.dispose();
         expect(layout.parent).to.be(null);
       });
@@ -279,9 +266,6 @@ describe('phosphor-widget', () => {
       });
 
       it('should be a no-op if the widget is already the parent', () => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         layout.parent = widget;
         expect(layout.parent).to.be(widget);
       });
@@ -291,9 +275,6 @@ describe('phosphor-widget', () => {
     describe('#onFitRequest()', () => {
 
       it('should be called when `fit()` is called on the parent widget', (done) => {
-        let widget = new Widget();
-        let layout = new LogLayout();
-        widget.layout = layout;
         widget.fit();
         expect(layout.messages).to.eql([]);
         requestAnimationFrame(() => {
@@ -309,12 +290,11 @@ describe('phosphor-widget', () => {
 
       it("should be called when one of the parent's children is shown", () => {
         let parent = new Widget();
-        let child = new Widget();
         let layout = new LogLayout();
         parent.layout = layout;
-        child.parent = parent;
-        child.hide();
-        child.show();
+        widget.parent = parent;
+        widget.hide();
+        widget.show();
         expect(layout.messages.indexOf('child-shown')).to.not.be(-1);
         expect(layout.methods.indexOf('onChildShown')).to.not.be(-1);
       });
@@ -325,11 +305,10 @@ describe('phosphor-widget', () => {
 
       it("should be called when one of the parent's children is hidden", () => {
         let parent = new Widget();
-        let child = new Widget();
         let layout = new LogLayout();
         parent.layout = layout;
-        child.parent = parent;
-        child.hide();
+        widget.parent = parent;
+        widget.hide();
         expect(layout.messages.indexOf('child-hidden')).to.not.be(-1);
         expect(layout.methods.indexOf('onChildHidden')).to.not.be(-1);
       });
@@ -339,6 +318,16 @@ describe('phosphor-widget', () => {
   });
 
   describe('AbstractLayout', () => {
+    let parent: LogWidget = null;
+    let widgets: LogWidget[] = null;
+    let layout: LogLayout = null;
+
+    beforeEach(() => {
+      parent = new LogWidget();
+      widgets = [new LogWidget(), new LogWidget()];
+      layout = new LogLayout(widgets);
+      // parent.layout = layout
+    })
 
     describe('#childCount()', () => {
 
@@ -352,14 +341,10 @@ describe('phosphor-widget', () => {
     describe('#childAt()', () => {
 
       it('should get the child widget at the specified index', () => {
-        let widgets = [new Widget(), new Widget()];
-        let layout = new LogLayout(widgets);
         expect(layout.childAt(0)).to.be(widgets[0]);
       });
 
       it('should return `undefined` if no widget was found', () => {
-        let widgets = [new Widget(), new Widget()];
-        let layout = new LogLayout(widgets);
         expect(layout.childAt(2)).to.be(void 0);
       });
 
@@ -368,14 +353,10 @@ describe('phosphor-widget', () => {
     describe('#childIndex()', () => {
 
       it('should get the index of the specified child widget', () => {
-        let widgets = [new Widget(), new Widget()];
-        let layout = new LogLayout(widgets);
         expect(layout.childIndex(widgets[1])).to.be(1);
       });
 
       it('should return `-1` if the widget was not found', () => {
-        let widgets = [new Widget(), new Widget()];
-        let layout = new LogLayout(widgets);
         expect(layout.childIndex(new Widget())).to.be(-1);
       });
 
@@ -384,9 +365,6 @@ describe('phosphor-widget', () => {
     describe('#onResize()', () => {
 
       it('should send a resize message to all children', () => {
-        let parent = new Widget();
-        let widgets = [new LogWidget(), new LogWidget()];
-        let layout = new LogLayout(widgets);
         parent.layout = layout;
         parent.attach(document.body);
         sendMessage(parent, ResizeMessage.UnknownSize);
@@ -400,9 +378,6 @@ describe('phosphor-widget', () => {
     describe('#onUpdateRequest()', () => {
 
       it('should send a resize message to all children', () => {
-        let parent = new Widget();
-        let widgets = [new LogWidget(), new LogWidget()];
-        let layout = new LogLayout(widgets);
         parent.layout = layout;
         sendMessage(parent, Widget.MsgUpdateRequest);
         expect(widgets[0].messages.indexOf('resize')).to.not.be(-1);
@@ -415,9 +390,6 @@ describe('phosphor-widget', () => {
     describe('#onAfterAttach()', () => {
 
       it('should send the message to all children', () => {
-        let parent = new Widget();
-        let widgets = [new LogWidget(), new LogWidget()];
-        let layout = new LogLayout(widgets);
         parent.layout = layout;
         parent.attach(document.body);
         expect(widgets[0].messages.indexOf('after-attach')).to.not.be(-1);
@@ -430,9 +402,6 @@ describe('phosphor-widget', () => {
     describe('#onBeforeDetach()', () => {
 
       it('should send the message to all children', () => {
-        let parent = new Widget();
-        let widgets = [new LogWidget(), new LogWidget()];
-        let layout = new LogLayout(widgets);
         parent.layout = layout;
         parent.attach(document.body);
         parent.detach();
@@ -446,9 +415,6 @@ describe('phosphor-widget', () => {
     describe('#onAfterShow()', () => {
 
       it('should send the message to all children', () => {
-        let parent = new Widget();
-        let widgets = [new LogWidget(), new LogWidget()];
-        let layout = new LogLayout(widgets);
         parent.layout = layout;
         parent.attach(document.body);
         parent.hide();
@@ -463,9 +429,6 @@ describe('phosphor-widget', () => {
     describe('#onBeforeHide()', () => {
 
       it('should send the message to all children', () => {
-        let parent = new Widget();
-        let widgets = [new LogWidget(), new LogWidget()];
-        let layout = new LogLayout(widgets);
         parent.layout = layout;
         parent.attach(document.body);
         parent.hide();
