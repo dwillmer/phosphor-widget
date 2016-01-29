@@ -114,18 +114,25 @@ class LogLayout extends AbstractLayout {
 
 
 describe('phosphor-widget', () => {
+  let widget: Widget = null;
+
+  beforeEach(() => {
+    widget = new Widget();
+  });
+
+  afterEach(() => {
+    widget.dispose();
+  });
 
   describe('Widget', () => {
 
     describe('#constructor()', () => {
 
       it('should accept no arguments', () => {
-        let widget = new Widget();
         expect(widget instanceof Widget).to.be(true);
       });
 
       it('should add the `p-Widget` class', () => {
-        let widget = new Widget();
         expect(widget.hasClass('p-Widget')).to.be(true);
       });
 
@@ -134,14 +141,12 @@ describe('phosphor-widget', () => {
     describe('#dispose()', () => {
 
       it('should dispose of the widget', () => {
-        let widget = new Widget();
         widget.dispose();
         expect(widget.isDisposed).to.be(true);
       });
 
       it('should be a no-op if the widget already disposed', () => {
         let called = false;
-        let widget = new Widget();
         widget.dispose();
         widget.disposed.connect(() => { called = true; });
         widget.dispose();
@@ -151,16 +156,14 @@ describe('phosphor-widget', () => {
 
       it('should remove the widget from its parent', () => {
         let parent = new Widget();
-        let child = new Widget();
-        child.parent = parent;
-        child.dispose();
+        widget.parent = parent;
+        widget.dispose();
         expect(parent.isDisposed).to.be(false);
-        expect(child.isDisposed).to.be(true);
-        expect(child.parent).to.be(null);
+        expect(widget.isDisposed).to.be(true);
+        expect(widget.parent).to.be(null);
       });
 
       it('should automatically detach the widget', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         expect(widget.isAttached).to.be(true);
         widget.dispose();
@@ -173,7 +176,6 @@ describe('phosphor-widget', () => {
 
       it('should be emitted when the widget is disposed', () => {
         let called = false;
-        let widget = new Widget();
         widget.disposed.connect(() => { called = true; });
         widget.dispose();
         expect(called).to.be(true);
@@ -184,13 +186,11 @@ describe('phosphor-widget', () => {
     describe('#isDisposed', () => {
 
       it('should be `true` if the widget is disposed', () => {
-        let widget = new Widget();
         widget.dispose();
         expect(widget.isDisposed).to.be(true);
       });
 
       it('should be `false` if the widget is not disposed', () => {
-        let widget = new Widget();
         expect(widget.isDisposed).to.be(false);
       });
 
@@ -199,14 +199,11 @@ describe('phosphor-widget', () => {
     describe('#isAttached', () => {
 
       it('should be `true` if the widget is attached', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         expect(widget.isAttached).to.be(true);
-        widget.dispose();
       });
 
       it('should be `false` if the widget is not attached', () => {
-        let widget = new Widget();
         expect(widget.isAttached).to.be(false);
       });
 
@@ -215,18 +212,14 @@ describe('phosphor-widget', () => {
     describe('#isHidden', () => {
 
       it('should be `true` if the widget is hidden', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         widget.hide();
         expect(widget.isHidden).to.be(true);
-        widget.dispose();
       });
 
       it('should be `false` if the widget is not hidden', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         expect(widget.isHidden).to.be(false);
-        widget.dispose();
       });
 
     });
@@ -234,22 +227,17 @@ describe('phosphor-widget', () => {
     describe('#isVisible', () => {
 
       it('should be `true` if the widget is visible', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         expect(widget.isVisible).to.be(true);
-        widget.dispose();
       });
 
       it('should be `false` if the widget is not visible', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         widget.hide();
         expect(widget.isVisible).to.be(false);
-        widget.dispose();
       });
 
       it('should be `false` if the widget is not attached', () => {
-        let widget = new Widget();
         expect(widget.isVisible).to.be(false);
       });
 
@@ -258,12 +246,10 @@ describe('phosphor-widget', () => {
     describe('#title', () => {
 
       it('should get the title data object for the widget', () => {
-        let widget = new Widget();
         expect(widget.title instanceof Title).to.be(true);
       });
 
       it('should be read-only', () => {
-        let widget = new Widget();
         let title = new Title();
         expect(() => { widget.title = title; }).to.throwError();
       });
@@ -273,40 +259,35 @@ describe('phosphor-widget', () => {
     describe('#parent', () => {
 
       it('should default to `null`', () => {
-        let widget = new Widget();
         expect(widget.parent).to.be(null);
       });
 
       it('should set the parent and send a `child-added` messagee', () => {
-        let child = new Widget();
         let parent = new LogWidget();
-        child.parent = parent;
-        expect(child.parent).to.be(parent);
+        widget.parent = parent;
+        expect(widget.parent).to.be(parent);
         expect(parent.messages.indexOf('child-added')).to.not.be(-1);
       });
 
       it('should remove itself from the current parent', () => {
         let parent0 = new LogWidget();
         let parent1 = new LogWidget();
-        let child = new Widget();
-        child.parent = parent0;
-        child.parent = parent1;
+        widget.parent = parent0;
+        widget.parent = parent1;
         expect(parent0.messages.indexOf('child-removed')).to.not.be(-1);
         expect(parent1.messages.indexOf('child-added')).to.not.be(-1);
       });
 
       it('should throw an error if the widget contains the parent', () => {
-        let widget0 = new Widget();
         let widget1 = new Widget();
-        widget0.parent = widget1;
-        expect(() => { widget1.parent = widget0; }).to.throwError();
+        widget.parent = widget1;
+        expect(() => { widget1.parent = widget; }).to.throwError();
       });
 
       it('should be a no-op if there is no parent change', () => {
         let parent = new LogWidget();
-        let child = new Widget();
-        child.parent = parent;
-        child.parent = parent;
+        widget.parent = parent;
+        widget.parent = parent;
         expect(parent.messages.indexOf('child-removed')).to.be(-1);
       });
 
@@ -315,30 +296,25 @@ describe('phosphor-widget', () => {
     describe('#layout', () => {
 
       it('should default to `null`', () => {
-        let widget = new Widget();
         expect(widget.layout).to.be(null);
       });
 
       it('should set the layout for the widget', () => {
-        let widget = new Widget();
         let layout = new LogLayout();
         widget.layout = layout;
         expect(widget.layout).to.be(layout);
       });
 
       it('should throw error if set to `null`', () => {
-        let widget = new Widget();
         expect(() => { widget.layout = null; }).to.throwError();
       });
 
       it('should be single-use only', () => {
-        let widget = new Widget();
         widget.layout = new LogLayout();
         expect(() => { widget.layout = new LogLayout(); }).to.throwError();
       });
 
       it('should be disposed when the widget is disposed', () => {
-        let widget = new Widget();
         let layout = new LogLayout();
         widget.layout = layout;
         widget.dispose();
@@ -346,7 +322,6 @@ describe('phosphor-widget', () => {
       });
 
       it('should be a no-op if the layout is the same', () => {
-        let widget = new Widget();
         let layout = new LogLayout();
         widget.layout = layout;
         widget.layout = layout;
@@ -354,10 +329,9 @@ describe('phosphor-widget', () => {
       });
 
       it('should throw an error if the layout already has a parent', () => {
-        let widget0 = new Widget();
         let widget1 = new Widget();
         let layout = new LogLayout();
-        widget0.layout = layout;
+        widget.layout = layout;
         expect(() => { widget1.layout = layout; }).to.throwError();
       });
 
@@ -456,7 +430,6 @@ describe('phosphor-widget', () => {
     describe('#show()', () => {
 
       it('should set `isHidden` to `false`', () => {
-        let widget = new Widget();
         widget.hide();
         expect(widget.isHidden).to.be(true);
         widget.show();
@@ -494,7 +467,6 @@ describe('phosphor-widget', () => {
     describe('#hide()', () => {
 
       it('should hide the widget', () => {
-        let widget = new Widget();
         widget.hide();
         expect(widget.isHidden).to.be(true);
       });
@@ -552,7 +524,6 @@ describe('phosphor-widget', () => {
     describe('#attach()', () => {
 
       it('should attach a root widget to a host', () => {
-        let widget = new Widget();
         expect(widget.isAttached).to.be(false);
         widget.attach(document.body);
         expect(widget.isAttached).to.be(true);
@@ -561,20 +532,17 @@ describe('phosphor-widget', () => {
 
       it('should throw if the widget is not a root', () => {
         let parent = new Widget();
-        let child = new Widget();
-        child.parent = parent;
-        expect(() => { child.attach(document.body); }).to.throwError();
+        widget.parent = parent;
+        expect(() => { widget.attach(document.body); }).to.throwError();
       });
 
       it('should throw if the widget is already attached', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         expect(() => { widget.attach(document.body); }).to.throwError();
         widget.dispose();
       });
 
       it('should throw if the host is not attached to the DOM', () => {
-        let widget = new Widget();
         let host = document.createElement('div');
         expect(() => { widget.attach(host); }).to.throwError();
       });
@@ -594,7 +562,6 @@ describe('phosphor-widget', () => {
     describe('#detach()', () => {
 
       it('should detach a root widget from its host', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         expect(widget.isAttached).to.be(true);
         widget.detach();
@@ -604,15 +571,13 @@ describe('phosphor-widget', () => {
 
       it('should throw if the widget is not a root', () => {
         let parent = new Widget();
-        let child = new Widget();
-        child.parent = parent;
+        widget.parent = parent;
         parent.attach(document.body);
-        expect(() => { child.detach(); }).to.throwError();
+        expect(() => { widget.detach(); }).to.throwError();
         parent.dispose();
       });
 
       it('should throw if the widget is not attached', () => {
-        let widget = new Widget();
         expect(() => { widget.detach(); }).to.throwError();
       });
 
@@ -630,7 +595,6 @@ describe('phosphor-widget', () => {
     describe('#testFlag()', () => {
 
       it('should test whether the given widget flag is set', () => {
-        let widget = new Widget();
         expect(widget.testFlag(WidgetFlag.IsHidden)).to.be(false);
       });
 
@@ -639,7 +603,6 @@ describe('phosphor-widget', () => {
     describe('#setFlag()', () => {
 
       it('should set the given widget flag', () => {
-        let widget = new Widget();
         widget.setFlag(WidgetFlag.IsHidden);
         expect(widget.testFlag(WidgetFlag.IsHidden)).to.be(true);
       });
@@ -649,7 +612,6 @@ describe('phosphor-widget', () => {
     describe('#clearFlag()', () => {
 
       it('should clear the given widget flag', () => {
-        let widget = new Widget();
         widget.setFlag(WidgetFlag.IsHidden);
         widget.clearFlag(WidgetFlag.IsHidden);
         expect(widget.testFlag(WidgetFlag.IsHidden)).to.be(false);
@@ -729,14 +691,12 @@ describe('phosphor-widget', () => {
 
       it('should unparent a child widget by default', () => {
         let parent = new Widget();
-        let child = new Widget();
-        child.parent = parent;
-        sendMessage(child, Widget.MsgCloseRequest);
-        expect(child.parent).to.be(null);
+        widget.parent = parent;
+        sendMessage(widget, Widget.MsgCloseRequest);
+        expect(widget.parent).to.be(null);
       });
 
       it('should detach a root widget by default', () => {
-        let widget = new Widget();
         widget.attach(document.body);
         sendMessage(widget, Widget.MsgCloseRequest);
         expect(widget.isAttached).to.be(false);
@@ -937,42 +897,33 @@ describe('phosphor-widget', () => {
     });
 
     describe('#onChildAdded()', () => {
+      let parent: LogWidget = null;
+
+      beforeEach(() => {
+        parent = new LogWidget();
+        widget.parent = parent;
+      })
 
       it('should be invoked when a child is added', () => {
-        let child = new Widget();
-        let parent = new LogWidget();
-        child.parent = parent;
         expect(parent.methods.indexOf('onChildAdded')).to.not.be(-1);
       });
 
       it('should notify the layout', () => {
-        let child = new Widget();
-        let parent = new LogWidget();
-        child.parent = parent;
         expect(parent.methods.indexOf('notifyLayout')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
 
         it('should be a `ChildMessage`', () => {
-          let child = new Widget();
-          let parent = new LogWidget();
-          child.parent = parent;
           expect(parent.raw[0] instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-added`', () => {
-          let child = new Widget();
-          let parent = new LogWidget();
-          child.parent = parent;
           expect(parent.raw[0].type).to.be('child-added');
         });
 
         it('should have the correct `child`', () => {
-          let child = new Widget();
-          let parent = new LogWidget();
-          child.parent = parent;
-          expect((parent.raw[0] as ChildMessage).child).to.be(child);
+          expect((parent.raw[0] as ChildMessage).child).to.be(widget);
         });
 
       });
@@ -980,51 +931,41 @@ describe('phosphor-widget', () => {
     });
 
     describe('#onChildRemoved()', () => {
+      let parent: LogWidget = null;
+
+      beforeEach(() => {
+        parent = new LogWidget();
+        widget.parent = parent;
+      })
 
       it('should be invoked when a child is removed', () => {
-        let child = new Widget();
-        let parent = new LogWidget();
-        child.parent = parent;
-        child.parent = null;
+        widget.parent = null;
         expect(parent.methods.indexOf('onChildRemoved')).to.not.be(-1);
       });
 
       it('should notify the layout', () => {
-        let child = new Widget();
-        let parent = new LogWidget();
-        child.parent = parent;
         parent.methods = [];
-        child.parent = null;
+        widget.parent = null;
         expect(parent.methods.indexOf('notifyLayout')).to.not.be(-1);
       });
 
       context('`msg` parameter', () => {
 
-        it('should be a `ChildMessage`', () => {
-          let child = new Widget();
-          let parent = new LogWidget();
-          child.parent = parent;
+        beforeEach(() => {
           parent.raw = [];
-          child.parent = null;
+          widget.parent = null;
+        });
+
+        it('should be a `ChildMessage`', () => {
           expect(parent.raw[0] instanceof ChildMessage).to.be(true);
         });
 
         it('should have a `type` of `child-removed`', () => {
-          let child = new Widget();
-          let parent = new LogWidget();
-          child.parent = parent;
-          parent.raw = [];
-          child.parent = null;
           expect((parent.raw[0] as ChildMessage).type).to.be('child-removed');
         });
 
         it('should have the correct `child`', () => {
-          let child = new Widget();
-          let parent = new LogWidget();
-          child.parent = parent;
-          parent.raw = [];
-          child.parent = null;
-          expect((parent.raw[0] as ChildMessage).child).to.be(child);
+          expect((parent.raw[0] as ChildMessage).child).to.be(widget);
         });
 
       });
@@ -1047,7 +988,6 @@ describe('phosphor-widget', () => {
     describe('#child', () => {
 
       it('should be the child passed to the constructor', () => {
-        let widget = new Widget();
         let msg = new ChildMessage('test', widget);
         expect(msg.child).to.be(widget);
       });
