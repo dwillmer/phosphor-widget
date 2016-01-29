@@ -25,11 +25,15 @@ const defaultOptions = {
 describe('phosphor-widget', () => {
 
   describe('Title', () => {
+    let title: Title = null;
+
+    beforeEach(() => {
+      title = new Title();
+    })
 
     describe('#constructor()', () => {
 
       it('should accept no arguments', () => {
-        let title = new Title();
         expect(title instanceof Title).to.be(true);
       });
 
@@ -61,12 +65,10 @@ describe('phosphor-widget', () => {
     describe('#text', () => {
 
       it('should default to an empty string', () => {
-        let title = new Title();
         expect(title.text).to.be('');
       });
 
       it('should be writable', () => {
-        let title = new Title();
         title.text = 'foo';
         expect(title.text).to.be('foo');
       });
@@ -90,18 +92,15 @@ describe('phosphor-widget', () => {
     describe('#icon', () => {
 
       it('should default to an empty string', () => {
-        let title = new Title();
         expect(title.icon).to.be('');
       });
 
       it('should be writable', () => {
-        let title = new Title();
         title.icon = 'foo';
         expect(title.icon).to.be('foo');
       });
 
       it('should allow multiple class names separated with whitespace', () => {
-        let title = new Title();
         title.icon = 'foo bar';
         expect(title.icon).to.be('foo bar');
       });
@@ -125,12 +124,10 @@ describe('phosphor-widget', () => {
     describe('#closable', () => {
 
       it('should default to false', () => {
-        let title = new Title();
         expect(title.closable).to.be(false);
       });
 
       it('should be writable', () => {
-        let title = new Title();
         title.closable = true;
         expect(title.closable).to.be(true);
       });
@@ -154,18 +151,15 @@ describe('phosphor-widget', () => {
     describe('#className', () => {
 
       it('should default to an empty string', () => {
-        let title = new Title();
         expect(title.className).to.be('');
       });
 
       it('should be writable', () => {
-        let title = new Title();
         title.className = 'foo';
         expect(title.className).to.be('foo');
       });
 
       it('should allow multiple class names separated with whitespace', () => {
-        let title = new Title();
         title.className = 'foo bar';
         expect(title.className).to.be('foo bar');
       });
